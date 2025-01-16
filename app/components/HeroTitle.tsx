@@ -15,9 +15,10 @@ const glitterAnimation = `
 interface HeroTitleProps {
   title: string;
   description: string;
+  className?: string;
 }
 
-export function HeroTitle({ description }: HeroTitleProps) {
+export function HeroTitle({ description, className }: HeroTitleProps) {
   const [isTourOpen, setIsTourOpen] = useState(false);
 
   return (
@@ -35,7 +36,7 @@ export function HeroTitle({ description }: HeroTitleProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-12"
+        className={`text-center mb-12 ${className}`}
       >
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white leading-tight">
           Decode Your{' '}
