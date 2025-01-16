@@ -28,6 +28,12 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const MAX_RETRIES = 5;
 const BASE_DELAY = 1000; // 1 second
 
+interface RevisionRequest {
+  originalContract: string;
+  instructions: string;
+  role: string;
+}
+
 async function generateWithRetry(
   content: string[],
   retryCount = 0
@@ -65,7 +71,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { originalContract, instructions, role } = await req.json();
+    const { originalContract, instructions, role }: RevisionRequest = await req.json();
 
     if (!originalContract || !instructions || !role) {
       return NextResponse.json(

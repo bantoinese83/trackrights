@@ -395,8 +395,12 @@ const contractForms: ContractForms = {
   },
 };
 
+interface FormData {
+  [key: string]: string;
+}
+
 export function ContractForm({ contractId, onSubmit }: ContractFormProps) {
-  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [formData, setFormData] = useState<FormData>({});
   const { toast } = useToast();
 
   const contractForm = contractForms[contractId];
@@ -425,9 +429,9 @@ export function ContractForm({ contractId, onSubmit }: ContractFormProps) {
       case 'number':
         return <Input {...commonProps} type="number" />;
       case 'date':
-        return <Input {...commonProps} type="date" />;
+        return <Input {...commonProps} type="date' />;
       default:
-        return <Input {...commonProps} type="text" />;
+        return <Input {...commonProps} type="text' />;
     }
   };
 

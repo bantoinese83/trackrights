@@ -9,8 +9,12 @@ interface ContractInputProps {
   onContractSubmitAction: (text: string) => void;
 }
 
+interface ContractText {
+  contractText: string;
+}
+
 export function ContractInput({ onContractSubmitAction }: ContractInputProps) {
-  const [contractText, setContractText] = useState('');
+  const [contractText, setContractText] = useState<ContractText['contractText']>('');
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();

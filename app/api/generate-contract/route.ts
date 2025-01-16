@@ -27,6 +27,18 @@ const BASE_DELAY = 1000; // 1 second
 interface Content {
   text: string;
 }
+
+interface ContractDetails {
+  id: string;
+  title: string;
+  description: string;
+  fields: Record<string, { label: string; type: string }>;
+}
+
+interface ContractInputs {
+  [key: string]: string | number;
+}
+
 async function generateWithRetry(
   content: Content[],
   retryCount = 0
@@ -64,7 +76,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { contractDetails, contractInputs } = await req.json();
+    const { contractDetails, contractInputs }: { contractDetails: ContractDetails; contractInputs: ContractInputs } = await req.json();
 
     if (!contractDetails || !contractInputs) {
       return NextResponse.json(
