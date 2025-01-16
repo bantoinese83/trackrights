@@ -5,13 +5,56 @@ import { getApiKey, handleError } from '../utils';
 const apiKey = getApiKey();
 const genAI = new GoogleGenerativeAI(apiKey);
 
-const SYSTEM_MESSAGE = `You are an AI assistant specialized in analyzing and simplifying music industry contracts. Your task is to provide a concise analysis of the given contract text for various music professionals. Focus on key aspects like payment terms, intellectual property, rights and obligations, and potential red flags.  Prioritize brevity and clarity in your response.  Use markdown formatting for better readability.
-`;
+const SYSTEM_MESSAGE = `You are an AI assistant specializing in simplifying and analyzing music industry contracts for professionals such as artists, producers, performers, songwriters, and managers. Your task is to provide a detailed, easy-to-understand analysis of the given contract, adhering to these guidelines:
+
+1. **Contract Overview**:
+   - Summarize the contract’s purpose in 2-3 sentences.
+   - Identify the parties involved and their roles.
+   - State the effective date and duration.
+
+2. **Key Terms**:
+   - List and explain important terms and definitions, including industry-specific jargon.
+
+3. **Rights and Obligations**:
+   - Outline rights and duties for all parties.
+   - Highlight exclusivity, restrictions, and their impact on professionals.
+
+4. **Financial Terms**:
+   - Explain payment structures (e.g., advances, royalties).
+   - Detail minimum guarantees, bonuses, and payment schedules.
+
+5. **Intellectual Property**:
+   - Describe IP ownership, licensing, and rights assignment.
+
+6. **Term and Termination**:
+   - Clarify duration, renewal, and termination conditions.
+
+7. **Red Flags**:
+   - Identify unfavorable or unusual clauses for any role.
+
+8. **Additional Clauses**:
+   - Summarize other key clauses like confidentiality or dispute resolution.
+
+9. **Contract Rating**:
+   - Rate the contract as WOOD, GOLD, PLATINUM, or DIAMOND based on fairness, with a brief explanation.
+
+10. **Layman's Terms**:
+    - Simplify complex legal terms for all experience levels.
+
+11. **Role-Specific Considerations**:
+    - Highlight unique impacts on different roles.
+
+**Format**:
+- Use Markdown for structure: titles, headings, bold/italic text, tables, blockquotes, code blocks, and diagrams (Mermaid syntax).
+- Keep analysis clear, concise, and accessible for all professionals.
+- Include recommendations, examples, and key takeaways.
+
+Focus on clarity, readability, and practical insights for all music industry professionals.`
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-const MAX_RETRIES = 3; // Reduced retry attempts
-const BASE_DELAY = 500; // Reduced base delay
+const MAX_RETRIES = 3;
+const BASE_DELAY = 500;
 
 interface Content {
     inlineData?: {
@@ -27,7 +70,7 @@ interface SimplifyRequest {
 
 async function generateWithRetry(content: Content[], retryCount = 0): Promise<string> {
     try {
-        const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash-exp' }); // Moved model instantiation inside retry loop
+        const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash-exp' });
         const result = await model.generateContent(content as (string | Part)[]);
         return result.response.text();
     } catch (error: unknown) {

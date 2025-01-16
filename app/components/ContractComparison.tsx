@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, lazy, Suspense } from 'react'
-import { motion } from 'framer-motion'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
-import rehypeRaw from 'rehype-raw'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Diamond } from 'lucide-react'
-import Image from 'next/image'
+import React, { useState, useEffect, useMemo, lazy, Suspense } from 'react';
+import { motion } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Diamond } from 'lucide-react';
+import Image from 'next/image';
 
 const PDFViewer = lazy(() => import('./PDFViewer'));
 
@@ -21,17 +21,17 @@ const ContractRatingPlaque = ({ rating }: { rating: string }) => {
   const getRatingImage = (rating: string) => {
     switch (rating.toLowerCase()) {
       case 'platinum':
-        return 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-01-15%20at%204.37.44%E2%80%AFPM-u3RJqMtrGUe6p7FVIDCCUR9WhTFYUP.png'
+        return 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-01-15%20at%204.37.44%E2%80%AFPM-u3RJqMtrGUe6p7FVIDCCUR9WhTFYUP.png';
       case 'gold':
-        return 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-01-15%20at%204.37.34%E2%80%AFPM-AL61x2Ar4TabESWX0sVeUDVKnJvWq4.png'
+        return 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-01-15%20at%204.37.34%E2%80%AFPM-AL61x2Ar4TabESWX0sVeUDVKnJvWq4.png';
       case 'wood':
-        return 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-01-15%20at%204.37.27%E2%80%AFPM-qI72DM5pc0SXZCPN1LGK8tol1CgX8o.png'
+        return 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-01-15%20at%204.37.27%E2%80%AFPM-qI72DM5pc0SXZCPN1LGK8tol1CgX8o.png';
       case 'diamond':
-        return 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-01-15%20at%204.37.50%E2%80%AFPM-yoMScIahTbQjx2g81rm7e9v4WDLC5w.png'
+        return 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-01-15%20at%204.37.50%E2%80%AFPM-yoMScIahTbQjx2g81rm7e9v4WDLC5w.png';
       default:
-        return 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-01-15%20at%204.37.44%E2%80%AFPM-u3RJqMtrGUe6p7FVIDCCUR9WhTFYUP.png'
+        return 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-01-15%20at%204.37.44%E2%80%AFPM-u3RJqMtrGUe6p7FVIDCCUR9WhTFYUP.png';
     }
-  }
+  };
 
   return (
     <div className="flex flex-col items-center mb-6">
@@ -62,17 +62,17 @@ const ContractRatingPlaque = ({ rating }: { rating: string }) => {
         </div>
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
 const MemoizedContractRatingPlaque = React.memo(ContractRatingPlaque);
 
 export function ContractComparison({ originalText, simplifiedContract, isPdf = false }: ContractComparisonProps) {
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
   const contractRating = useMemo(() => {
     if (simplifiedContract) {
       const ratingMatch = simplifiedContract.match(/Contract Rating:\s*(WOOD|GOLD|PLATINUM|DIAMOND)/i)
-      || originalText.match(/Contract Rating:\s*(WOOD|GOLD|PLATINUM|DIAMOND)/i);
+        || originalText.match(/Contract Rating:\s*(WOOD|GOLD|PLATINUM|DIAMOND)/i);
       return ratingMatch ? ratingMatch[1].toLowerCase() : 'wood';
     }
     return 'wood';
@@ -80,9 +80,9 @@ export function ContractComparison({ originalText, simplifiedContract, isPdf = f
 
   useEffect(() => {
     if (originalText && simplifiedContract) {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [originalText, simplifiedContract])
+  }, [originalText, simplifiedContract]);
 
   if (isLoading) {
     return (
@@ -90,7 +90,7 @@ export function ContractComparison({ originalText, simplifiedContract, isPdf = f
         <Skeleton className="h-6 w-48 mx-auto mb-4" />
         <Skeleton className="h-96 w-full max-w-6xl mx-auto" />
       </div>
-    )
+    );
   }
 
   if (!originalText || !simplifiedContract) {
@@ -98,7 +98,7 @@ export function ContractComparison({ originalText, simplifiedContract, isPdf = f
       <div className="text-center mt-8">
         <p className="text-red-700">Error: Missing contract text.</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -130,7 +130,7 @@ export function ContractComparison({ originalText, simplifiedContract, isPdf = f
         </div>
         <div>
           <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-4 text-white p-4 rounded-t-lg flex items-center shadow-lg">
-            <Diamond className="w-5 h-5 mr-2 animate-pulse"/>
+            <Diamond className="w-5 h-5 mr-2 animate-pulse" />
             Simplified Version
           </h2>
           <div className="bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow-md h-[400px] sm:h-[500px] md:h-[600px] overflow-y-auto">
@@ -160,6 +160,5 @@ export function ContractComparison({ originalText, simplifiedContract, isPdf = f
         }
       `}</style>
     </motion.div>
-  )
+  );
 }
-
