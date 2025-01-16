@@ -79,45 +79,46 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <head>
-                <title>TrackRights | AI-Powered Music Contract Analysis</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="canonical" href="https://trackrights.com" />
-                <link rel="manifest" href="/site.webmanifest" />
-                <script
-                    {...(jsonLdScriptProps({
-                        "@context": "https://schema.org",
-                        "@type": "WebSite",
-                        name: "TrackRights",
-                        url: "https://trackrights.com",
-                        potentialAction: {
-                            "@type": "SearchAction",
-                            target: {
-                                "@type": "EntryPoint",
-                                urlTemplate: "https://trackrights.com/search?q={search_term_string}"
-                            },
-                            "query-input": "required name=search_term_string"
-                        }
-                    }) as React.ScriptHTMLAttributes<HTMLScriptElement>)}
-                />
-                <script
-                    {...(jsonLdScriptProps({
-                        "@context": "https://schema.org",
-                        "@type": "Organization",
-                        name: "TrackRights",
-                        url: "https://trackrights.com",
-                        logo: "https://trackrights.com/logo.png",
-                        sameAs: [
-                            "https://twitter.com/trackrights",
-                            "https://www.facebook.com/trackrights",
-                            "https://www.linkedin.com/company/trackrights"
-                        ]
-                    }) as React.ScriptHTMLAttributes<HTMLScriptElement>)}
-                />
-            </head>
-            <StateProvider>
-                <ErrorBoundary>
-                    <body>{children}
+        <head>
+            <title>TrackRights | AI-Powered Music Contract Analysis</title>
+            <meta name="google-adsense-account" content="ca-pub-2126374418379576" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <link rel="canonical" href="https://trackrights.com" />
+            <link rel="manifest" href="/site.webmanifest" />
+            <script
+              {...(jsonLdScriptProps({
+                  '@context': 'https://schema.org',
+                  '@type': 'WebSite',
+                  name: 'TrackRights',
+                  url: 'https://trackrights.com',
+                  potentialAction: {
+                      '@type': 'SearchAction',
+                      target: {
+                          '@type': 'EntryPoint',
+                          urlTemplate: 'https://trackrights.com/search?q={search_term_string}',
+                      },
+                      'query-input': 'required name=search_term_string',
+                  },
+              }) as React.ScriptHTMLAttributes<HTMLScriptElement>)}
+            />
+            <script
+              {...(jsonLdScriptProps({
+                  '@context': 'https://schema.org',
+                  '@type': 'Organization',
+                  name: 'TrackRights',
+                  url: 'https://trackrights.com',
+                  logo: 'https://trackrights.com/logo.png',
+                  sameAs: [
+                      'https://twitter.com/trackrights',
+                      'https://www.facebook.com/trackrights',
+                      'https://www.linkedin.com/company/trackrights',
+                  ],
+              }) as React.ScriptHTMLAttributes<HTMLScriptElement>)}
+            />
+        </head>
+        <StateProvider>
+            <ErrorBoundary>
+            <body>{children}
                     <CookieConsent />
                     </body>
                 </ErrorBoundary>
