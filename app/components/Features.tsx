@@ -96,7 +96,6 @@ export function Features({ id }: { id?: string }) {
             style={{
               color: 'transparent',
               WebkitTextStroke: '2px rgba(128, 90, 213, 0.8)',
-              textStroke: '2px rgba(128, 90, 213, 0.8)',
             }}
           >
             Features for All Music Professionals
