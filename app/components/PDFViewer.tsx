@@ -357,30 +357,30 @@ export default function PDFViewer({ pdfData }: PDFViewerProps) {
         <div
           className={`overflow-auto ${isFullscreen ? 'h-full w-full' : 'h-[calc(100vh-12rem)] sm:h-[calc(100vh-14rem)] w-full'}`}
         >
-          <Document
-            file={`data:application/pdf;base64,${pdfData}`}
-            onLoadSuccess={onDocumentLoadSuccess}
-            onLoadError={(error) => setError(error)}
-            loading={
-              <div className="flex items-center justify-center h-full">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-              </div>
-            }
-            error={
-              <div className="text-red-600 p-4 text-center">
-                Error loading PDF. Please make sure it&#39;s a valid PDF file.
-              </div>
-            }
-          >
-            <Page
-              pageNumber={pageNumber}
-              scale={scale}
-              rotate={rotation}
-              renderTextLayer={true}
-              renderAnnotationLayer={true}
-              className="mx-auto max-w-full"
-            />
-          </Document>
+<Document
+  file={`data:application/pdf;base64,${pdfData}`}
+  onLoadSuccess={onDocumentLoadSuccess}
+  onLoadError={(error: Error) => setError(error)}
+  loading={
+    <div className="flex items-center justify-center h-full">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+    </div>
+  }
+  error={
+    <div className="text-red-600 p-4 text-center">
+      Error loading PDF. Please make sure it&#39;s a valid PDF file.
+    </div>
+  }
+>
+  <Page
+    pageNumber={pageNumber}
+    scale={scale}
+    rotate={rotation}
+    renderTextLayer={true}
+    renderAnnotationLayer={true}
+    className="mx-auto max-w-full"
+  />
+</Document>
         </div>
       </div>
     </TooltipProvider>
