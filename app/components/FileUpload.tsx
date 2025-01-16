@@ -1,104 +1,97 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Upload, AlertCircle, Music } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { ProcessingIndicator } from './ProcessingIndicator';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { ContractInput } from './ContractInput';
+import React, { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Upload, AlertCircle, Music } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ProcessingIndicator } from "./ProcessingIndicator"
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+import { ContractInput } from './ContractInput'
 
 interface FileUploadProps {
-  onFileProcessedAction: (
-    originalContract: string,
-    simplifiedContract: string,
-    fileType: string
-  ) => void;
+  onFileProcessedAction: (originalContract: string, simplifiedContract: string, fileType: string) => void;
 }
 
 export function FileUpload({ onFileProcessedAction }: FileUploadProps) {
-  const [file, setFile] = useState<File | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isFileUpload, setIsFileUpload] = useState(true);
+  const [file, setFile] = useState<File | null>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [isFileUpload, setIsFileUpload] = useState(true)
 
   const convertToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
       reader.onload = () => {
         if (typeof reader.result === 'string') {
-          const base64 = reader.result.split(',')[1];
-          resolve(base64);
+          const base64 = reader.result.split(',')[1]
+          resolve(base64)
         } else {
-          reject(new Error('Failed to convert file to base64'));
+          reject(new Error('Failed to convert file to base64'))
         }
-      };
-      reader.onerror = (error) => reject(error);
-    });
-  };
+      }
+      reader.onerror = error => reject(error)
+    })
+  }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0] || null;
+    const selectedFile = event.target.files?.[0] || null
     if (selectedFile && selectedFile.size > 10 * 1024 * 1024) {
-      setError('File size must be less than 10MB');
-      return;
+      setError('File size must be less than 10MB')
+      return
     }
-    setFile(selectedFile);
-    setError(null);
-  };
+    setFile(selectedFile)
+    setError(null)
+  }
 
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+    event.preventDefault()
     if (!file) {
-      setError('Please select a file before analyzing.');
-      return;
+      setError('Please select a file before analyzing.')
+      return
     }
 
-    setIsProcessing(true);
-    setError(null);
+    setIsProcessing(true)
+    setError(null)
 
     try {
-      let fileContent: string;
+      let fileContent: string
       if (file.type === 'application/pdf') {
-        fileContent = await convertToBase64(file);
+        fileContent = await convertToBase64(file)
       } else {
-        fileContent = await file.text();
+        fileContent = await file.text()
       }
+
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('fileContent', fileContent)
 
       const response = await fetch('/api/simplify-contract', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ contractText: fileContent }),
-      });
+        body: formData,
+      })
 
+      const responseData = await response.json()
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(responseData.error || 'Failed to process the contract')
       }
 
-      const responseData = await response.json();
-      onFileProcessedAction(
-        fileContent,
-        responseData.simplifiedContract,
-        file.type
-      );
+      onFileProcessedAction(fileContent, responseData.simplifiedContract, file.type)
     } catch (error) {
       if (error instanceof Error) {
-        setError(error.message);
+        setError(error.message)
       } else {
-        setError('An unknown error occurred');
+        setError('An unknown error occurred')
       }
     } finally {
-      setIsProcessing(false);
+      setIsProcessing(false)
     }
-  };
+  }
 
   const handleContractSubmit = async (contractText: string) => {
-    setIsProcessing(true);
-    setError(null);
+    setIsProcessing(true)
+    setError(null)
 
     try {
       const response = await fetch('/api/simplify-contract', {
@@ -107,28 +100,24 @@ export function FileUpload({ onFileProcessedAction }: FileUploadProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ contractText }),
-      });
+      })
 
+      const responseData = await response.json()
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(responseData.error || 'Failed to process the contract')
       }
 
-      const responseData = await response.json();
-      onFileProcessedAction(
-        contractText,
-        responseData.simplifiedContract,
-        'text/plain'
-      );
+      onFileProcessedAction(contractText, responseData.simplifiedContract, 'text/plain')
     } catch (error) {
       if (error instanceof Error) {
-        setError(error.message);
+        setError(error.message)
       } else {
-        setError('An unknown error occurred');
+        setError('An unknown error occurred')
       }
     } finally {
-      setIsProcessing(false);
+      setIsProcessing(false)
     }
-  };
+  }
 
   return (
     <div className="w-full max-w-3xl mx-auto">
@@ -143,8 +132,8 @@ export function FileUpload({ onFileProcessedAction }: FileUploadProps) {
             htmlFor="input-method"
             className={`px-6 py-2 rounded-lg cursor-pointer transition-all duration-300 ${
               isFileUpload
-                ? 'bg-purple-600 text-white shadow-lg'
-                : 'text-purple-200/60 hover:text-purple-200'
+                ? "bg-purple-600 text-white shadow-lg"
+                : "text-purple-200/60 hover:text-purple-200"
             }`}
             onClick={() => setIsFileUpload(true)}
           >
@@ -154,8 +143,8 @@ export function FileUpload({ onFileProcessedAction }: FileUploadProps) {
             htmlFor="input-method"
             className={`px-6 py-2 rounded-lg cursor-pointer transition-all duration-300 ${
               !isFileUpload
-                ? 'bg-purple-600 text-white shadow-lg'
-                : 'text-purple-200/60 hover:text-purple-200'
+                ? "bg-purple-600 text-white shadow-lg"
+                : "text-purple-200/60 hover:text-purple-200"
             }`}
             onClick={() => setIsFileUpload(false)}
           >
@@ -181,9 +170,7 @@ export function FileUpload({ onFileProcessedAction }: FileUploadProps) {
           transition={{ duration: 0.3 }}
         >
           <div className="mb-6">
-            <label htmlFor="contract" className="sr-only">
-              Upload Contract
-            </label>
+            <label htmlFor="contract" className="sr-only">Upload Contract</label>
             <div className="flex items-center justify-center w-full">
               <label
                 htmlFor="contract"
@@ -193,12 +180,9 @@ export function FileUpload({ onFileProcessedAction }: FileUploadProps) {
                   <Music className="w-12 h-12 mb-3 text-purple-500" />
                   <Upload className="w-10 h-10 mb-3 text-purple-500" />
                   <p className="mb-2 text-sm text-gray-500">
-                    <span className="font-semibold">Click to upload</span> or
-                    drag and drop
+                    <span className="font-semibold">Click to upload</span> or drag and drop
                   </p>
-                  <p className="text-xs text-gray-500">
-                    PDF, DOCX, TXT (MAX. 10MB)
-                  </p>
+                  <p className="text-xs text-gray-500">PDF, DOCX, TXT (MAX. 10MB)</p>
                   {file && (
                     <div className="mt-4 text-sm text-purple-600 font-medium">
                       Selected file: {file.name}
@@ -246,5 +230,6 @@ export function FileUpload({ onFileProcessedAction }: FileUploadProps) {
         </motion.div>
       )}
     </div>
-  );
+  )
 }
+

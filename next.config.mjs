@@ -1,15 +1,17 @@
-/** @type {{reactStrictMode: boolean, webpack: (function(*): any), experimental: {serverExternalPackages: string[]}, images: {domains: string[]}}} */
+/** @type {{reactStrictMode: boolean, webpack: (function(*): any), images: {remotePatterns: {protocol: string, hostname: string}[]}}} */
 const nextConfig = {
   reactStrictMode: true,
   webpack: (config) => {
     config.resolve.alias.canvas = false;
     return config;
   },
-  experimental: {
-    serverExternalPackages: ['@react-pdf/renderer'],
-  },
   images: {
-    domains: ['hebbkx1anhila5yf.public.blob.vercel-storage.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'hebbkx1anhila5yf.public.blob.vercel-storage.com',
+      },
+    ],
   },
 };
 
