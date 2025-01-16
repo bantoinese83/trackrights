@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TrackRights - AI-Powered Music Contract Analysis
+
+![TrackRights Logo](https://trackrights.com/logo.png)
+
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+- [API Endpoints](#api-endpoints)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+
+## Overview
+
+TrackRights is an AI-powered platform designed to simplify and analyze music industry contracts for various professionals, including artists, producers, performers, songwriters, and managers. Our mission is to empower music industry professionals with clear, concise contract insights, helping them make informed decisions about their careers and business relationships.
+
+## Features
+
+- **AI-Powered Contract Analysis**: Upload your music contract and receive a simplified, easy-to-understand version.
+- **Contract Generation**: Create custom music contracts based on your specific needs and role in the industry.
+- **Contract Revision**: Get AI-assisted suggestions for revising contracts in your favor.
+- **Multi-Role Support**: Tailored analysis and generation for various music industry roles.
+- **Royalty Calculator**: Estimate potential earnings from different streaming platforms.
+- **Educational Resources**: Access a comprehensive FAQ and educational content about music industry contracts.
+- **Responsive Design**: Fully functional on desktop and mobile devices.
+
+## Technologies Used
+
+- **Frontend**: React, Next.js, Tailwind CSS, Framer Motion
+- **Backend**: Node.js, Next.js API Routes
+- **AI/ML**: Google's Generative AI (Gemini)
+- **Authentication**: (To be implemented)
+- **Database**: (To be implemented)
+- **Deployment**: Vercel
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js (v14.0.0 or later)
+- npm (v6.0.0 or later)
+- A Google Cloud account with access to the Generative AI API
+
+### Installation
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+  git clone 
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

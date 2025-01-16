@@ -1,0 +1,7 @@
+# Ignore artifacts:
+node_modules
+
+# Ignore all HTML files:
+# Ignore specific files:
+src/ignored-file.js
+public
