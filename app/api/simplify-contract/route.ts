@@ -1,14 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI, Part } from '@google/generative-ai';
-
-const getApiKey = (): string => {
-    const envApiKey = process.env.GEMINI_API_KEY;
-    if (envApiKey) {
-        return envApiKey;
-    }
-    console.warn('GEMINI_API_KEY not found in environment variables. Using fallback key.');
-    return ''; // Replace with your fallback key
-};
+import { getApiKey, handleError } from '../utils';
 
 const apiKey = getApiKey();
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -100,33 +92,6 @@ const handleJsonRequest = async (req: NextRequest) => {
     const simplifiedContract = await generateWithRetry(content);
 
     return NextResponse.json({ originalContract: contractText, simplifiedContract }, { status: 200 });
-};
-
-const handleError = (
-    error: unknown
-): { errorMessage: string; statusCode: number } => {
-    console.error('Error processing music industry contract:', error);
-    let errorMessage = 'Failed to process the music industry contract';
-    let statusCode = 500;
-
-    if (error instanceof Error && (error as { status?: number }).status === 429) {
-        errorMessage = 'API rate limit exceeded. Please try again later.';
-        statusCode = 429;
-    } else if (
-        error instanceof Error &&
-        (error as { status?: number }).status === 403
-    ) {
-        errorMessage = 'API access forbidden. Please check your API key.';
-        statusCode = 403;
-    } else if (
-        error instanceof Error &&
-        (error as { status?: number }).status === 503
-    ) {
-        errorMessage = 'Service unavailable. Please try again later.';
-        statusCode = 503;
-    }
-
-    return { errorMessage, statusCode };
 };
 
 export async function POST(req: NextRequest) {
