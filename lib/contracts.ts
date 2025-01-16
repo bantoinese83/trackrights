@@ -238,44 +238,4 @@ export const contracts: Contract[] = [
     description:
       'Agreement for side artists performing on a recording, with no royalties and no song rights.',
   },
-  {
-    id: 'new1',
-    title: 'New Contract Template 1',
-    category: 'featured',
-    tags: ['new', 'template'],
-    description:
-      'Description for new contract template 1.',
-  },
-  {
-    id: 'new2',
-    title: 'New Contract Template 2',
-    category: 'producer',
-    tags: ['new', 'template'],
-    description:
-      'Description for new contract template 2.',
-  },
-  {
-    id: 'new3',
-    title: 'New Contract Template 3',
-    category: 'licensing',
-    tags: ['new', 'template'],
-    description:
-      'Description for new contract template 3.',
-  },
-  {
-    id: 'new4',
-    title: 'New Contract Template 4',
-    category: 'studio',
-    tags: ['new', 'template'],
-    description:
-      'Description for new contract template 4.',
-  },
-  {
-    id: 'new5',
-    title: 'New Contract Template 5',
-    category: 'other',
-    tags: ['new', 'template'],
-    description:
-      'Description for new contract template 5.',
-  },
 ];
