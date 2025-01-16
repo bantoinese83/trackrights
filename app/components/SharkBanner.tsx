@@ -57,9 +57,7 @@ export function SharkBanner() {
   const [currentPhrase, setCurrentPhrase] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-
-  // 3D tilt effect values
+// 3D tilt effect values
   const x = useMotionValue(0)
   const y = useMotionValue(0)
 
