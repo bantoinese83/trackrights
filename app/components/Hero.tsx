@@ -1,3 +1,4 @@
+// Hero.tsx
 'use client';
 
 import { useState } from 'react';
@@ -14,7 +15,7 @@ import { useAppState } from '@/lib/StateContext';
 
 export default function Hero() {
   const { state, dispatch } = useAppState();
-  const { originalContract, simplifiedContract, revisedContract, isLoading, error } = state;
+  const { originalContract, simplifiedContract, revisedContract, error } = state;
   const [isPdf, setIsPdf] = useState<boolean>(false);
 
   const handleFileProcessed = (
@@ -123,4 +124,3 @@ export default function Hero() {
     </>
   );
 }
-

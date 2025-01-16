@@ -1,3 +1,4 @@
+// ErrorBoundary.tsx
 'use client'
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
@@ -16,7 +17,7 @@ class ErrorBoundary extends Component<Props, State> {
     hasError: false
   };
 
-  public static getDerivedStateFromError(_: Error): State {
+  public static getDerivedStateFromError(): State {
     return { hasError: true };
   }
 
@@ -34,4 +35,3 @@ class ErrorBoundary extends Component<Props, State> {
 }
 
 export default ErrorBoundary;
-
