@@ -186,6 +186,33 @@ const handleJsonRequest = async (req: NextRequest) => {
     return NextResponse.json({ originalContract: contractText, simplifiedContract }, { status: 200 });
 };
 
+const handleError = (
+    error: unknown
+): { errorMessage: string; statusCode: number } => {
+    console.error('Error processing music industry contract:', error);
+    let errorMessage = 'Failed to process the music industry contract';
+    let statusCode = 500;
+
+    if (error instanceof Error && (error as { status?: number }).status === 429) {
+        errorMessage = 'API rate limit exceeded. Please try again later.';
+        statusCode = 429;
+    } else if (
+        error instanceof Error &&
+        (error as { status?: number }).status === 403
+    ) {
+        errorMessage = 'API access forbidden. Please check your API key.';
+        statusCode = 403;
+    } else if (
+        error instanceof Error &&
+        (error as { status?: number }).status === 503
+    ) {
+        errorMessage = 'Service unavailable. Please try again later.';
+        statusCode = 503;
+    }
+
+    return { errorMessage, statusCode };
+};
+
 export async function POST(req: NextRequest) {
     try {
         if (req.headers.get('content-type')?.includes('multipart/form-data')) {
@@ -196,21 +223,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Invalid content type' }, { status: 400 });
         }
     } catch (error: unknown) {
-        console.error('Error processing music industry contract:', error);
-        let errorMessage = 'Failed to process the music industry contract';
-        let statusCode = 500;
-
-        if (error instanceof Error && (error as { status?: number }).status === 429) {
-            errorMessage = 'API rate limit exceeded. Please try again later.';
-            statusCode = 429;
-        } else if (error instanceof Error && (error as { status?: number }).status === 403) {
-            errorMessage = 'API access forbidden. Please check your API key.';
-            statusCode = 403;
-        } else if (error instanceof Error && (error as { status?: number }).status === 503) {
-            errorMessage = 'Service unavailable. Please try again later.';
-            statusCode = 503;
-        }
-
-        return NextResponse.json({ error: errorMessage }, { status: statusCode });
+        const { errorMessage, statusCode } = handleError(error);
+        return NextResponse.json(
+            { error: errorMessage },
+            { status: statusCode }
+        );
     }
 }
