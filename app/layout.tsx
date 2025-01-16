@@ -122,7 +122,7 @@ export default function RootLayout({
           }) as React.ScriptHTMLAttributes<HTMLScriptElement>)}
         />
         <title>
-          {metadata.title && 'template' in metadata.title && 'default' in metadata.title
+          {metadata.title && typeof metadata.title === 'object' && 'template' in metadata.title && 'default' in metadata.title
             ? metadata.title.template.replace('%s', metadata.title.default)
             : 'TrackRights'}
         </title>
