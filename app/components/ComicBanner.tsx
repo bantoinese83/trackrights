@@ -107,7 +107,7 @@ export function ComicBanner() {
                   <div className="text-3xl font-bold text-white mb-2" aria-live="polite">
                   <AnimatedCounter
                     value={stat.value}
-                      formatFn={(v) => `${v.toLocaleString()}${stat.suffix}`}
+                      formatFnAction={(v) => `${v.toLocaleString()}${stat.suffix}`}
                   />
                 </div>
                 <div className="text-purple-200 text-sm">{stat.label}</div>
@@ -130,4 +130,3 @@ export function ComicBanner() {
     </section>
   )
 }
-

@@ -12,7 +12,7 @@ interface AnimatedCounterProps {
 export function AnimatedCounter({
   value,
   duration = 2,
-  formatFnAction = (v) => v.toLocaleString(),
+  formatFnAction = (v: number) => v.toLocaleString(),
 }: AnimatedCounterProps) {
   const [isInView, setIsInView] = useState(false);
   const springValue = useSpring(0, {
