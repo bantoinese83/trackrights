@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import React from 'react';
 import { jsonLdScriptProps } from 'react-schemaorg';
 import { CookieConsent } from './components/CookieConsent';
-
+import { Analytics } from "@vercel/analytics/react"
 export const metadata: Metadata = {
   metadataBase: new URL('https://trackrights.com'),
   title: {
@@ -129,6 +129,7 @@ export default function RootLayout({
       </head>
       <body>
         {children}
+        <Analytics/>
         <CookieConsent />
       </body>
     </html>
