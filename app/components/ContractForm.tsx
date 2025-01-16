@@ -56,8 +56,7 @@ const contractForms: ContractForms = {
       studioName: { label: 'Recording Studio Name', type: 'text' },
       studioRentalRate: {
         label: 'Studio Rental Rate ($ per hour)',
-        type: 'number',
-      },
+        type: 'number' },
       engineerName: { label: 'Recording Engineer Name', type: 'text' },
       engineerRate: { label: 'Engineer Rate ($ per hour)', type: 'number' },
       featuredArtistName: {
@@ -434,6 +433,14 @@ export function ContractForm({ contractId, onSubmit }: ContractFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (Object.values(formData).some((value) => value.trim() === '')) {
+      toast({
+        title: 'Validation Error',
+        description: 'Please fill in all required fields.',
+        variant: 'destructive',
+      });
+      return;
+    }
     if (onSubmit) {
       onSubmit(formData);
     } else {

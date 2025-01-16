@@ -69,6 +69,33 @@ async function generateWithRetry(
   }
 }
 
+const handleError = (
+  error: unknown
+): { errorMessage: string; statusCode: number } => {
+  console.error('Error generating contract:', error);
+  let errorMessage = 'Failed to generate the contract';
+  let statusCode = 500;
+
+  if (error instanceof Error && (error as { status?: number }).status === 429) {
+    errorMessage = 'API rate limit exceeded. Please try again later.';
+    statusCode = 429;
+  } else if (
+    error instanceof Error &&
+    (error as { status?: number }).status === 403
+  ) {
+    errorMessage = 'API access forbidden. Please check your API key.';
+    statusCode = 403;
+  } else if (
+    error instanceof Error &&
+    (error as { status?: number }).status === 503
+  ) {
+    errorMessage = 'Service unavailable. Please try again later.';
+    statusCode = 503;
+  }
+
+  return { errorMessage, statusCode };
+};
+
 export async function POST(req: NextRequest) {
   if (req.method === 'OPTIONS') {
     return NextResponse.json({}, { headers: corsHeaders() });
@@ -106,29 +133,7 @@ export async function POST(req: NextRequest) {
       { status: 200, headers: corsHeaders() }
     );
   } catch (error: unknown) {
-    console.error('Error generating contract:', error);
-    let errorMessage = 'Failed to generate the contract';
-    let statusCode = 500;
-
-    if (
-      typeof error === 'object' &&
-      error !== null &&
-      'status' in error &&
-      typeof (error as { status: unknown }).status === 'number'
-    ) {
-      const status = (error as { status: number }).status;
-      if (status === 429) {
-        errorMessage = 'API rate limit exceeded. Please try again later.';
-        statusCode = 429;
-      } else if (status === 403) {
-        errorMessage = 'API access forbidden. Please check your API key.';
-        statusCode = 403;
-      } else if (status === 503) {
-        errorMessage = 'Service unavailable. Please try again later.';
-        statusCode = 503;
-      }
-    }
-
+    const { errorMessage, statusCode } = handleError(error);
     return NextResponse.json(
       { error: errorMessage },
       { status: statusCode, headers: corsHeaders() }
