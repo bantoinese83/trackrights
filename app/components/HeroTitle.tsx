@@ -15,10 +15,11 @@ const glitterAnimation = `
 interface HeroTitleProps {
   title: string;
   description: string;
+  className?: string;
 }
 
-export function HeroTitle({ description }: HeroTitleProps) {
-  const [isTourOpen, setIsTourOpen] = useState(false)
+export function HeroTitle({ title, description, className }: HeroTitleProps) {
+  const [isTourOpen, setIsTourOpen] = useState(false);
 
   return (
     <>
@@ -35,10 +36,10 @@ export function HeroTitle({ description }: HeroTitleProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-12"
+        className={`text-center mb-12 ${className}`} // Use className here
       >
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white leading-tight">
-          Decode Your <span className="text-purple-300 underline decoration-2 decoration-purple-400">Music Contracts</span> <span className="separator">|</span>{' '}
+          {title} <span className="separator">|</span>{' '}
           For All Music Professionals <span className="separator">|</span> <span className="inline-block animate-pulse" style={{
             background: 'linear-gradient(90deg, #FFD700, #FFA500, #FFD700)',
             backgroundSize: '200% 200%',
@@ -149,6 +150,5 @@ export function HeroTitle({ description }: HeroTitleProps) {
       </motion.div>
       <TourGuide isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />
     </>
-  )
+  );
 }
-
