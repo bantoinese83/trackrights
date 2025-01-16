@@ -395,8 +395,12 @@ const contractForms: ContractForms = {
   },
 };
 
+interface FormData {
+  [key: string]: string;
+}
+
 export function ContractForm({ contractId, onSubmit }: ContractFormProps) {
-  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [formData, setFormData] = useState<FormData>({});
   const { toast } = useToast();
 
   const contractForm = contractForms[contractId];
