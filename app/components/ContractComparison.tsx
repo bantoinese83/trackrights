@@ -1,19 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo, lazy, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { Skeleton } from '@/components/ui/skeleton'
-import dynamic from 'next/dynamic'
 import { Diamond } from 'lucide-react'
 import Image from 'next/image'
 
-const PDFViewer = dynamic(() => import('./PDFViewer'), {
-  ssr: false,
-  loading: () => <Skeleton className="h-[600px] w-full" />
-})
+const PDFViewer = lazy(() => import('./PDFViewer'));
 
 interface ContractComparisonProps {
   originalText: string;
@@ -69,19 +65,22 @@ const ContractRatingPlaque = ({ rating }: { rating: string }) => {
   )
 }
 
+const MemoizedContractRatingPlaque = React.memo(ContractRatingPlaque);
+
 export function ContractComparison({ originalText, simplifiedContract, isPdf = false }: ContractComparisonProps) {
   const [isLoading, setIsLoading] = useState(true)
-  const [contractRating, setContractRating] = useState('wood')
+  const contractRating = useMemo(() => {
+    if (simplifiedContract) {
+      const ratingMatch = simplifiedContract.match(/Contract Rating:\s*(WOOD|GOLD|PLATINUM|DIAMOND)/i)
+      || originalText.match(/Contract Rating:\s*(WOOD|GOLD|PLATINUM|DIAMOND)/i);
+      return ratingMatch ? ratingMatch[1].toLowerCase() : 'wood';
+    }
+    return 'wood';
+  }, [simplifiedContract, originalText]);
 
   useEffect(() => {
     if (originalText && simplifiedContract) {
       setIsLoading(false)
-      // Extract rating from the markdown content
-      const ratingMatch = simplifiedContract.match(/Contract Rating:\s*(WOOD|GOLD|PLATINUM|DIAMOND)/i)
-      || originalText.match(/Contract Rating:\s*(WOOD|GOLD|PLATINUM|DIAMOND)/i);
-      if (ratingMatch) {
-        setContractRating(ratingMatch[1].toLowerCase())
-      }
     }
   }, [originalText, simplifiedContract])
 
@@ -110,7 +109,7 @@ export function ContractComparison({ originalText, simplifiedContract, isPdf = f
       transition={{ duration: 0.5 }}
       aria-live="polite"
     >
-      <ContractRatingPlaque rating={contractRating} />
+      <MemoizedContractRatingPlaque rating={contractRating} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
         <div className="mb-8 md:mb-0">
           <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-4 text-white p-4 rounded-t-lg flex items-center shadow-lg">
@@ -119,7 +118,9 @@ export function ContractComparison({ originalText, simplifiedContract, isPdf = f
           </h2>
           <div className="bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow-md h-[400px] sm:h-[500px] md:h-[600px] overflow-y-auto">
             {isPdf ? (
-              <PDFViewer pdfData={originalText} />
+              <Suspense fallback={<Skeleton className="h-[600px] w-full" />}>
+                <PDFViewer pdfData={originalText} />
+              </Suspense>
             ) : (
               <div className="prose max-w-none text-gray-700 whitespace-pre-line text-sm sm:text-base">
                 {originalText}
@@ -144,9 +145,6 @@ export function ContractComparison({ originalText, simplifiedContract, isPdf = f
         </div>
       </div>
       <style jsx>{`
-        .prose {
-          font-family: var(--font-sans),serif;
-        }
       `}</style>
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');

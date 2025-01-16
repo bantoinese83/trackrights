@@ -10,12 +10,11 @@ import { FileUpload } from '@/app/components/FileUpload';
 import { ContractRevision } from '@/app/components/ContractRevision';
 import Head from 'next/head';
 import { RevisedContractDisplay } from './RevisedContractDisplay';
+import { useAppState } from '@/lib/StateContext';
 
 export default function Hero() {
-  const [originalText, setOriginalText] = useState<string | null>(null);
-  const [result, setResult] = useState<string | null>(null);
-  const [error] = useState<string | null>(null);
-  const [revisedContract, setRevisedContract] = useState<string | null>(null);
+  const { state, dispatch } = useAppState();
+  const { originalContract, simplifiedContract, revisedContract, isLoading, error } = state;
   const [isPdf, setIsPdf] = useState<boolean>(false);
 
   const handleFileProcessed = (
@@ -23,17 +22,17 @@ export default function Hero() {
     simplifiedContract: string,
     fileType: string
   ) => {
-    setOriginalText(originalContract);
-    setResult(simplifiedContract);
-    setRevisedContract(null);
+    dispatch({ type: 'SET_ORIGINAL_CONTRACT', payload: originalContract });
+    dispatch({ type: 'SET_SIMPLIFIED_CONTRACT', payload: simplifiedContract });
+    dispatch({ type: 'SET_REVISED_CONTRACT', payload: null });
     setIsPdf(fileType === 'application/pdf');
   };
 
   const handleRevisionComplete = (newRevisedContract: string) => {
-    setRevisedContract(newRevisedContract);
+    dispatch({ type: 'SET_REVISED_CONTRACT', payload: newRevisedContract });
   };
 
-  const dynamicOgImage = result
+  const dynamicOgImage = simplifiedContract
     ? `/api/og?title=${encodeURIComponent('Contract Analysis Complete')}`
     : '/default-og-image.jpg';
 
@@ -73,17 +72,15 @@ export default function Hero() {
 
           {error && <ErrorDisplay error={error} />}
 
-          {result && (
+          {simplifiedContract && (
             <>
               <ContractComparison
-                originalText={
-                  originalText || 'Original contract text not available'
-                }
-                simplifiedContract={result}
+                originalText={originalContract || 'Original contract text not available'}
+                simplifiedContract={simplifiedContract}
                 isPdf={isPdf}
               />
               <ContractRevision
-                originalContract={originalText || ''}
+                originalContract={originalContract || ''}
                 onRevisionCompleteAction={handleRevisionComplete}
               />
             </>
@@ -126,3 +123,4 @@ export default function Hero() {
     </>
   );
 }
+
