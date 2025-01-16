@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion'
 
 const phrases = [
@@ -11,61 +11,56 @@ const phrases = [
   { text: "", highlight: "TrackRights.com", rest: " - Where producers take control" }
 ]
 
-const Particles = () => {
-  const [particles, setParticles] = useState<React.ReactNode[]>([])
-
-  useEffect(() => {
-    const generateParticles = () => {
-      return [...Array(50)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="particle absolute bg-white/30 rounded-full"
-          initial={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            width: `${Math.random() * 3 + 1}px`,
-            height: `${Math.random() * 3 + 1}px`,
-          }}
-          animate={{
-            top: [
-              `${Math.random() * 100}%`,
-              `${Math.random() * 100}%`,
-              `${Math.random() * 100}%`,
-            ],
-            left: [
-              `${Math.random() * 100}%`,
-              `${Math.random() * 100}%`,
-              `${Math.random() * 100}%`,
-            ],
-          }}
-          transition={{
-            duration: Math.random() * 10 + 5,
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
-        />
-      ))
-    }
-
-    setParticles(generateParticles())
+const Particles: React.FC = React.memo(() => {
+  const generateParticles = useCallback(() => {
+    return [...Array(50)].map((_, i) => (
+      <motion.div
+        key={i}
+        className="particle absolute bg-white/30 rounded-full"
+        initial={{
+          top: `${Math.random() * 100}%`,
+          left: `${Math.random() * 100}%`,
+          width: `${Math.random() * 3 + 1}px`,
+          height: `${Math.random() * 3 + 1}px`,
+        }}
+        animate={{
+          top: [
+            `${Math.random() * 100}%`,
+            `${Math.random() * 100}%`,
+            `${Math.random() * 100}%`,
+          ],
+          left: [
+            `${Math.random() * 100}%`,
+            `${Math.random() * 100}%`,
+            `${Math.random() * 100}%`,
+          ],
+        }}
+        transition={{
+          duration: Math.random() * 10 + 5,
+          repeat: Infinity,
+          repeatType: "reverse",
+        }}
+      />
+    ))
   }, [])
 
+  const [particles] = useState(() => generateParticles())
+
   return <div className="absolute inset-0 z-0">{particles}</div>
-}
+})
+
+Particles.displayName = 'Particles'
 
 export function SharkBanner() {
   const [currentPhrase, setCurrentPhrase] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-// 3D tilt effect values
   const x = useMotionValue(0)
   const y = useMotionValue(0)
 
-  // Transform mouse position into rotation values
   const rotateX = useTransform(y, [-300, 300], [10, -10])
   const rotateY = useTransform(x, [-300, 300], [-10, 10])
 
-  // Add spring physics to the rotation
   const springConfig = { damping: 20, stiffness: 200 }
   const springRotateX = useSpring(rotateX, springConfig)
   const springRotateY = useSpring(rotateY, springConfig)
@@ -83,7 +78,7 @@ export function SharkBanner() {
     }
   }, [])
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = containerRef.current?.getBoundingClientRect()
     if (rect) {
       const centerX = rect.left + rect.width / 2
@@ -91,18 +86,12 @@ export function SharkBanner() {
       x.set(e.clientX - centerX)
       y.set(e.clientY - centerY)
     }
-  }
+  }, [x, y])
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     x.set(0)
     y.set(0)
-  }
-
-  const springAnimation = {
-    type: "spring",
-    stiffness: 700,
-    damping: 30
-  }
+  }, [x, y])
 
   return (
     <motion.section
@@ -125,9 +114,10 @@ export function SharkBanner() {
         muted
         loop
         playsInline
+        preload="auto"
+        aria-hidden="true"
       >
         <source src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/sharks-Y934nNoxgt5xiXPxos3qfeXyIgGA8Z.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
       </video>
 
       <motion.div
@@ -146,13 +136,17 @@ export function SharkBanner() {
             transition={{ duration: 0.5 }}
             className="relative"
           >
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-center shark-banner-text">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-center shark-banner-text">
               {phrases[currentPhrase].text}
               <motion.span
                 className="text-white relative inline-block"
                 initial={{ scale: 1 }}
                 animate={{ scale: [1, 1.1, 1] }}
-                transition={springAnimation}
+                transition={{
+                  type: "spring",
+                  stiffness: 700,
+                  damping: 30
+                }}
               >
                 {phrases[currentPhrase].highlight}
                 <span className="absolute inset-0 animate-glow" />
@@ -169,30 +163,22 @@ export function SharkBanner() {
       </motion.div>
 
       <style jsx>{`
+        :root {
+          --float-duration: 6s;
+          --glow-duration: 3s;
+          --swim-duration: 20s;
+        }
+
         @keyframes float {
-          0%, 100% {
-            transform: translateY(0) translateX(0);
-          }
-          25% {
-            transform: translateY(-20px) translateX(10px);
-          }
-          50% {
-            transform: translateY(-35px) translateX(-10px);
-          }
-          75% {
-            transform: translateY(-20px) translateX(8px);
-          }
+          0%, 100% { transform: translateY(0) translateX(0); }
+          25% { transform: translateY(-20px) translateX(10px); }
+          50% { transform: translateY(-35px) translateX(-10px); }
+          75% { transform: translateY(-20px) translateX(8px); }
         }
 
         @keyframes glow {
-          0%, 100% {
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
-                         0 0 40px rgba(255, 255, 255, 0.2);
-          }
-          50% {
-            text-shadow: 0 0 40px rgba(255, 255, 255, 0.8),
-                         0 0 80px rgba(255, 255, 255, 0.4);
-          }
+          0%, 100% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.2); }
+          50% { text-shadow: 0 0 40px rgba(255, 255, 255, 0.8), 0 0 80px rgba(255, 255, 255, 0.4); }
         }
 
         .shark-banner-text {
@@ -200,18 +186,13 @@ export function SharkBanner() {
           color: transparent;
           -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
           text-stroke: 2px rgba(255, 255, 255, 0.8);
-          font-size: 3rem;
           text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-          animation: textFloat 6s ease-in-out infinite;
+          animation: textFloat var(--float-duration) ease-in-out infinite;
         }
 
         @keyframes textFloat {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
         }
 
         .shark-banner-text-mask {
@@ -223,33 +204,17 @@ export function SharkBanner() {
           background-clip: text;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
-          animation: sharkSwim 20s linear infinite;
+          animation: sharkSwim var(--swim-duration) linear infinite;
           filter: brightness(1.5) contrast(1.2);
         }
 
         .animate-glow {
-          animation: glow 3s ease-in-out infinite;
+          animation: glow var(--glow-duration) ease-in-out infinite;
         }
 
         @keyframes sharkSwim {
-          0% {
-            background-position: 0% 50%;
-          }
-          100% {
-            background-position: 100% 50%;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .shark-banner-text, .shark-banner-text-mask {
-            font-size: 2.5rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .shark-banner-text, .shark-banner-text-mask {
-            font-size: 2rem;
-          }
+          0% { background-position: 0% 50%; }
+          100% { background-position: 100% 50%; }
         }
 
         .particle {
