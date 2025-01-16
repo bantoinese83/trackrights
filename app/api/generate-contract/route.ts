@@ -17,7 +17,7 @@ const getApiKey = () => {
   console.warn(
     'GEMINI_API_KEY not found in environment variables. Using fallback key.'
   );
-  return 'AIzaSyDmxvr6uXs_WyDnwqNiJ4QynI67vJUuj10';
+  return '';
 };
 
 const apiKey = getApiKey();
