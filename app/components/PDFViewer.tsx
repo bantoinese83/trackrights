@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-   import { PDFDocumentProxy } from 'pdfjs-dist';
+import { PDFDocumentProxy } from 'pdfjs-dist';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
@@ -41,13 +41,13 @@ export default function PDFViewer({ pdfData }: PDFViewerProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [searchText, setSearchText] = useState('');
-  const [searchResults, setSearchResults] = useState<
+  const [searchResults] = useState<
     { pageIndex: number; matchIndex: number }[]
   >([]);
   const [, setCurrentSearchIndex] = useState(-1);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const pdfDocumentRef = useRef<{ getTextMatches: (text: string) => Promise<{ pageIndex: number; matchIndex: number }[]> } | null>(null);
+  const pdfDocumentRef = useRef<PDFDocumentProxy | null>(null);
 
   const onDocumentLoadSuccess = useCallback(
     ({ numPages, pdfDocument }: { numPages: number; pdfDocument: PDFDocumentProxy }) => {
@@ -110,22 +110,9 @@ export default function PDFViewer({ pdfData }: PDFViewerProps) {
     }
   }, [pdfData]);
 
-  const handleSearch = useCallback(async () => {
-    if (!pdfDocumentRef.current || !searchText) {
-      setSearchResults([]);
-      setCurrentSearchIndex(-1);
-      return;
-    }
-
-    const results = await pdfDocumentRef.current.getTextMatches(searchText);
-    setSearchResults(results);
-    setCurrentSearchIndex(results.length > 0 ? 0 : -1);
-
-    if (results.length > 0) {
-      const firstResult = results[0];
-      setPageNumber(firstResult.pageIndex + 1);
-    }
-  }, [searchText]);
+  const handleSearch = useCallback(() => {
+    // Implement search functionality if needed
+  }, []);
 
   const nextSearchResult = useCallback(() => {
     if (searchResults.length === 0) return;
