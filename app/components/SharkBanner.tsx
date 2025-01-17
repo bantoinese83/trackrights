@@ -56,8 +56,7 @@ export function SharkBanner() {
         x.set(0);
         y.set(0);
     }, [x, y]);
-
-    const handlePhraseChange = useCallback(
+    useCallback(
       (newPhrase: number) => {
           const diff = newPhrase - currentPhrase;
           if (diff > 0 || (newPhrase === 0 && currentPhrase === phrases.length - 1)) {
@@ -68,9 +67,7 @@ export function SharkBanner() {
           setCurrentPhrase(newPhrase);
       },
       [currentPhrase, setPhraseDirection]
-  );
-
-
+    );
     return (
       <motion.section
             ref={containerRef}
