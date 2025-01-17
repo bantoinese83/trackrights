@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import { useContractForm } from '@/hooks/useContractForm';
 
 interface ContractFormProps {
   contractId: string;
@@ -395,12 +396,8 @@ const contractForms: ContractForms = {
   },
 };
 
-interface FormData {
-  [key: string]: string;
-}
-
 export function ContractForm({ contractId, onSubmit }: ContractFormProps) {
-  const [formData, setFormData] = useState<FormData>({});
+  const { formData, handleInputChange, resetForm } = useContractForm({});
   const { toast } = useToast();
 
   const contractForm = contractForms[contractId];
@@ -408,10 +405,6 @@ export function ContractForm({ contractId, onSubmit }: ContractFormProps) {
   if (!contractForm) {
     return <div>Contract type not found</div>;
   }
-
-  const handleInputChange = (key: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
-  };
 
   const renderField = (key: string, field: FieldConfig) => {
     const commonProps = {
@@ -431,7 +424,7 @@ export function ContractForm({ contractId, onSubmit }: ContractFormProps) {
       case 'date':
         return <Input {...commonProps} type="date" />;
       default:
-        return <Input {...commonProps} type="text" />;
+        return <Input {...commonProps} type="text' />;
     }
   };
 
@@ -455,7 +448,7 @@ export function ContractForm({ contractId, onSubmit }: ContractFormProps) {
       });
     }
     // Reset form after submission
-    setFormData({});
+    resetForm();
   };
 
   return (
