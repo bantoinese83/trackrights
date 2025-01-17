@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { motion } from 'framer-motion';
+import { useToast } from '@/components/ui/use-toast';
 
 interface ContractInputProps {
   onContractSubmitAction: (text: string) => void;
@@ -15,11 +16,22 @@ interface ContractText {
 
 export function ContractInput({ onContractSubmitAction }: ContractInputProps) {
   const [contractText, setContractText] = useState<ContractText['contractText']>('');
+  const { toast } = useToast();
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (contractText.trim()) {
       onContractSubmitAction(contractText);
+      toast({
+        title: 'Contract Submitted',
+        description: 'Your contract text has been successfully submitted.',
+      });
+    } else {
+      toast({
+        title: 'Validation Error',
+        description: 'Please enter contract text before submitting.',
+        variant: 'destructive',
+      });
     }
   };
 

@@ -66,11 +66,15 @@ const handleMultipartFormData = async (req: NextRequest) => {
         ];
 
         const simplifiedContract = await generateWithRetry(content);
-        return NextResponse.json({ simplifiedContract }, { status: 200 });
+        return NextResponse.json({ simplifiedContract, message: 'Contract simplified successfully.' }, { status: 200 });
 
     } catch (error) {
         console.error("Error processing file:", error);
-        return NextResponse.json({ error: 'Failed to process contract. Please try again later or contact support.' }, { status: 500 });
+        const { errorMessage, statusCode } = handleError(error);
+        return NextResponse.json(
+            { error: errorMessage, message: 'Failed to process contract. Please try again later or contact support.' },
+            { status: statusCode }
+        );
     }
 };
 
@@ -89,7 +93,10 @@ const handleJsonRequest = async (req: NextRequest) => {
 
     const simplifiedContract = await generateWithRetry(content);
 
-    return NextResponse.json({ originalContract: contractText, simplifiedContract }, { status: 200 });
+    return NextResponse.json(
+        { originalContract: contractText, simplifiedContract, message: 'Contract simplified successfully.' },
+        { status: 200 }
+    );
 };
 
 export async function POST(req: NextRequest) {
@@ -104,7 +111,7 @@ export async function POST(req: NextRequest) {
     } catch (error: unknown) {
         const { errorMessage, statusCode } = handleError(error);
         return NextResponse.json(
-            { error: errorMessage },
+            { error: errorMessage, message: 'Failed to process request. Please try again later.' },
             { status: statusCode }
         );
     }
