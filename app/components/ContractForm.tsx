@@ -424,7 +424,7 @@ export function ContractForm({ contractId, onSubmit }: ContractFormProps) {
       case 'date':
         return <Input {...commonProps} type="date" />;
       default:
-        return <Input {...commonProps} type="text' />;
+        return <Input {...commonProps} type="text" />;
     }
   };
 
