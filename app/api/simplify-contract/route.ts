@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI, Part } from '@google/generative-ai';
 import { getApiKey, handleError } from '../utils';
+import { Content, SimplifyRequest } from '../../../types/api';
 
 const apiKey = getApiKey();
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -106,18 +107,6 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const MAX_RETRIES = 3;
 const BASE_DELAY = 500;
-
-interface Content {
-    inlineData?: {
-        data: string;
-        mimeType: string;
-    };
-    text?: string;
-}
-
-interface SimplifyRequest {
-    contractText: string;
-}
 
 async function generateWithRetry(content: Content[], retryCount = 0): Promise<string> {
     try {
