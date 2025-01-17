@@ -29,7 +29,7 @@ interface StreamingPlatform {
   height: number;
 }
 
-const currencyRates = {
+const currencyRates: { [key: string]: number } = {
   USD: 1,
   GBP: 0.75,
   EUR: 0.85,
