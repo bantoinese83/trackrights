@@ -31,11 +31,19 @@ export function ContractInput({ onContractSubmitAction }: ContractInputProps) {
         });
         resetForm();
       } catch (error) {
-        toast({
-          title: 'Submission Error',
-          description: error.message || 'Failed to submit the contract.',
-          variant: 'destructive',
-        });
+        if (error instanceof Error) {
+          toast({
+            title: 'Submission Error',
+            description: error.message || 'Failed to submit the contract.',
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: 'Submission Error',
+            description: 'Failed to submit the contract.',
+            variant: 'destructive',
+          });
+        }
       }
     } else {
       toast({
