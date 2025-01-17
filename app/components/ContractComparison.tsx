@@ -39,13 +39,13 @@ const ContractRatingPlaque = ({ rating }: { rating: string }) => {
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
-        className="relative w-40 h-40 mb-2"
+        className="relative w-40 h-40 mb-2 rounded-lg"
       >
         <Image
           src={getRatingImage(rating) || "/placeholder.svg"}
           alt={`${rating} Rating`}
           fill
-          className="object-contain"
+          className="object-contain rounded-lg"
         />
       </motion.div>
       <motion.div
@@ -87,8 +87,8 @@ export function ContractComparison({ originalText, simplifiedContract, isPdf = f
   if (isLoading) {
     return (
       <div className="text-center mt-8">
-        <Skeleton className="h-6 w-48 mx-auto mb-4" />
-        <Skeleton className="h-96 w-full max-w-6xl mx-auto" />
+        <Skeleton className="h-6 w-48 mx-auto mb-4 rounded-lg" />
+        <Skeleton className="h-96 w-full max-w-6xl mx-auto rounded-lg" />
       </div>
     );
   }
@@ -112,30 +112,30 @@ export function ContractComparison({ originalText, simplifiedContract, isPdf = f
       <MemoizedContractRatingPlaque rating={contractRating} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
         <div className="mb-8 md:mb-0">
-          <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-4 text-white p-4 rounded-t-lg flex items-center shadow-lg">
+          <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-4 text-white p-4 rounded-t-lg flex items-center shadow-lg rounded-lg">
             <Diamond className="w-5 h-5 mr-2 animate-pulse" />
             Original Contract
           </h2>
           <div className="bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow-md h-[400px] sm:h-[500px] md:h-[600px] overflow-y-auto">
             {isPdf ? (
-              <Suspense fallback={<Skeleton className="h-[600px] w-full" />}>
+              <Suspense fallback={<Skeleton className="h-[600px] w-full rounded-lg" />}>
                 <PDFViewer pdfData={originalText} />
               </Suspense>
             ) : (
-              <div className="prose max-w-none text-gray-700 whitespace-pre-line text-sm sm:text-base">
+              <div className="prose max-w-none text-gray-700 whitespace-pre-line text-sm sm:text-base rounded-lg">
                 {originalText}
               </div>
             )}
           </div>
         </div>
         <div>
-          <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-4 text-white p-4 rounded-t-lg flex items-center shadow-lg">
+          <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-4 text-white p-4 rounded-t-lg flex items-center shadow-lg rounded-lg">
             <Diamond className="w-5 h-5 mr-2 animate-pulse" />
             Simplified Version
           </h2>
           <div className="bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow-md h-[400px] sm:h-[500px] md:h-[600px] overflow-y-auto">
            <ReactMarkdown
-  className="prose max-w-none text-xs sm:text-sm md:text-base simplified-contract"
+  className="prose max-w-none text-xs sm:text-sm md:text-base simplified-contract rounded-lg"
   remarkPlugins={[remarkGfm]}
   rehypePlugins={[rehypeRaw]}
 >

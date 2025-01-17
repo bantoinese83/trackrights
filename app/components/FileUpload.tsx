@@ -127,10 +127,10 @@ export function FileUpload({ onFileProcessedAction }: FileUploadProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="relative flex items-center bg-purple-900/50 p-2 rounded-xl backdrop-blur-sm shadow-xl border border-purple-500/20">
+        <div className="relative flex items-center bg-purple-900/50 p-2 rounded-full backdrop-blur-sm shadow-xl border border-purple-500/20">
           <Label
             htmlFor="input-method"
-            className={`px-6 py-2 rounded-lg cursor-pointer transition-all duration-300 ${
+            className={`px-6 py-2 rounded-full cursor-pointer transition-all duration-300 ${
               isFileUpload
                 ? "bg-purple-600 text-white shadow-lg"
                 : "text-purple-200/60 hover:text-purple-200"
@@ -141,7 +141,7 @@ export function FileUpload({ onFileProcessedAction }: FileUploadProps) {
           </Label>
           <Label
             htmlFor="input-method"
-            className={`px-6 py-2 rounded-lg cursor-pointer transition-all duration-300 ${
+            className={`px-6 py-2 rounded-full cursor-pointer transition-all duration-300 ${
               !isFileUpload
                 ? "bg-purple-600 text-white shadow-lg"
                 : "text-purple-200/60 hover:text-purple-200"
@@ -204,7 +204,7 @@ export function FileUpload({ onFileProcessedAction }: FileUploadProps) {
             <div className="flex justify-center">
               <Button
                 type="submit"
-                className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-xl transform transition-all duration-200 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100"
+                className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-full transform transition-all duration-200 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100"
               >
                 Analyze Contract
               </Button>

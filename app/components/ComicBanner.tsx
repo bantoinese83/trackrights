@@ -40,35 +40,35 @@ const stats = [
 
 export function ComicBanner() {
   return (
-    <section className="relative py-20 overflow-hidden bg-gradient-to-b from-purple-900 to-indigo-900">
-          <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-0 w-1/3 h-full">
-              <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/DALL%C2%B7E%202025-01-14%2021.50.18%20-%20A%20four-panel%20comic%20strip%20telling%20the%20story%20of%20a%20music%20producer%20signing%20a%20bad%20contract.%20Panel%201_%20The%20music%20producer%20excitedly%20shaking%20hands%20with%20a%20slic-lhWF2AcXOdqixZCOHNlDbj6xDKzP01.webp"
-              alt="Comic panel showing contract signing"
-              fill
-              className="object-cover"
-              priority
-              />
-          </div>
-              <div className="absolute top-0 left-1/3 w-1/3 h-full">
-              <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/DALL%C2%B7E%202025-01-14%2021.48.14%20-%20A%20four-panel%20comic%20strip%20illustrating%20a%20music%20producer's%20journey%20with%20a%20contract.%20Panel%201_%20A%20music%20producer%20in%20a%20recording%20studio,%20holding%20a%20contract,-nmrJ7YIsyRYsjCmBWoBNlBdaU2G9sH.webp"
-                  alt="Comic panel showing BeatContract usage"
-                  fill
-              className="object-cover"
-              priority
-              />
-          </div>
-              <div className="absolute top-0 right-0 w-1/3 h-full">
-              <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/DALL%C2%B7E%202025-01-14%2021.49.36%20-%20A%20four-panel%20comic%20strip%20illustrating%20a%20music%20producer's%20experience%20with%20signing%20a%20bad%20contract.%20Panel%201_%20A%20music%20producer%20receives%20a%20contract%20from%20a%20-ZEJE3YFVbHldDazNM0iDMFuBaFOCUs.webp"
-                  alt="Comic panel showing contract analysis"
-                  fill
-                  className="object-cover"
-                  priority
-              />
-              </div>
+    <section className="relative py-10 overflow-hidden bg-gradient-to-b from-purple-900 to-indigo-900">
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-0 left-0 w-full sm:w-1/3 h-1/3 sm:h-full">
+          <Image
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/DALL%C2%B7E%202025-01-14%2021.50.18%20-%20A%20four-panel%20comic%20strip%20telling%20the%20story%20of%20a%20music%20producer%20signing%20a%20bad%20contract.%20Panel%201_%20The%20music%20producer%20excitedly%20shaking%20hands%20with%20a%20slic-lhWF2AcXOdqixZCOHNlDbj6xDKzP01.webp"
+            alt="Comic panel showing contract signing"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+        <div className="absolute top-1/3 sm:top-0 left-0 sm:left-1/3 w-full sm:w-1/3 h-1/3 sm:h-full">
+          <Image
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/DALL%C2%B7E%202025-01-14%2021.48.14%20-%20A%20four-panel%20comic%20strip%20illustrating%20a%20music%20producer's%20journey%20with%20a%20contract.%20Panel%201_%20A%20music%20producer%20in%20a%20recording%20studio,%20holding%20a%20contract,-nmrJ7YIsyRYsjCmBWoBNlBdaU2G9sH.webp"
+            alt="Comic panel showing BeatContract usage"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+        <div className="absolute top-2/3 sm:top-0 left-0 sm:left-2/3 w-full sm:w-1/3 h-1/3 sm:h-full">
+          <Image
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/DALL%C2%B7E%202025-01-14%2021.49.36%20-%20A%20four-panel%20comic%20strip%20illustrating%20a%20music%20producer's%20experience%20with%20signing%20a%20bad%20contract.%20Panel%201_%20A%20music%20producer%20receives%20a%20contract%20from%20a%20-ZEJE3YFVbHldDazNM0iDMFuBaFOCUs.webp"
+            alt="Comic panel showing contract analysis"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
       </div>
       <div className="relative container mx-auto px-4 text-center z-10">
         <motion.h2
@@ -104,10 +104,10 @@ export function ComicBanner() {
                     <stat.icon className="w-6 h-6 text-purple-300" />
                   </div>
                 </div>
-                  <div className="text-3xl font-bold text-white mb-2" aria-live="polite">
+                <div className="text-3xl font-bold text-white mb-2" aria-live="polite">
                   <AnimatedCounter
                     value={stat.value}
-                      formatFnAction={(v) => `${v.toLocaleString()}${stat.suffix}`}
+                    formatFnAction={(v) => `${v.toLocaleString()}${stat.suffix}`}
                   />
                 </div>
                 <div className="text-purple-200 text-sm">{stat.label}</div>
@@ -125,8 +125,8 @@ export function ComicBanner() {
           * Statistics updated in real-time based on our platform usage
         </motion.div>
       </div>
-        <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-purple-900 to-transparent blur-lg"></div>
-        <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-indigo-900 to-transparent blur-lg"></div>
+      <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-purple-900 to-transparent blur-lg"></div>
+      <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-indigo-900 to-transparent blur-lg"></div>
     </section>
   )
 }

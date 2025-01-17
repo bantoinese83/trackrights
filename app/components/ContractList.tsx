@@ -128,6 +128,16 @@ export function ContractList() {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
+      <h1
+        className="text-3xl md:text-4xl lg:text-5xl font-normal text-purple-600 font-salome text-center mb-8"
+        style={{
+          color: 'transparent',
+          WebkitTextStroke: '2px rgba(128, 90, 213, 0.8)',
+        }}
+      >
+        Generate a Contract Now
+      </h1>
+
       <div className="mb-8 space-y-4">
         <div className="flex items-center space-x-4">
           <div className="relative flex-grow">
@@ -137,13 +147,13 @@ export function ContractList() {
               placeholder="Search contracts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full border rounded-md focus:ring-2 focus:ring-purple-500"
+              className="pl-10 pr-4 py-2 w-full border rounded-full focus:ring-2 focus:ring-purple-500"
             />
           </div>
           <Button
             variant="outline"
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-2 rounded-full border-gray-300 hover:border-gray-400"
           >
             <SlidersHorizontal className="h-4 w-4" />
             <span>Filters</span>
@@ -152,7 +162,7 @@ export function ContractList() {
             value={sortBy}
             onValueChange={(value: 'title' | 'category') => setSortBy(value)}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] rounded-full border-gray-300 hover:border-gray-400">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -169,7 +179,7 @@ export function ContractList() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-gray-50 p-4 rounded-md shadow-sm"
+              className="bg-gray-50 p-4 rounded-lg shadow-sm"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -181,6 +191,7 @@ export function ContractList() {
                           id={`category-${key}`}
                           checked={selectedCategories.includes(key)}
                           onCheckedChange={() => handleCategoryChange(key)}
+                          className="rounded-full border-gray-300"
                         />
                         <label
                           htmlFor={`category-${key}`}
@@ -201,7 +212,7 @@ export function ContractList() {
                         variant={
                           selectedTags.includes(tag) ? 'default' : 'outline'
                         }
-                        className="cursor-pointer"
+                        className="cursor-pointer rounded-full border-gray-300"
                         onClick={() => handleTagChange(tag)}
                       >
                         {tag}
@@ -296,7 +307,7 @@ export function ContractList() {
                                         <Badge
                                           key={tag}
                                           variant="secondary"
-                                          className="bg-purple-100 text-purple-800"
+                                          className="bg-purple-100 text-purple-800 rounded-full"
                                         >
                                           {tag}
                                         </Badge>

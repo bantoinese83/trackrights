@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ServerStatus } from './ServerStatus';
 
 export function Footer() {
@@ -69,15 +70,26 @@ export function Footer() {
           </div>
           <ServerStatus />
         </div>
-        <div className="mt-4 text-sm text-purple-200">
-          By using this website, you agree to our use of cookies. We use cookies
-          to provide you with a great experience and to help our website run
-          effectively.{' '}
-          <Link
-            href="https://www.trackrights.com/cookies"
-            className="underline hover:text-white"
-          >
-            Learn more
+        <div className="mt-4 text-sm text-purple-200 flex items-center">
+          <span className="mr-2">
+            By using this website, you agree to our use of cookies. We use cookies
+            to provide you with a great experience and to help our website run
+            effectively.{' '}
+            <Link
+              href="https://www.trackrights.com/cookies"
+              className="underline hover:text-white"
+            >
+              Learn more
+            </Link>
+          </span>
+          <Link href="https://www.spotify.com" aria-label="Spotify Home Page">
+            <Image
+              src="/spotify-partner-logo.png"
+              alt="Spotify Logo"
+              width={40}
+              height={40}
+              className="hover:opacity-80 transition-opacity duration-200"
+            />
           </Link>
         </div>
       </div>
