@@ -20,41 +20,42 @@ export function ContractRevision({
   const [instructions, setInstructions] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const handleRevise = async () => {
-    setIsRevising(true);
-    setError(null);
+const handleRevise = async () => {
+  setIsRevising(true);
+  setError(null);
 
-    try {
-      const response = await fetch('/api/revise-contract', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          originalContract,
-          instructions,
-        }),
-      });
+  try {
+    const response = await fetch('/api/revise-contract', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        originalContract,
+        instructions,
+        role: 'music-professional',
+      }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to revise the contract');
-      }
-
-      const revisedContract = data.revisedContract.replace(/\*\*?|```/g, '');
-
-      onRevisionCompleteAction(revisedContract);
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError('An unknown error occurred');
-      }
-    } finally {
-      setIsRevising(false);
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to revise the contract');
     }
-  };
+
+    const revisedContract = data.revisedContract.replace(/\*\*?|```/g, '');
+
+    onRevisionCompleteAction(revisedContract);
+  } catch (error) {
+    if (error instanceof Error) {
+      setError(error.message);
+    } else {
+      setError('An unknown error occurred');
+    }
+  } finally {
+    setIsRevising(false);
+  }
+};
 
   return (
     <motion.div
