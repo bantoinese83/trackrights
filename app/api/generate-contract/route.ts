@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
   try {
     if (req.headers.get('content-type') !== 'application/json') {
       return NextResponse.json(
-        { error: 'Invalid content type' },
+        { error: 'Invalid content type. Please use application/json.' },
         { status: 400, headers: corsHeaders() }
       );
     }
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
 
     if (!contractDetails || !contractInputs) {
       return NextResponse.json(
-        { error: 'Missing contract details or inputs' },
+        { error: 'Missing contract details or inputs. Please provide all necessary information.' },
         { status: 400, headers: corsHeaders() }
       );
     }
@@ -96,13 +96,13 @@ export async function POST(req: NextRequest) {
     const generatedContract = await generateWithRetry(content);
 
     return NextResponse.json(
-      { generatedContract },
+      { generatedContract, message: 'Contract generated successfully.' },
       { status: 200, headers: corsHeaders() }
     );
   } catch (error: unknown) {
     const { errorMessage, statusCode } = handleError(error);
     return NextResponse.json(
-      { error: errorMessage },
+      { error: errorMessage, message: 'Failed to generate contract. Please try again later.' },
       { status: statusCode, headers: corsHeaders() }
     );
   }

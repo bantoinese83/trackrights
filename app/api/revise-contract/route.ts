@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
 
   if (req.headers.get('content-type') !== 'application/json') {
     return NextResponse.json(
-      { error: 'Invalid content type' },
+      { error: 'Invalid content type. Please use application/json.' },
       { status: 400, headers: corsHeaders() }
     );
   }
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           error:
-            'Missing original contract, instructions, or professional role',
+            'Missing original contract, instructions, or professional role. Please provide all necessary information.',
         },
         { status: 400, headers: corsHeaders() }
       );
@@ -94,13 +94,13 @@ export async function POST(req: NextRequest) {
     const revisedContract = await generateWithRetry(content);
 
     return NextResponse.json(
-      { revisedContract },
+      { revisedContract, message: 'Contract revised successfully.' },
       { status: 200, headers: corsHeaders() }
     );
   } catch (error: unknown) {
     const { errorMessage, statusCode } = handleError(error);
     return NextResponse.json(
-      { error: errorMessage },
+      { error: errorMessage, message: 'Failed to revise contract. Please try again later.' },
       { status: statusCode, headers: corsHeaders() }
     );
   }
