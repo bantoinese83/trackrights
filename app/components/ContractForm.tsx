@@ -397,7 +397,7 @@ const contractForms: ContractForms = {
 };
 
 export function ContractForm({ contractId, onSubmit }: ContractFormProps) {
-  const { formData, handleInputChange, resetForm } = useContractForm({});
+  const { formData, handleInputChange, resetForm } = useContractForm<Record<string, string>>({});
   const { toast } = useToast();
 
   const contractForm = contractForms[contractId];
