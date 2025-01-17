@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700&display=swap');
+
 @font-face {
   font-family: 'Salome';
   src: url('https://files.jcink.net/uploads/elpintor/salome/salome_italic_webfont.ttf')
@@ -60,8 +62,6 @@
   font-weight: 700;
   font-display: swap;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -208,7 +208,10 @@ html {
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
-
+/* globals.css */
+.simplified-contract {
+  font-family: var(--font-sans);
+}
 @layer base {
   :root {
     --sidebar-background: 0 0% 98%;

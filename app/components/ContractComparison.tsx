@@ -134,13 +134,13 @@ export function ContractComparison({ originalText, simplifiedContract, isPdf = f
             Simplified Version
           </h2>
           <div className="bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow-md h-[400px] sm:h-[500px] md:h-[600px] overflow-y-auto">
-            <ReactMarkdown
-              className="prose max-w-none text-xs sm:text-sm md:text-base font-sans"
-              remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeRaw]}
-            >
-              {simplifiedContract}
-            </ReactMarkdown>
+           <ReactMarkdown
+  className="prose max-w-none text-xs sm:text-sm md:text-base simplified-contract"
+  remarkPlugins={[remarkGfm]}
+  rehypePlugins={[rehypeRaw]}
+>
+  {simplifiedContract}
+</ReactMarkdown>
           </div>
         </div>
       </div>
