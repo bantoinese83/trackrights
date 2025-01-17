@@ -17,7 +17,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Calculator, Music, ChevronUp, ChevronDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { ComparisonChart } from './ComparisonChart';
 import { streamingPlatforms } from '../data/streamingPlatforms';
@@ -30,13 +29,11 @@ interface StreamingPlatform {
   height: number;
 }
 
-const engagingMessages = [
-  { text: 'Try me! 🎵💰', icon: '💰' },
-  { text: 'Calculate your royalties! 🧮', icon: '🧮' },
-  { text: 'Click for insights! 💡', icon: '💡' },
-  { text: 'Boost your earnings! 📈', icon: '📈' },
-  { text: 'Unlock your potential! 🔓', icon: '🔓' },
-];
+const currencyRates = {
+  USD: 1,
+  GBP: 0.75,
+  EUR: 0.85,
+};
 
 export default function RoyaltyCalculator() {
   const [platform, setPlatform] = useState<StreamingPlatform>(
@@ -45,17 +42,9 @@ export default function RoyaltyCalculator() {
   const [streams, setStreams] = useState(1000);
   const [earnings, setEarnings] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  const [messageIndex, setMessageIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [showComparison, setShowComparison] = useState(false);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setMessageIndex((prevIndex) => (prevIndex + 1) % engagingMessages.length);
-    }, 3000);
-
-    return () => clearInterval(timer);
-  }, []);
+  const [currency, setCurrency] = useState('USD');
 
   useEffect(() => {
     if (streams < 0 || isNaN(streams)) {
@@ -63,9 +52,9 @@ export default function RoyaltyCalculator() {
       setEarnings(0);
     } else {
       setError(null);
-      setEarnings(platform.rate * streams);
+      setEarnings(platform.rate * streams * currencyRates[currency]);
     }
-  }, [streams, platform.rate]);
+  }, [streams, platform.rate, currency]);
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
@@ -79,22 +68,6 @@ export default function RoyaltyCalculator() {
               aria-label="Open Royalty Calculator"
             >
               <Calculator className="h-6 w-6" />
-              <AnimatePresence>
-                {!isOpen && (
-                  <motion.div
-                    key={messageIndex}
-                    initial={{ opacity: 0, scale: 0.8, x: -20 }}
-                    animate={{ opacity: 1, scale: 1, x: 0 }}
-                    exit={{ opacity: 0, scale: 0.8, x: 20 }}
-                    className="absolute -top-16 right-0 bg-yellow-400 text-purple-800 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap flex items-center"
-                  >
-                    <span className="mr-2 text-xl">
-                      {engagingMessages[messageIndex].icon}
-                    </span>
-                    {engagingMessages[messageIndex].text}
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </Button>
           </PopoverTrigger>
           <PopoverContent
@@ -169,16 +142,33 @@ export default function RoyaltyCalculator() {
                     aria-invalid={!!error}
                   />
                 </div>
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <Label htmlFor="currency">Currency</Label>
+                  <Select
+                    value={currency}
+                    onValueChange={(value) => setCurrency(value)}
+                  >
+                    <SelectTrigger className="col-span-2 h-8 bg-white">
+                      <SelectValue placeholder="Select currency">
+                        {currency}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent className="bg-white">
+                      <SelectItem value="USD">$USD</SelectItem>
+                      <SelectItem value="GBP">£GBP</SelectItem>
+                      <SelectItem value="EUR">€EUR</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 {error && (
                   <p className="text-red-500 text-sm col-span-3">{error}</p>
                 )}
-                {/* Remove this button */}
-                {/* <Button onClick={calculateEarnings} className="bg-purple-600 hover:bg-purple-700 text-white">Calculate</Button> */}
               </div>
               <div className="space-y-2">
                 <h4 className="font-medium leading-none">Estimated Earnings</h4>
                 <p className="text-2xl font-bold text-purple-600">
-                  ${earnings.toFixed(2)}
+                  {currency === 'USD' ? '$' : currency === 'GBP' ? '£' : '€'}
+                  {earnings.toFixed(2)}
                 </p>
               </div>
               <Button
