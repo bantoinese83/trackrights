@@ -128,10 +128,10 @@ export function HeroTitle({ title, description, className }: HeroTitleProps) {
           transition={{ delay: 0.4, duration: 0.5 }}
           className="mt-12 text-white text-lg"
         >
-          <p>Trusted by <span className="font-bold text-yellow-400">5000+</span> music industry professionals worldwide</p>
+          <p>Trusted by <span className="font-bold text-yellow-400">1000+</span> music industry professionals worldwide</p>
           <p className="text-sm text-purple-200 mt-2">
             Our <span className="text-yellow-400 font-semibold">MusicProGuard™</span> algorithm has analyzed over{' '}
-            <span className="font-bold text-white">50,000+</span> music contracts across various roles
+            <span className="font-bold text-white">2,000+</span> music contracts across various roles
           </p>
           <div className="flex justify-center items-center mt-4 space-x-6">
             {['Spotify', 'Apple Music', 'Universal Music', 'Sony Music'].map((brand, index) => (

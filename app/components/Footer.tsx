@@ -82,15 +82,15 @@ export function Footer() {
               Learn more
             </Link>
           </span>
-          <Link href="https://www.spotify.com" aria-label="Spotify Home Page">
-            <Image
-              src="/spotify-partner-logo.png"
-              alt="Spotify Logo"
-              width={40}
-              height={40}
-              className="hover:opacity-80 transition-opacity duration-200"
-            />
-          </Link>
+        <Link href="https://www.spotify.com" aria-label="Spotify Home Page">
+  <Image
+    src="/spotify-partner-logo.png"
+    alt="Spotify Logo"
+    width={250}
+    height={250}
+    className="hover:opacity-80 transition-opacity duration-200 rounded-full shadow-lg"
+  />
+</Link>
         </div>
       </div>
     </footer>
