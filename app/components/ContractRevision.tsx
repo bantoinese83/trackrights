@@ -6,6 +6,7 @@ import { Edit2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ProcessingIndicator } from './ProcessingIndicator';
+import { useContractProcessing } from '@/hooks/useContractProcessing';
 
 interface ContractRevisionProps {
   originalContract: string;
@@ -16,46 +17,24 @@ export function ContractRevision({
   originalContract,
   onRevisionCompleteAction,
 }: ContractRevisionProps) {
-  const [isRevising, setIsRevising] = useState(false);
   const [instructions, setInstructions] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const { isProcessing, error, processContract } = useContractProcessing();
 
-const handleRevise = async () => {
-  setIsRevising(true);
-  setError(null);
-
-  try {
-    const response = await fetch('/api/revise-contract', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+  const handleRevise = async () => {
+    try {
+      const data = await processContract('/api/revise-contract', {
         originalContract,
         instructions,
         role: 'music-professional',
-      }),
-    });
+      });
 
-    const data = await response.json();
+      const revisedContract = data.revisedContract.replace(/\*\*?|```/g, '');
 
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to revise the contract');
+      onRevisionCompleteAction(revisedContract);
+    } catch (error) {
+      console.error(error);
     }
-
-    const revisedContract = data.revisedContract.replace(/\*\*?|```/g, '');
-
-    onRevisionCompleteAction(revisedContract);
-  } catch (error) {
-    if (error instanceof Error) {
-      setError(error.message);
-    } else {
-      setError('An unknown error occurred');
-    }
-  } finally {
-    setIsRevising(false);
-  }
-};
+  };
 
   return (
     <motion.div
@@ -81,10 +60,10 @@ const handleRevise = async () => {
       />
       <Button
         onClick={handleRevise}
-        disabled={isRevising || !instructions.trim()}
+        disabled={isProcessing || !instructions.trim()}
         className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white"
       >
-        {isRevising ? (
+        {isProcessing ? (
           <span className="flex items-center">
             <Edit2 className="mr-2 h-4 w-4 animate-spin" />
             Revising...
@@ -97,7 +76,7 @@ const handleRevise = async () => {
         )}
       </Button>
 
-      {isRevising && <ProcessingIndicator type="revise" />}
+      {isProcessing && <ProcessingIndicator type="revise" />}
 
       {error && (
         <motion.div
