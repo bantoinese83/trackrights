@@ -1,6 +1,13 @@
-/** @type {{reactStrictMode: boolean, webpack: (function(*): any), images: {remotePatterns: {protocol: string, hostname: string}[]}}} */
+import withBundleAnalyzer from '@next/bundle-analyzer';
+
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE_BUNDLE === 'true',
+});
+
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  compress: true,
   webpack: (config) => {
     config.resolve.alias.canvas = false;
     return config;
@@ -15,4 +22,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default bundleAnalyzer(nextConfig);
