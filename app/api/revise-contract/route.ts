@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { corsHeaders, getApiKey, handleError, cache } from '../utils';
+import { corsHeaders, getApiKey, handleError } from '../utils';
 
 const apiKey = getApiKey();
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -34,12 +34,31 @@ interface RevisionRequest {
   role: string;
 }
 
+const cache = new Map<string, { value: string; timestamp: number }>();
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
+function cacheGet(key: string): string | null {
+  const cached = cache.get(key);
+  if (cached) {
+    const isExpired = Date.now() - cached.timestamp > CACHE_TTL;
+    if (!isExpired) {
+      return cached.value;
+    }
+    cache.delete(key);
+  }
+  return null;
+}
+
+function cacheSet(key: string, value: string): void {
+  cache.set(key, { value, timestamp: Date.now() });
+}
+
 async function generateWithRetry(
   content: string[],
   retryCount = 0
 ): Promise<string> {
   const cacheKey = JSON.stringify(content);
-  const cachedResponse = cache.get(cacheKey);
+  const cachedResponse = cacheGet(cacheKey);
   if (cachedResponse) {
     return cachedResponse;
   }
@@ -47,7 +66,7 @@ async function generateWithRetry(
   try {
     const result = await model.generateContent(content);
     const responseText = result.response.text();
-    cache.set(cacheKey, responseText);
+    cacheSet(cacheKey, responseText);
     return responseText;
   } catch (error: unknown) {
     if (
@@ -100,7 +119,7 @@ export async function POST(req: NextRequest) {
     ];
 
     const cacheKey = JSON.stringify(content);
-    const cachedResponse = cache.get(cacheKey);
+    const cachedResponse = cacheGet(cacheKey);
     if (cachedResponse) {
       return NextResponse.json(
         { revisedContract: cachedResponse, message: 'Contract revised successfully (from cache).' },
@@ -109,7 +128,7 @@ export async function POST(req: NextRequest) {
     }
 
     const revisedContract = await generateWithRetry(content);
-    cache.set(cacheKey, revisedContract);
+    cacheSet(cacheKey, revisedContract);
 
     return NextResponse.json(
       { revisedContract, message: 'Contract revised successfully.' },

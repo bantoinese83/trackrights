@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI, Part } from '@google/generative-ai';
-import { getApiKey, handleError, cache } from '../utils';
+import { getApiKey, handleError } from '../utils';
 import { Content, SimplifyRequest } from '../../../types/api';
 
 const apiKey = getApiKey();
@@ -108,9 +108,28 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const MAX_RETRIES = 3;
 const BASE_DELAY = 500;
 
+const cache = new Map<string, { value: string; timestamp: number }>();
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
+function cacheGet(key: string): string | null {
+  const cached = cache.get(key);
+  if (cached) {
+    const isExpired = Date.now() - cached.timestamp > CACHE_TTL;
+    if (!isExpired) {
+      return cached.value;
+    }
+    cache.delete(key);
+  }
+  return null;
+}
+
+function cacheSet(key: string, value: string): void {
+  cache.set(key, { value, timestamp: Date.now() });
+}
+
 async function generateWithRetry(content: Content[], retryCount = 0): Promise<string> {
     const cacheKey = JSON.stringify(content);
-    const cachedResponse = cache.get(cacheKey);
+    const cachedResponse = cacheGet(cacheKey);
     if (cachedResponse) {
         return cachedResponse;
     }
@@ -119,7 +138,7 @@ async function generateWithRetry(content: Content[], retryCount = 0): Promise<st
         const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash-exp' });
         const result = await model.generateContent(content as (string | Part)[]);
         const responseText = result.response.text();
-        cache.set(cacheKey, responseText);
+        cacheSet(cacheKey, responseText);
         return responseText;
     } catch (error: unknown) {
         if (error instanceof Error && (error as { status?: number }).status && ((error as unknown as { status: number }).status === 429 || (error as unknown as { status: number }).status === 503) && retryCount < MAX_RETRIES) {
@@ -157,7 +176,7 @@ const handleMultipartFormData = async (req: NextRequest) => {
         ];
 
         const cacheKey = JSON.stringify(content);
-        const cachedResponse = cache.get(cacheKey);
+        const cachedResponse = cacheGet(cacheKey);
         if (cachedResponse) {
             return NextResponse.json(
                 { simplifiedContract: cachedResponse, message: 'Contract simplified successfully (from cache).' },
@@ -166,7 +185,7 @@ const handleMultipartFormData = async (req: NextRequest) => {
         }
 
         const simplifiedContract = await generateWithRetry(content);
-        cache.set(cacheKey, simplifiedContract);
+        cacheSet(cacheKey, simplifiedContract);
 
         return NextResponse.json({ simplifiedContract, message: 'Contract simplified successfully.' }, { status: 200 });
 
@@ -194,7 +213,7 @@ const handleJsonRequest = async (req: NextRequest) => {
     ];
 
     const cacheKey = JSON.stringify(content);
-    const cachedResponse = cache.get(cacheKey);
+    const cachedResponse = cacheGet(cacheKey);
     if (cachedResponse) {
         return NextResponse.json(
             { originalContract: contractText, simplifiedContract: cachedResponse, message: 'Contract simplified successfully (from cache).' },
@@ -203,7 +222,7 @@ const handleJsonRequest = async (req: NextRequest) => {
     }
 
     const simplifiedContract = await generateWithRetry(content);
-    cache.set(cacheKey, simplifiedContract);
+    cacheSet(cacheKey, simplifiedContract);
 
     return NextResponse.json(
         { originalContract: contractText, simplifiedContract, message: 'Contract simplified successfully.' },
