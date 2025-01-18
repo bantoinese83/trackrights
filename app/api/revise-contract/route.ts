@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { corsHeaders, getApiKey, handleError } from '../utils';
+import { corsHeaders, getApiKey, handleError, cache } from '../utils';
 
 const apiKey = getApiKey();
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -38,9 +38,17 @@ async function generateWithRetry(
   content: string[],
   retryCount = 0
 ): Promise<string> {
+  const cacheKey = JSON.stringify(content);
+  const cachedResponse = cache.get(cacheKey);
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+
   try {
     const result = await model.generateContent(content);
-    return result.response.text();
+    const responseText = result.response.text();
+    cache.set(cacheKey, responseText);
+    return responseText;
   } catch (error: unknown) {
     if (
       error instanceof Error &&
@@ -91,7 +99,17 @@ export async function POST(req: NextRequest) {
       'Please revise the contract based on the given instructions, making it more favorable for the specified music industry professional.',
     ];
 
+    const cacheKey = JSON.stringify(content);
+    const cachedResponse = cache.get(cacheKey);
+    if (cachedResponse) {
+      return NextResponse.json(
+        { revisedContract: cachedResponse, message: 'Contract revised successfully (from cache).' },
+        { status: 200, headers: corsHeaders() }
+      );
+    }
+
     const revisedContract = await generateWithRetry(content);
+    cache.set(cacheKey, revisedContract);
 
     return NextResponse.json(
       { revisedContract, message: 'Contract revised successfully.' },

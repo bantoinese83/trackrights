@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI, Part } from '@google/generative-ai';
-import { getApiKey, handleError } from '../utils';
+import { getApiKey, handleError, cache } from '../utils';
 import { Content, SimplifyRequest } from '../../../types/api';
 
 const apiKey = getApiKey();
@@ -109,10 +109,18 @@ const MAX_RETRIES = 3;
 const BASE_DELAY = 500;
 
 async function generateWithRetry(content: Content[], retryCount = 0): Promise<string> {
+    const cacheKey = JSON.stringify(content);
+    const cachedResponse = cache.get(cacheKey);
+    if (cachedResponse) {
+        return cachedResponse;
+    }
+
     try {
         const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash-exp' });
         const result = await model.generateContent(content as (string | Part)[]);
-        return result.response.text();
+        const responseText = result.response.text();
+        cache.set(cacheKey, responseText);
+        return responseText;
     } catch (error: unknown) {
         if (error instanceof Error && (error as { status?: number }).status && ((error as unknown as { status: number }).status === 429 || (error as unknown as { status: number }).status === 503) && retryCount < MAX_RETRIES) {
             const waitTime = BASE_DELAY * Math.pow(2, retryCount);
@@ -148,7 +156,18 @@ const handleMultipartFormData = async (req: NextRequest) => {
             { text: fileContent },
         ];
 
+        const cacheKey = JSON.stringify(content);
+        const cachedResponse = cache.get(cacheKey);
+        if (cachedResponse) {
+            return NextResponse.json(
+                { simplifiedContract: cachedResponse, message: 'Contract simplified successfully (from cache).' },
+                { status: 200 }
+            );
+        }
+
         const simplifiedContract = await generateWithRetry(content);
+        cache.set(cacheKey, simplifiedContract);
+
         return NextResponse.json({ simplifiedContract, message: 'Contract simplified successfully.' }, { status: 200 });
 
     } catch (error) {
@@ -174,7 +193,17 @@ const handleJsonRequest = async (req: NextRequest) => {
         { text: 'Simplify this contract based on the instructions provided, and format the response using Markdown as specified.' },
     ];
 
+    const cacheKey = JSON.stringify(content);
+    const cachedResponse = cache.get(cacheKey);
+    if (cachedResponse) {
+        return NextResponse.json(
+            { originalContract: contractText, simplifiedContract: cachedResponse, message: 'Contract simplified successfully (from cache).' },
+            { status: 200 }
+        );
+    }
+
     const simplifiedContract = await generateWithRetry(content);
+    cache.set(cacheKey, simplifiedContract);
 
     return NextResponse.json(
         { originalContract: contractText, simplifiedContract, message: 'Contract simplified successfully.' },

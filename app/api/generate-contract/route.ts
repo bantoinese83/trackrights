@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { corsHeaders, getApiKey, handleError } from '../utils';
+import { corsHeaders, getApiKey, handleError, cache } from '../utils';
 
 const apiKey = getApiKey();
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -43,9 +43,17 @@ async function generateWithRetry(
   content: Content[],
   retryCount = 0
 ): Promise<string> {
+  const cacheKey = JSON.stringify(content);
+  const cachedResponse = cache.get(cacheKey);
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+
   try {
     const result = await model.generateContent(content);
-    return result.response.text();
+    const responseText = result.response.text();
+    cache.set(cacheKey, responseText);
+    return responseText;
   } catch (error: unknown) {
     if (
       typeof error === 'object' &&
@@ -93,7 +101,17 @@ export async function POST(req: NextRequest) {
       { text: 'Generate ONLY the complete contract text based on the provided information. Do not include any additional explanations or text outside the contract itself.' },
     ];
 
+    const cacheKey = JSON.stringify(content);
+    const cachedResponse = cache.get(cacheKey);
+    if (cachedResponse) {
+      return NextResponse.json(
+        { generatedContract: cachedResponse, message: 'Contract generated successfully (from cache).' },
+        { status: 200, headers: corsHeaders() }
+      );
+    }
+
     const generatedContract = await generateWithRetry(content);
+    cache.set(cacheKey, generatedContract);
 
     return NextResponse.json(
       { generatedContract, message: 'Contract generated successfully.' },
