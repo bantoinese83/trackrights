@@ -39,13 +39,40 @@ interface ContractInputs {
   [key: string]: string | number;
 }
 
+const cache = new Map<string, { value: string; timestamp: number }>();
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
+function cacheGet(key: string): string | null {
+  const cached = cache.get(key);
+  if (cached) {
+    const isExpired = Date.now() - cached.timestamp > CACHE_TTL;
+    if (!isExpired) {
+      return cached.value;
+    }
+    cache.delete(key);
+  }
+  return null;
+}
+
+function cacheSet(key: string, value: string): void {
+  cache.set(key, { value, timestamp: Date.now() });
+}
+
 async function generateWithRetry(
   content: Content[],
   retryCount = 0
 ): Promise<string> {
+  const cacheKey = JSON.stringify(content);
+  const cachedResponse = cacheGet(cacheKey);
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+
   try {
     const result = await model.generateContent(content);
-    return result.response.text();
+    const responseText = result.response.text();
+    cacheSet(cacheKey, responseText);
+    return responseText;
   } catch (error: unknown) {
     if (
       typeof error === 'object' &&
@@ -93,7 +120,17 @@ export async function POST(req: NextRequest) {
       { text: 'Generate ONLY the complete contract text based on the provided information. Do not include any additional explanations or text outside the contract itself.' },
     ];
 
+    const cacheKey = JSON.stringify(content);
+    const cachedResponse = cacheGet(cacheKey);
+    if (cachedResponse) {
+      return NextResponse.json(
+        { generatedContract: cachedResponse, message: 'Contract generated successfully (from cache).' },
+        { status: 200, headers: corsHeaders() }
+      );
+    }
+
     const generatedContract = await generateWithRetry(content);
+    cacheSet(cacheKey, generatedContract);
 
     return NextResponse.json(
       { generatedContract, message: 'Contract generated successfully.' },

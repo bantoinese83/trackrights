@@ -1,3 +1,6 @@
+const cache = new Map<string, { value: string; timestamp: number }>();
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
 export function corsHeaders() {
   return {
     'Access-Control-Allow-Origin': '*',
@@ -40,4 +43,20 @@ export function handleError(
   }
 
   return { errorMessage, statusCode };
+}
+
+export function cacheGet(key: string): string | null {
+  const cached = cache.get(key);
+  if (cached) {
+    const isExpired = Date.now() - cached.timestamp > CACHE_TTL;
+    if (!isExpired) {
+      return cached.value;
+    }
+    cache.delete(key);
+  }
+  return null;
+}
+
+export function cacheSet(key: string, value: string): void {
+  cache.set(key, { value, timestamp: Date.now() });
 }

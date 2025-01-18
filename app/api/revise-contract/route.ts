@@ -34,13 +34,40 @@ interface RevisionRequest {
   role: string;
 }
 
+const cache = new Map<string, { value: string; timestamp: number }>();
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
+function cacheGet(key: string): string | null {
+  const cached = cache.get(key);
+  if (cached) {
+    const isExpired = Date.now() - cached.timestamp > CACHE_TTL;
+    if (!isExpired) {
+      return cached.value;
+    }
+    cache.delete(key);
+  }
+  return null;
+}
+
+function cacheSet(key: string, value: string): void {
+  cache.set(key, { value, timestamp: Date.now() });
+}
+
 async function generateWithRetry(
   content: string[],
   retryCount = 0
 ): Promise<string> {
+  const cacheKey = JSON.stringify(content);
+  const cachedResponse = cacheGet(cacheKey);
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+
   try {
     const result = await model.generateContent(content);
-    return result.response.text();
+    const responseText = result.response.text();
+    cacheSet(cacheKey, responseText);
+    return responseText;
   } catch (error: unknown) {
     if (
       error instanceof Error &&
@@ -91,7 +118,17 @@ export async function POST(req: NextRequest) {
       'Please revise the contract based on the given instructions, making it more favorable for the specified music industry professional.',
     ];
 
+    const cacheKey = JSON.stringify(content);
+    const cachedResponse = cacheGet(cacheKey);
+    if (cachedResponse) {
+      return NextResponse.json(
+        { revisedContract: cachedResponse, message: 'Contract revised successfully (from cache).' },
+        { status: 200, headers: corsHeaders() }
+      );
+    }
+
     const revisedContract = await generateWithRetry(content);
+    cacheSet(cacheKey, revisedContract);
 
     return NextResponse.json(
       { revisedContract, message: 'Contract revised successfully.' },
