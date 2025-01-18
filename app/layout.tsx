@@ -5,6 +5,7 @@ import { jsonLdScriptProps } from "react-schemaorg"
 import { CookieConsent } from './components/CookieConsent'
 import { StateProvider } from '@/lib/StateContext'
 import  ErrorBoundary  from './components/ErrorBoundary'
+import { Analytics } from "@vercel/analytics/react"
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://trackrights.com'),
@@ -119,6 +120,7 @@ export default function RootLayout({
         <StateProvider>
             <ErrorBoundary>
             <body>{children}
+                    <Analytics/>
                     <CookieConsent />
                     </body>
                 </ErrorBoundary>
