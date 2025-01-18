@@ -85,7 +85,7 @@ export function ComicBanner() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-xl text-purple-100 max-w-2xl mx-auto mb-12"
         >
-          Join thousands of music producers who trust BeatContract to analyze and simplify their contracts
+          Join thousands of music industry professional who trust TrackRights.com to analyze and simplify their contracts
         </motion.p>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 max-w-6xl mx-auto">
