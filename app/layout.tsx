@@ -70,7 +70,11 @@ export const metadata: Metadata = {
             'en-US': 'https://trackrights.com',
         },
     },
-
+    meta: [
+        { name: 'description', content: 'TrackRights uses AI to simplify and explain music contracts in producer-friendly terms. Understand complex legal jargon effortlessly.' },
+        { name: 'keywords', content: 'music contract analysis, AI contract simplification, music producer tools, legal jargon simplification, contract review, music industry' },
+        { name: 'author', content: 'TrackRights Team' },
+    ],
 }
 
 export default function RootLayout({
