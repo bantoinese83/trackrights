@@ -98,7 +98,8 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { originalContract, instructions, role }: RevisionRequest = await req.json();
+    const { originalContract, instructions, role }: RevisionRequest =
+      await req.json();
 
     if (!originalContract || !instructions || !role) {
       return NextResponse.json(
@@ -122,7 +123,10 @@ export async function POST(req: NextRequest) {
     const cachedResponse = cacheGet(cacheKey);
     if (cachedResponse) {
       return NextResponse.json(
-        { revisedContract: cachedResponse, message: 'Contract revised successfully (from cache).' },
+        {
+          revisedContract: cachedResponse,
+          message: 'Contract revised successfully (from cache).',
+        },
         { status: 200, headers: corsHeaders() }
       );
     }
@@ -137,7 +141,10 @@ export async function POST(req: NextRequest) {
   } catch (error: unknown) {
     const { errorMessage, statusCode } = handleError(error);
     return NextResponse.json(
-      { error: errorMessage, message: 'Failed to revise contract. Please try again later.' },
+      {
+        error: errorMessage,
+        message: 'Failed to revise contract. Please try again later.',
+      },
       { status: statusCode, headers: corsHeaders() }
     );
   }

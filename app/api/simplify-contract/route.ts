@@ -103,7 +103,7 @@ Format your response using Markdown, following these guidelines:
 
 Remember to explain complex legal concepts in plain language that all music industry professionals can easily understand. Your analysis should be thorough yet accessible to professionals at all levels of experience.`;
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const MAX_RETRIES = 3;
 const BASE_DELAY = 500;
@@ -127,7 +127,10 @@ function cacheSet(key: string, value: string): void {
   cache.set(key, { value, timestamp: Date.now() });
 }
 
-async function generateWithRetry(content: Content[], retryCount = 0): Promise<string> {
+async function generateWithRetry(
+  content: Content[],
+  retryCount = 0
+): Promise<string> {
   const cacheKey = JSON.stringify(content);
   const cachedResponse = cacheGet(cacheKey);
   if (cachedResponse) {
@@ -135,15 +138,25 @@ async function generateWithRetry(content: Content[], retryCount = 0): Promise<st
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash-exp' });
+    const model = genAI.getGenerativeModel({
+      model: 'models/gemini-2.0-flash-exp',
+    });
     const result = await model.generateContent(content as (string | Part)[]);
     const responseText = result.response.text();
     cacheSet(cacheKey, responseText);
     return responseText;
   } catch (error: unknown) {
-    if (error instanceof Error && (error as { status?: number }).status && ((error as unknown as {
-      status: number
-    }).status === 429 || (error as unknown as { status: number }).status === 503) && retryCount < MAX_RETRIES) {
+    if (
+      error instanceof Error &&
+      (error as { status?: number }).status &&
+      ((
+        error as unknown as {
+          status: number;
+        }
+      ).status === 429 ||
+        (error as unknown as { status: number }).status === 503) &&
+      retryCount < MAX_RETRIES
+    ) {
       const waitTime = BASE_DELAY * Math.pow(2, retryCount);
       console.log(`Service unavailable. Retrying in ${waitTime}ms...`);
       await delay(waitTime);
@@ -169,7 +182,10 @@ const handleMultipartFormData = async (req: NextRequest) => {
     } else if (file.type === 'text/plain') {
       fileContent = await file.text();
     } else {
-      return NextResponse.json({ error: 'Unsupported file type. Please upload a PDF or TXT file.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Unsupported file type. Please upload a PDF or TXT file.' },
+        { status: 400 }
+      );
     }
 
     const content: Content[] = [
@@ -181,22 +197,31 @@ const handleMultipartFormData = async (req: NextRequest) => {
     const cachedResponse = cacheGet(cacheKey);
     if (cachedResponse) {
       return NextResponse.json(
-        { simplifiedContract: cachedResponse, message: 'Contract simplified successfully (from cache).' },
-        { status: 200 },
+        {
+          simplifiedContract: cachedResponse,
+          message: 'Contract simplified successfully (from cache).',
+        },
+        { status: 200 }
       );
     }
 
     const simplifiedContract = await generateWithRetry(content);
     cacheSet(cacheKey, simplifiedContract);
 
-    return NextResponse.json({ simplifiedContract, message: 'Contract simplified successfully.' }, { status: 200 });
-
+    return NextResponse.json(
+      { simplifiedContract, message: 'Contract simplified successfully.' },
+      { status: 200 }
+    );
   } catch (error) {
     console.error('Error processing file:', error);
     const { errorMessage, statusCode } = handleError(error);
     return NextResponse.json(
-      { error: errorMessage, message: 'Failed to process contract. Please try again later or contact support.' },
-      { status: statusCode },
+      {
+        error: errorMessage,
+        message:
+          'Failed to process contract. Please try again later or contact support.',
+      },
+      { status: statusCode }
     );
   }
 };
@@ -205,13 +230,18 @@ const handleJsonRequest = async (req: NextRequest) => {
   const { contractText }: SimplifyRequest = await req.json();
 
   if (!contractText) {
-    return NextResponse.json({ error: 'No contract text provided' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'No contract text provided' },
+      { status: 400 }
+    );
   }
 
   const content: Content[] = [
     { text: contractText },
     { text: SYSTEM_MESSAGE },
-    { text: 'Simplify this contract based on the instructions provided, and format the response using Markdown as specified.' },
+    {
+      text: 'Simplify this contract based on the instructions provided, and format the response using Markdown as specified.',
+    },
   ];
 
   const cacheKey = JSON.stringify(content);
@@ -223,7 +253,7 @@ const handleJsonRequest = async (req: NextRequest) => {
         simplifiedContract: cachedResponse,
         message: 'Contract simplified successfully (from cache).',
       },
-      { status: 200 },
+      { status: 200 }
     );
   }
 
@@ -231,8 +261,12 @@ const handleJsonRequest = async (req: NextRequest) => {
   cacheSet(cacheKey, simplifiedContract);
 
   return NextResponse.json(
-    { originalContract: contractText, simplifiedContract, message: 'Contract simplified successfully.' },
-    { status: 200 },
+    {
+      originalContract: contractText,
+      simplifiedContract,
+      message: 'Contract simplified successfully.',
+    },
+    { status: 200 }
   );
 };
 
@@ -243,13 +277,19 @@ export async function POST(req: NextRequest) {
     } else if (req.headers.get('content-type') === 'application/json') {
       return await handleJsonRequest(req);
     } else {
-      return NextResponse.json({ error: 'Invalid content type' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid content type' },
+        { status: 400 }
+      );
     }
   } catch (error: unknown) {
     const { errorMessage, statusCode } = handleError(error);
     return NextResponse.json(
-      { error: errorMessage, message: 'Failed to process request. Please try again later.' },
-      { status: statusCode },
+      {
+        error: errorMessage,
+        message: 'Failed to process request. Please try again later.',
+      },
+      { status: statusCode }
     );
   }
 }

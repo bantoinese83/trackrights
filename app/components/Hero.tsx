@@ -15,7 +15,8 @@ import { useAppState } from '@/lib/StateContext';
 
 export default function Hero() {
   const { state, dispatch } = useAppState();
-  const { originalContract, simplifiedContract, revisedContract, error } = state;
+  const { originalContract, simplifiedContract, revisedContract, error } =
+    state;
   const [isPdf, setIsPdf] = useState<boolean>(false);
 
   const handleFileProcessed = (
@@ -76,7 +77,9 @@ export default function Hero() {
           {simplifiedContract && (
             <>
               <ContractComparison
-                originalText={originalContract || 'Original contract text not available'}
+                originalText={
+                  originalContract || 'Original contract text not available'
+                }
                 simplifiedContract={simplifiedContract}
                 isPdf={isPdf}
               />

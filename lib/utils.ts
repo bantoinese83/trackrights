@@ -5,7 +5,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function handleError(error: unknown): { errorMessage: string; statusCode: number } {
+export function handleError(error: unknown): {
+  errorMessage: string;
+  statusCode: number;
+} {
   console.error('Error:', error);
   let errorMessage = 'An unknown error occurred';
   let statusCode = 500;

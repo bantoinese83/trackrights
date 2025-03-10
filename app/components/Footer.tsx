@@ -72,9 +72,9 @@ export function Footer() {
         </div>
         <div className="mt-4 text-sm text-purple-200 flex items-center">
           <span className="mr-2">
-            By using this website, you agree to our use of cookies. We use cookies
-            to provide you with a great experience and to help our website run
-            effectively.{' '}
+            By using this website, you agree to our use of cookies. We use
+            cookies to provide you with a great experience and to help our
+            website run effectively.{' '}
             <Link
               href="https://www.trackrights.com/cookies"
               className="underline hover:text-white"
@@ -82,15 +82,15 @@ export function Footer() {
               Learn more
             </Link>
           </span>
-        <Link href="https://www.spotify.com" aria-label="Spotify Home Page">
-  <Image
-    src="/spotify-partner-logo.png"
-    alt="Spotify Logo"
-    width={250}
-    height={250}
-    className="hover:opacity-80 transition-opacity duration-200 rounded-full shadow-lg"
-  />
-</Link>
+          <Link href="https://www.spotify.com" aria-label="Spotify Home Page">
+            <Image
+              src="/spotify-partner-logo.png"
+              alt="Spotify Logo"
+              width={250}
+              height={250}
+              className="hover:opacity-80 transition-opacity duration-200 rounded-full shadow-lg"
+            />
+          </Link>
         </div>
       </div>
     </footer>

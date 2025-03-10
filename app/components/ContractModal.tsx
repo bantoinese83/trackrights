@@ -29,10 +29,10 @@ const cleanContractText = (text: string): string => {
 
 interface ContractModalProps {
   contract: Contract;
-  onClose: () => void;
+  onCloseAction: () => void;
 }
 
-export function ContractModal({ contract, onClose }: ContractModalProps) {
+export function ContractModal({ contract, onCloseAction }: ContractModalProps) {
   const [generatedContract, setGeneratedContract] = useState<string | null>(
     null
   );
@@ -117,7 +117,7 @@ export function ContractModal({ contract, onClose }: ContractModalProps) {
           <h2 className="text-2xl font-bold text-purple-800">
             {contract.title}
           </h2>
-          <Button variant="ghost" size="icon" onClick={onClose}>
+          <Button variant="ghost" size="icon" onClick={onCloseAction}>
             <X className="h-6 w-6" />
           </Button>
         </div>

@@ -38,20 +38,19 @@ const steps = [
   },
 ];
 
-export function TourGuide({
-  isOpen,
-  onClose,
-}: {
+interface TourGuideProps {
   isOpen: boolean;
-  onClose: () => void;
-}) {
+  onCloseAction: () => Promise<void>;
+}
+
+export function TourGuide({ isOpen, onCloseAction }: TourGuideProps) {
   const [currentStep, setCurrentStep] = useState(0);
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      onClose();
+      onCloseAction();
     }
   };
 
@@ -80,7 +79,11 @@ export function TourGuide({
               <h2 className="text-2xl font-bold text-purple-800">
                 {steps[currentStep].title}
               </h2>
-              <Button variant="ghost" size="icon" onClick={onClose}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onCloseAction()}
+              >
                 <X className="h-6 w-6" />
               </Button>
             </div>

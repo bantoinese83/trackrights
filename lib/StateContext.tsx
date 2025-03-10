@@ -47,13 +47,18 @@ const reducer = (state: State, action: Action): State => {
 };
 
 // Create the context
-const StateContext = createContext<{
-  state: State;
-  dispatch: React.Dispatch<Action>;
-} | undefined>(undefined);
+const StateContext = createContext<
+  | {
+      state: State;
+      dispatch: React.Dispatch<Action>;
+    }
+  | undefined
+>(undefined);
 
 // Create the provider component
-export const StateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const StateProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
@@ -71,4 +76,3 @@ export const useAppState = () => {
   }
   return context;
 };
-

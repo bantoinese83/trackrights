@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Zap, Shield, FileText, Map } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { TourGuide } from './TourGuide'
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Zap, Shield, FileText, Map } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { TourGuide } from './TourGuide';
 
 const glitterAnimation = `
 @keyframes glitter {
@@ -10,7 +10,7 @@ const glitterAnimation = `
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-`
+`;
 
 interface HeroTitleProps {
   title: string;
@@ -39,15 +39,21 @@ export function HeroTitle({ title, description, className }: HeroTitleProps) {
         className={`text-center mb-12 ${className}`} // Use className here
       >
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white leading-tight">
-          {title} <span className="separator">|</span>{' '}
-          For All Music Professionals <span className="separator">|</span> <span className="inline-block animate-pulse" style={{
-            background: 'linear-gradient(90deg, #FFD700, #FFA500, #FFD700)',
-            backgroundSize: '200% 200%',
-            animation: 'glitter 2s linear infinite',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            textShadow: '0 0 5px rgba(255,215,0,0.5)'
-          }}>100% Free</span>
+          {title} <span className="separator">|</span> For All Music
+          Professionals <span className="separator">|</span>{' '}
+          <span
+            className="inline-block animate-pulse"
+            style={{
+              background: 'linear-gradient(90deg, #FFD700, #FFA500, #FFD700)',
+              backgroundSize: '200% 200%',
+              animation: 'glitter 2s linear infinite',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textShadow: '0 0 5px rgba(255,215,0,0.5)',
+            }}
+          >
+            100% Free
+          </span>
         </h1>
         <p className="text-lg md:text-xl lg:text-2xl text-purple-100 mb-8 leading-relaxed max-w-3xl mx-auto">
           {description}
@@ -60,10 +66,24 @@ export function HeroTitle({ title, description, className }: HeroTitleProps) {
         >
           <div className="bg-gradient-to-r from-purple-900/30 to-indigo-900/30 backdrop-blur-sm p-4 rounded-xl border border-purple-500/20 max-w-2xl">
             <p className="text-purple-100 text-center leading-relaxed">
-              Powered by our <span className="text-yellow-400 font-semibold">MusicProGuard™</span> algorithm, developed in collaboration with{' '}
-              <span className="text-purple-300 font-semibold">elite music industry lawyers</span>,{' '}
-              <span className="text-purple-300 font-semibold">top-tier artist managers</span>, and{' '}
-              <span className="text-purple-300 font-semibold">experienced music producers</span> to generate the most favorable contracts for all music industry professionals.
+              Powered by our{' '}
+              <span className="text-yellow-400 font-semibold">
+                MusicProGuard™
+              </span>{' '}
+              algorithm, developed in collaboration with{' '}
+              <span className="text-purple-300 font-semibold">
+                elite music industry lawyers
+              </span>
+              ,{' '}
+              <span className="text-purple-300 font-semibold">
+                top-tier artist managers
+              </span>
+              , and{' '}
+              <span className="text-purple-300 font-semibold">
+                experienced music producers
+              </span>{' '}
+              to generate the most favorable contracts for all music industry
+              professionals.
             </p>
           </div>
           <div className="flex items-center space-x-2 text-purple-300 text-sm">
@@ -128,27 +148,40 @@ export function HeroTitle({ title, description, className }: HeroTitleProps) {
           transition={{ delay: 0.4, duration: 0.5 }}
           className="mt-12 text-white text-lg"
         >
-          <p>Trusted by <span className="font-bold text-yellow-400">1000+</span> music industry professionals worldwide</p>
+          <p>
+            Trusted by <span className="font-bold text-yellow-400">1000+</span>{' '}
+            music industry professionals worldwide
+          </p>
           <p className="text-sm text-purple-200 mt-2">
-            Our <span className="text-yellow-400 font-semibold">MusicProGuard™</span> algorithm has analyzed over{' '}
-            <span className="font-bold text-white">2,000+</span> music contracts across various roles
+            Our{' '}
+            <span className="text-yellow-400 font-semibold">
+              MusicProGuard™
+            </span>{' '}
+            algorithm has analyzed over{' '}
+            <span className="font-bold text-white">2,000+</span> music contracts
+            across various roles
           </p>
           <div className="flex justify-center items-center mt-4 space-x-6">
-            {['Spotify', 'Apple Music', 'Universal Music', 'Sony Music'].map((brand, index) => (
-              <motion.div
-                key={brand}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 + index * 0.1 }}
-                className="text-gray-400 text-sm"
-              >
-                {brand}
-              </motion.div>
-            ))}
+            {['Spotify', 'Apple Music', 'Universal Music', 'Sony Music'].map(
+              (brand, index) => (
+                <motion.div
+                  key={brand}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 + index * 0.1 }}
+                  className="text-gray-400 text-sm"
+                >
+                  {brand}
+                </motion.div>
+              )
+            )}
           </div>
         </motion.div>
       </motion.div>
-      <TourGuide isOpen={isTourOpen} onClose={() => setIsTourOpen(false)} />
+      <TourGuide
+        isOpen={isTourOpen}
+        onCloseAction={async () => setIsTourOpen(false)}
+      />
     </>
   );
 }

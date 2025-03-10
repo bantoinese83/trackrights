@@ -340,7 +340,7 @@ export function ContractList() {
       {selectedContract && (
         <ContractModal
           contract={selectedContract}
-          onClose={() => setSelectedContract(null)}
+          onCloseAction={() => setSelectedContract(null)}
         />
       )}
     </div>

@@ -63,8 +63,8 @@ TrackRights is an innovative AI-powered platform designed to simplify and analyz
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
 - [Contributing](#contributing)
@@ -459,4 +459,3 @@ TrackRights is an innovative AI-powered platform designed to simplify and analyz
 <p style="margin-bottom: 30px;">To revise a contract, upload the original contract and provide specific instructions and your role within the industry. Track
 Rights will use AI-assisted suggestions to help you revise the contract in your favor.</p>
 </div>
-

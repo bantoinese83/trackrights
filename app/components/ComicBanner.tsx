@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { motion } from 'framer-motion'
-import Image from 'next/image'
-import { AnimatedCounter } from './AnimatedCounter'
-import { FileCheck, Users, Clock, Award, FileText } from 'lucide-react'
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { AnimatedCounter } from './AnimatedCounter';
+import { FileCheck, Users, Clock, Award, FileText } from 'lucide-react';
 
 const stats = [
   {
@@ -85,7 +85,8 @@ export function ComicBanner() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-xl text-purple-100 max-w-2xl mx-auto mb-12"
         >
-          Join thousands of music industry professional who trust TrackRights.com to analyze and simplify their contracts
+          Join thousands of music industry professional who trust
+          TrackRights.com to analyze and simplify their contracts
         </motion.p>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 max-w-6xl mx-auto">
@@ -104,10 +105,15 @@ export function ComicBanner() {
                     <stat.icon className="w-6 h-6 text-purple-300" />
                   </div>
                 </div>
-                <div className="text-3xl font-bold text-white mb-2" aria-live="polite">
+                <div
+                  className="text-3xl font-bold text-white mb-2"
+                  aria-live="polite"
+                >
                   <AnimatedCounter
                     value={stat.value}
-                    formatFnAction={(v) => `${v.toLocaleString()}${stat.suffix}`}
+                    formatFnAction={(v) =>
+                      `${v.toLocaleString()}${stat.suffix}`
+                    }
                   />
                 </div>
                 <div className="text-purple-200 text-sm">{stat.label}</div>
@@ -128,5 +134,5 @@ export function ComicBanner() {
       <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-purple-900 to-transparent blur-lg"></div>
       <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-indigo-900 to-transparent blur-lg"></div>
     </section>
-  )
+  );
 }

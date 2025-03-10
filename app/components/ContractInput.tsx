@@ -23,7 +23,9 @@ export function ContractInput({ onContractSubmitAction }: ContractInputProps) {
     event.preventDefault();
     if (formData.contractText.trim()) {
       try {
-        await processContract('/api/simplify-contract', { contractText: formData.contractText });
+        await processContract('/api/simplify-contract', {
+          contractText: formData.contractText,
+        });
         onContractSubmitAction(formData.contractText);
         toast({
           title: 'Contract Submitted',
@@ -79,11 +81,7 @@ export function ContractInput({ onContractSubmitAction }: ContractInputProps) {
           {isProcessing ? 'Processing...' : 'Analyze Contract'}
         </Button>
       </div>
-      {error && (
-        <div className="mt-4 text-red-600 text-center">
-          {error}
-        </div>
-      )}
+      {error && <div className="mt-4 text-red-600 text-center">{error}</div>}
     </motion.form>
   );
 }

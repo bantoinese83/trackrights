@@ -10,7 +10,6 @@ import {
   LayoutList,
   MessageCircle,
   HelpCircle,
-
 } from 'lucide-react';
 import { jsonLdScriptProps } from 'react-schemaorg';
 import { InfiniteCarousel } from './InfiniteCarousel';
@@ -261,18 +260,20 @@ export function Header() {
         })}
       />
       <style jsx>{`
-          :root {
-              --font-sans: "Butler", "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-              --font-decorative: ${'Salome, Langita, Astila, cursive'};
-          }
+        :root {
+          --font-sans: 'Butler', 'Montserrat', -apple-system,
+            BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+            sans-serif;
+          --font-decorative: ${'Salome, Langita, Astila, cursive'};
+        }
 
-          header {
-              transition: transform 0.3s ease-in-out;
-          }
+        header {
+          transition: transform 0.3s ease-in-out;
+        }
       `}</style>
       <style jsx>{`
-          @supports (backdrop-filter: blur(8px)) {
-          }
+        @supports (backdrop-filter: blur(8px)) {
+        }
       `}</style>
     </header>
   );

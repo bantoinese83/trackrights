@@ -4,7 +4,10 @@ export function useContractProcessing() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const processContract = async <T extends Record<string, any>>(url: string, payload: T) => {
+  const processContract = async <T extends Record<string, unknown>>(
+    url: string,
+    payload: T
+  ) => {
     setIsProcessing(true);
     setError(null);
 

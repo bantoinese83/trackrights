@@ -1,5 +1,5 @@
 // ErrorBoundary.tsx
-'use client'
+'use client';
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 
@@ -14,7 +14,7 @@ interface State {
 
 class ErrorBoundary extends Component<Props, State> {
   public state: State = {
-    hasError: false
+    hasError: false,
   };
 
   public static getDerivedStateFromError(): State {
@@ -22,7 +22,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Uncaught error:", error, errorInfo);
+    console.error('Uncaught error:', error, errorInfo);
   }
 
   public render() {

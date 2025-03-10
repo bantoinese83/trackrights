@@ -20,9 +20,10 @@ export function getApiKey(): string {
   return '';
 }
 
-export function handleError(
-  error: unknown
-): { errorMessage: string; statusCode: number } {
+export function handleError(error: unknown): {
+  errorMessage: string;
+  statusCode: number;
+} {
   console.error('Error:', error);
   let errorMessage = 'An unknown error occurred';
   let statusCode = 500;

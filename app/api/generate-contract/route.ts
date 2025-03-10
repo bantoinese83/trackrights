@@ -103,11 +103,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { contractDetails, contractInputs }: { contractDetails: ContractDetails; contractInputs: ContractInputs } = await req.json();
+    const {
+      contractDetails,
+      contractInputs,
+    }: { contractDetails: ContractDetails; contractInputs: ContractInputs } =
+      await req.json();
 
     if (!contractDetails || !contractInputs) {
       return NextResponse.json(
-        { error: 'Missing contract details or inputs. Please provide all necessary information.' },
+        {
+          error:
+            'Missing contract details or inputs. Please provide all necessary information.',
+        },
         { status: 400, headers: corsHeaders() }
       );
     }
@@ -117,14 +124,19 @@ export async function POST(req: NextRequest) {
       { text: `Contract Type: ${contractDetails.id}` },
       { text: `Contract Details: ${JSON.stringify(contractDetails)}` },
       { text: `Contract Inputs: ${JSON.stringify(contractInputs)}` },
-      { text: 'Generate ONLY the complete contract text based on the provided information. Do not include any additional explanations or text outside the contract itself.' },
+      {
+        text: 'Generate ONLY the complete contract text based on the provided information. Do not include any additional explanations or text outside the contract itself.',
+      },
     ];
 
     const cacheKey = JSON.stringify(content);
     const cachedResponse = cacheGet(cacheKey);
     if (cachedResponse) {
       return NextResponse.json(
-        { generatedContract: cachedResponse, message: 'Contract generated successfully (from cache).' },
+        {
+          generatedContract: cachedResponse,
+          message: 'Contract generated successfully (from cache).',
+        },
         { status: 200, headers: corsHeaders() }
       );
     }
@@ -139,7 +151,10 @@ export async function POST(req: NextRequest) {
   } catch (error: unknown) {
     const { errorMessage, statusCode } = handleError(error);
     return NextResponse.json(
-      { error: errorMessage, message: 'Failed to generate contract. Please try again later.' },
+      {
+        error: errorMessage,
+        message: 'Failed to generate contract. Please try again later.',
+      },
       { status: statusCode, headers: corsHeaders() }
     );
   }

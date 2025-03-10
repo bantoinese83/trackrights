@@ -57,7 +57,8 @@ const contractForms: ContractForms = {
       studioName: { label: 'Recording Studio Name', type: 'text' },
       studioRentalRate: {
         label: 'Studio Rental Rate ($ per hour)',
-        type: 'number' },
+        type: 'number',
+      },
       engineerName: { label: 'Recording Engineer Name', type: 'text' },
       engineerRate: { label: 'Engineer Rate ($ per hour)', type: 'number' },
       featuredArtistName: {

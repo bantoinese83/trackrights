@@ -133,13 +133,13 @@ export function Features({ id }: { id?: string }) {
         </div>
       </div>
       <style jsx>{`
-          @font-face {
-              font-family: 'Salome';
-              src: url('https://files.jcink.net/uploads/elpintor/salome/salome_italic_webfont.ttf') format('truetype');
-              font-weight: normal;
-              font-style: normal;
-          }
-
+        @font-face {
+          font-family: 'Salome';
+          src: url('https://files.jcink.net/uploads/elpintor/salome/salome_italic_webfont.ttf')
+            format('truetype');
+          font-weight: normal;
+          font-style: normal;
+        }
       `}</style>
     </section>
   );

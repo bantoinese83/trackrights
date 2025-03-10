@@ -38,11 +38,11 @@ const ContractRatingPlaque = ({ rating }: { rating: string }) => {
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 20 }}
         className="relative w-40 h-40 mb-2 rounded-lg"
       >
         <Image
-          src={getRatingImage(rating) || "/placeholder.svg"}
+          src={getRatingImage(rating) || '/placeholder.svg'}
           alt={`${rating} Rating`}
           fill
           className="object-contain rounded-lg"
@@ -54,10 +54,16 @@ const ContractRatingPlaque = ({ rating }: { rating: string }) => {
         transition={{ delay: 0.3 }}
         className="flex flex-col items-center"
       >
-        <div className="text-2xl font-extrabold text-yellow-400 tracking-wider" style={{ fontFamily: "'Engraver', serif" }}>
+        <div
+          className="text-2xl font-extrabold text-yellow-400 tracking-wider"
+          style={{ fontFamily: "'Engraver', serif" }}
+        >
           {rating.toUpperCase()}
         </div>
-        <div className="text-lg font-semibold text-white tracking-wide" style={{ fontFamily: "'Trajan Pro', serif" }}>
+        <div
+          className="text-lg font-semibold text-white tracking-wide"
+          style={{ fontFamily: "'Trajan Pro', serif" }}
+        >
           PLAQUE
         </div>
       </motion.div>
@@ -67,12 +73,19 @@ const ContractRatingPlaque = ({ rating }: { rating: string }) => {
 
 const MemoizedContractRatingPlaque = React.memo(ContractRatingPlaque);
 
-export function ContractComparison({ originalText, simplifiedContract, isPdf = false }: ContractComparisonProps) {
+export function ContractComparison({
+  originalText,
+  simplifiedContract,
+  isPdf = false,
+}: ContractComparisonProps) {
   const [isLoading, setIsLoading] = useState(true);
   const contractRating = useMemo(() => {
     if (simplifiedContract) {
-      const ratingMatch = simplifiedContract.match(/Contract Rating:\s*(WOOD|GOLD|PLATINUM|DIAMOND)/i)
-        || originalText.match(/Contract Rating:\s*(WOOD|GOLD|PLATINUM|DIAMOND)/i);
+      const ratingMatch =
+        simplifiedContract.match(
+          /Contract Rating:\s*(WOOD|GOLD|PLATINUM|DIAMOND)/i
+        ) ||
+        originalText.match(/Contract Rating:\s*(WOOD|GOLD|PLATINUM|DIAMOND)/i);
       return ratingMatch ? ratingMatch[1].toLowerCase() : 'wood';
     }
     return 'wood';
@@ -118,7 +131,9 @@ export function ContractComparison({ originalText, simplifiedContract, isPdf = f
           </h2>
           <div className="bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow-md h-[400px] sm:h-[500px] md:h-[600px] overflow-y-auto">
             {isPdf ? (
-              <Suspense fallback={<Skeleton className="h-[600px] w-full rounded-lg" />}>
+              <Suspense
+                fallback={<Skeleton className="h-[600px] w-full rounded-lg" />}
+              >
                 <PDFViewer pdfData={originalText} />
               </Suspense>
             ) : (
@@ -134,26 +149,26 @@ export function ContractComparison({ originalText, simplifiedContract, isPdf = f
             Simplified Version
           </h2>
           <div className="bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow-md h-[400px] sm:h-[500px] md:h-[600px] overflow-y-auto">
-           <ReactMarkdown
-  className="prose max-w-none text-xs sm:text-sm md:text-base simplified-contract rounded-lg"
-  remarkPlugins={[remarkGfm]}
-  rehypePlugins={[rehypeRaw]}
->
-  {simplifiedContract}
-</ReactMarkdown>
+            <ReactMarkdown
+              className="prose max-w-none text-xs sm:text-sm md:text-base simplified-contract rounded-lg"
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeRaw]}
+            >
+              {simplifiedContract}
+            </ReactMarkdown>
           </div>
         </div>
       </div>
-      <style jsx>{`
-      `}</style>
+      <style jsx>{``}</style>
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');
-        
+
         @font-face {
           font-family: 'Engraver';
-          src: url('https://fonts.cdnfonts.com/css/engravers-mt') format('woff2');
+          src: url('https://fonts.cdnfonts.com/css/engravers-mt')
+            format('woff2');
         }
-        
+
         @font-face {
           font-family: 'Trajan Pro';
           src: url('https://fonts.cdnfonts.com/css/trajan-pro') format('woff2');

@@ -47,9 +47,9 @@ export function ContractRevision({
         Revise Contract in Favor of Producer
       </h3>
       <p className="mb-4 text-gray-600">
-        Provide instructions for how you&#39;d like the contract to be revised. Our
-        AI will attempt to rewrite the contract in favor of the producer based
-        on your input.
+        Provide instructions for how you&#39;d like the contract to be revised.
+        Our AI will attempt to rewrite the contract in favor of the producer
+        based on your input.
       </p>
       <Textarea
         placeholder="E.g., Increase royalty percentage, add clause for creative control, extend contract duration..."
