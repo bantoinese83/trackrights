@@ -70,7 +70,44 @@ export const metadata: Metadata = {
             'en-US': 'https://trackrights.com',
         },
     },
-
+    // Pdd03: Add meta tags and descriptions for SEO
+    meta: [
+        { name: 'description', content: 'TrackRights uses AI to simplify and explain music contracts in producer-friendly terms. Understand complex legal jargon effortlessly.' },
+        { name: 'keywords', content: 'music contract analysis, AI contract simplification, music producer tools, legal jargon simplification, contract review, music industry' },
+        { name: 'author', content: 'TrackRights Team' },
+        { name: 'publisher', content: 'TrackRights' },
+        { name: 'robots', content: 'index, follow' },
+        { name: 'googlebot', content: 'index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1' },
+    ],
+    // Pe4c1: Add canonical tags
+    link: [
+        { rel: 'canonical', href: 'https://trackrights.com' },
+    ],
+    // P1ed5: Add Open Graph and Twitter Card meta tags
+    openGraph: {
+        title: 'TrackRights - AI-Powered Music Contract Analysis',
+        description: 'Simplify your music contracts with AI. Understand legal terms easily.',
+        url: 'https://trackrights.com',
+        siteName: 'TrackRights',
+        images: [
+            {
+                url: 'https://trackrights.com/og-image.jpg',
+                width: 1200,
+                height: 630,
+                alt: 'TrackRights - AI-Powered Music Contract Analysis',
+            },
+        ],
+        type: 'website',
+        locale: 'en_US',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'TrackRights - AI-Powered Music Contract Analysis',
+        description: 'Simplify your music contracts with AI. Understand legal terms easily.',
+        images: ['https://trackrights.com/twitter-image.jpg'],
+        creator: '@trackrights',
+        site: '@trackrights',
+    },
 }
 
 export default function RootLayout({

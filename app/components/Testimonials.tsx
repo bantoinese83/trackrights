@@ -13,6 +13,7 @@ const testimonials = [
     role: 'Electronic Music Producer',
     avatar: '/placeholder.svg?height=80&width=80',
     instagram: '@dj_harmony',
+    alt: 'DJ Harmony avatar',
   },
   {
     quote:
@@ -21,6 +22,7 @@ const testimonials = [
     role: 'Hip Hop Artist',
     avatar: '/placeholder.svg?height=80&width=80',
     instagram: '@lyrical_genius',
+    alt: 'Lyrical Genius avatar',
   },
   {
     quote:
@@ -29,6 +31,7 @@ const testimonials = [
     role: 'Singer-Songwriter',
     avatar: '/placeholder.svg?height=80&width=80',
     instagram: '@melodymaker',
+    alt: 'Melody Maker avatar',
   },
   {
     quote:
@@ -37,6 +40,7 @@ const testimonials = [
     role: 'EDM Producer',
     avatar: '/placeholder.svg?height=80&width=80',
     instagram: '@bass_master',
+    alt: 'Bass Master avatar',
   },
   {
     quote:
@@ -45,6 +49,7 @@ const testimonials = [
     role: 'Rock Musician',
     avatar: '/placeholder.svg?height=80&width=80',
     instagram: '@indie_rocker',
+    alt: 'Indie Rocker avatar',
   },
 ];
 
@@ -103,7 +108,7 @@ export function Testimonials({ id }: { id?: string }) {
                     <div className="flex items-center mb-4">
                       <Image
                         src={testimonial.avatar || '/placeholder.svg'}
-                        alt={testimonial.author}
+                        alt={testimonial.alt}
                         width={60}
                         height={60}
                         className="rounded-full mr-4"
