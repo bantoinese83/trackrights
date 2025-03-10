@@ -1,74 +1,44 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 
-        interface ContractProcessingState {
-          isProcessing: boolean;
-          progress: number;
-          result: string | null;
-          error: string | null;
-        }
+export function useContractProcessing() {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-        interface ProcessingOptions {
-          analysisType?: 'simple' | 'detailed';
-          includeRevisions?: boolean;
-        }
+  const processContract = async (url: string, payload: any) => {
+    setIsProcessing(true);
+    setError(null);
 
-        export function useContractProcessing() {
-          const [state, setState] = useState<ContractProcessingState>({
-            isProcessing: false,
-            progress: 0,
-            result: null,
-            error: null,
-          });
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
 
-          const processContract = useCallback(async (
-            contractData: string,
-            options: ProcessingOptions = {}
-          ) => {
-            setState(prev => ({ ...prev, isProcessing: true, error: null }));
+      const data = await response.json();
 
-            try {
-              // Simulate processing stages
-              for (let i = 0; i <= 100; i += 20) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-                setState(prev => ({ ...prev, progress: i }));
-              }
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to process the contract');
+      }
 
-              // Mock result based on analysis type
-              const result = options.analysisType === 'detailed'
-                ? 'Detailed analysis completed'
-                : 'Basic analysis completed';
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+      throw error;
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
-              setState(prev => ({
-                ...prev,
-                isProcessing: false,
-                progress: 100,
-                result,
-              }));
-
-              return result;
-
-            } catch (err) {
-              setState(prev => ({
-                ...prev,
-                isProcessing: false,
-                error: err instanceof Error ? err.message : 'An error occurred',
-              }));
-              throw err;
-            }
-          }, []);
-
-          const resetProcessing = useCallback(() => {
-            setState({
-              isProcessing: false,
-              progress: 0,
-              result: null,
-              error: null,
-            });
-          }, []);
-
-          return {
-            ...state,
-            processContract,
-            resetProcessing,
-          };
-        }
+  return {
+    isProcessing,
+    error,
+    processContract,
+  };
+}
