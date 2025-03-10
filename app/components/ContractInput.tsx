@@ -23,7 +23,7 @@ export function ContractInput({ onContractSubmitAction }: ContractInputProps) {
     event.preventDefault();
     if (formData.contractText.trim()) {
       try {
-        await processContract('/api/simplify-contract', { text: formData.contractText });
+        await processContract('/api/simplify-contract', { contractText: formData.contractText });
         onContractSubmitAction(formData.contractText);
         toast({
           title: 'Contract Submitted',
