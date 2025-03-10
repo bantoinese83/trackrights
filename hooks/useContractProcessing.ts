@@ -1,15 +1,10 @@
-
 import { useState } from 'react';
 
 export function useContractProcessing() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const processContract = async (url: string, payload: {
-    originalContract: string;
-    instructions: string;
-    role: string
-  }) => {
+  const processContract = async <T extends Record<string, any>>(url: string, payload: T) => {
     setIsProcessing(true);
     setError(null);
 
