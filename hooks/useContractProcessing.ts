@@ -4,7 +4,7 @@ export function useContractProcessing() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const processContract = async (url: string, payload: any) => {
+  const processContract = async (url: string, payload: { originalContract: string; instructions: string; role: string }) => {
     setIsProcessing(true);
     setError(null);
 
