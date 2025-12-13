@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { GoogleGenAI, Modality } from '@google/genai';
 import { Button } from '@/components/ui/button';
-import { Mic, MicOff, Phone, PhoneOff, X } from 'lucide-react';
+import { Mic, MicOff, Phone, PhoneOff, X, AlertCircle } from 'lucide-react';
 import { useAppState } from '@/lib/contexts/StateContext';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,15 @@ import { cn } from '@/lib/utils';
 interface LiveLawyerWidgetProps {
   onClose?: () => void;
   className?: string;
+}
+
+interface SessionResumptionUpdate {
+  resumable?: boolean;
+  newHandle?: string;
+}
+
+interface GoAwayMessage {
+  timeLeft?: string;
 }
 
 export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) {
@@ -23,9 +32,13 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
   const [isMuted, setIsMuted] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<'idle' | 'connecting' | 'connected' | 'reconnecting' | 'error'>('idle');
   
   const sessionRef = useRef<{
     _playbackCleanup?: () => void;
+    _audioProcessor?: ScriptProcessorNode | null;
+    _inputAudioContext?: AudioContext | null;
     close: () => void;
   } | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -33,41 +46,76 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
   const audioQueueRef = useRef<Uint8Array[]>([]);
   const isPlayingRef = useRef(false);
   const aiRef = useRef<GoogleGenAI | null>(null);
+  const sessionHandleRef = useRef<string | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const retryCountRef = useRef(0);
+  const maxRetries = 3;
+  const playbackIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const currentSourceRef = useRef<AudioBufferSourceNode | null>(null);
 
-  // Initialize audio context
+  // Initialize audio context with error handling
   const initAudioContext = useCallback(() => {
-    if (!audioContextRef.current) {
-      const AudioContextClass = window.AudioContext || (window as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!AudioContextClass) {
-        throw new Error('AudioContext not supported');
+    if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
+      try {
+        const AudioContextClass = window.AudioContext || (window as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+        if (!AudioContextClass) {
+          throw new Error('AudioContext not supported in this browser');
+        }
+        audioContextRef.current = new AudioContextClass({
+          sampleRate: 24000, // Live API output sample rate
+        });
+        
+        // Resume audio context if suspended (required by some browsers)
+        if (audioContextRef.current.state === 'suspended') {
+          audioContextRef.current.resume().catch((err) => {
+            console.warn('Failed to resume audio context:', err);
+          });
+        }
+      } catch (err) {
+        console.error('Error initializing audio context:', err);
+        throw new Error('Audio playback not supported. Please use a modern browser.');
       }
-      audioContextRef.current = new AudioContextClass({
-        sampleRate: 24000, // Live API output sample rate
-      });
     }
     return audioContextRef.current;
   }, []);
 
-  // Get API key from server (more secure than client-side)
-  const getApiKey = useCallback(async (): Promise<string> => {
+  // Get ephemeral token from server with retry logic
+  const getEphemeralToken = useCallback(async (retryCount = 0): Promise<string> => {
     try {
       const response = await fetch('/api/live-lawyer/token', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get API credentials');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to get authentication token`);
       }
 
       const data = await response.json();
-      return data.apiKey || data.token;
+      if (!data.token) {
+        throw new Error('Invalid token response from server');
+      }
+      
+      // Reset retry count on success
+      retryCountRef.current = 0;
+      return data.token;
     } catch (err) {
-      console.error('Error getting API credentials:', err);
-      throw new Error('Failed to authenticate. Please try again.');
+      console.error('Error getting ephemeral token:', err);
+      
+      // Retry logic
+      if (retryCount < 2) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+        return getEphemeralToken(retryCount + 1);
+      }
+      
+      throw new Error(err instanceof Error ? err.message : 'Failed to authenticate. Please try again.');
     }
   }, []);
 
-  // Handle incoming messages
+  // Handle incoming messages with comprehensive error handling
   const handleMessage = useCallback((message: {
     serverContent?: {
       modelTurn?: {
@@ -78,87 +126,196 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
         }>;
       };
       interrupted?: boolean;
+      turnComplete?: boolean;
+      generationComplete?: boolean;
+    };
+    sessionResumptionUpdate?: SessionResumptionUpdate;
+    goAway?: GoAwayMessage;
+    usageMetadata?: {
+      totalTokenCount?: number;
     };
   }): void => {
-    if (message.serverContent?.modelTurn?.parts) {
-      for (const part of message.serverContent.modelTurn.parts) {
-        if (part.inlineData?.data) {
-          // Decode base64 audio data
-          const audioData = Uint8Array.from(
-            atob(part.inlineData.data),
-            (c) => c.charCodeAt(0)
-          );
-          audioQueueRef.current.push(audioData);
+    try {
+      // Handle audio data
+      if (message.serverContent?.modelTurn?.parts) {
+        for (const part of message.serverContent.modelTurn.parts) {
+          if (part.inlineData?.data) {
+            try {
+              // Decode base64 audio data
+              const audioData = Uint8Array.from(
+                atob(part.inlineData.data),
+                (c) => c.charCodeAt(0)
+              );
+              audioQueueRef.current.push(audioData);
+            } catch (err) {
+              console.error('Error decoding audio data:', err);
+            }
+          }
         }
       }
-    }
 
-    // Handle interruptions
-    if (message.serverContent?.interrupted) {
-      // Clear audio queue on interruption
-      audioQueueRef.current = [];
-      if (isPlayingRef.current) {
+      // Handle interruptions - clear queue and stop playback
+      if (message.serverContent?.interrupted) {
+        audioQueueRef.current = [];
+        if (currentSourceRef.current) {
+          try {
+            currentSourceRef.current.stop();
+          } catch {
+            // Ignore errors when stopping (may already be stopped)
+          }
+          currentSourceRef.current = null;
+        }
         isPlayingRef.current = false;
       }
+
+      // Handle session resumption updates
+      if (message.sessionResumptionUpdate) {
+        const update = message.sessionResumptionUpdate;
+        if (update.resumable && update.newHandle) {
+          sessionHandleRef.current = update.newHandle;
+          console.log('Session resumption handle updated:', update.newHandle);
+        }
+      }
+
+      // Handle GoAway message (connection will close soon)
+      if (message.goAway) {
+        const timeLeft = message.goAway.timeLeft;
+        console.warn('GoAway received, time left:', timeLeft);
+        toast({
+          title: 'Connection Warning',
+          description: 'Connection will close soon. Reconnecting...',
+          variant: 'default',
+        });
+        // Set flag for reconnection (handled in onclose callback)
+        setConnectionStatus('reconnecting');
+      }
+
+      // Handle generation complete
+      if (message.serverContent?.generationComplete) {
+        console.log('Generation complete');
+      }
+    } catch (err) {
+      console.error('Error handling message:', err);
+    }
+  }, [toast]);
+
+  // Cleanup audio processor
+  const cleanupAudioProcessor = useCallback(() => {
+    if (sessionRef.current?._audioProcessor) {
+      try {
+        sessionRef.current._audioProcessor.disconnect();
+      } catch (err) {
+        console.warn('Error disconnecting audio processor:', err);
+      }
+      sessionRef.current._audioProcessor = null;
+    }
+
+    if (sessionRef.current?._inputAudioContext) {
+      try {
+        if (sessionRef.current._inputAudioContext.state !== 'closed') {
+          sessionRef.current._inputAudioContext.close();
+        }
+      } catch (err) {
+        console.warn('Error closing input audio context:', err);
+      }
+      sessionRef.current._inputAudioContext = undefined;
     }
   }, []);
 
-  // Start microphone capture
+  // Start microphone capture with comprehensive error handling
   const startMicrophone = useCallback(async (session: {
     sendRealtimeInput: (input: {
-      audio: {
+      audio?: {
         data: string;
         mimeType: string;
       };
+      audioStreamEnd?: boolean;
     }) => void;
   }) => {
     try {
+      // Request microphone access
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           sampleRate: 16000,
           channelCount: 1,
           echoCancellation: true,
           noiseSuppression: true,
+          autoGainControl: true,
         },
       });
 
       mediaStreamRef.current = stream;
 
+      // Handle stream end events
+      stream.getAudioTracks().forEach(track => {
+        track.onended = () => {
+          console.log('Microphone track ended');
+          if (session && isConnected) {
+            try {
+              session.sendRealtimeInput({ audioStreamEnd: true });
+            } catch {
+              console.error('Error sending audio stream end');
+            }
+          }
+        };
+      });
+
       const AudioContextClass = window.AudioContext || (window as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
       if (!AudioContextClass) {
         throw new Error('AudioContext not supported');
       }
+      
       const audioContext = new AudioContextClass({
         sampleRate: 16000,
       });
+      
+      // Store for cleanup
+      if (sessionRef.current) {
+        sessionRef.current._inputAudioContext = audioContext;
+      }
 
       const source = audioContext.createMediaStreamSource(stream);
+      
+      // Use ScriptProcessorNode for audio processing
+      // Note: ScriptProcessorNode is deprecated but still widely supported
+      // For better performance, consider using AudioWorkletNode in the future
       const processor = audioContext.createScriptProcessor(4096, 1, 1);
+      
+      // Store for cleanup
+      if (sessionRef.current) {
+        sessionRef.current._audioProcessor = processor;
+      }
 
       processor.onaudioprocess = (e) => {
-        if (!isMuted && session && isConnected) {
-          const inputData = e.inputBuffer.getChannelData(0);
-          // Convert Float32Array to Int16Array (16-bit PCM)
-          const pcmData = new Int16Array(inputData.length);
-          for (let i = 0; i < inputData.length; i++) {
-            const sample = inputData[i];
-            if (sample !== undefined) {
-              const s = Math.max(-1, Math.min(1, sample));
-              pcmData[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+        if (!isMuted && session && isConnected && audioContext.state === 'running') {
+          try {
+            const inputData = e.inputBuffer.getChannelData(0);
+            
+            // Convert Float32Array to Int16Array (16-bit PCM)
+            const pcmData = new Int16Array(inputData.length);
+            for (let i = 0; i < inputData.length; i++) {
+              const sample = inputData[i];
+              if (sample !== undefined) {
+                const s = Math.max(-1, Math.min(1, sample));
+                pcmData[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+              }
             }
+
+            // Convert to base64 efficiently
+            const uint8Array = new Uint8Array(pcmData.buffer);
+            const base64 = btoa(
+              String.fromCharCode.apply(null, Array.from(uint8Array))
+            );
+
+            session.sendRealtimeInput({
+              audio: {
+                data: base64,
+                mimeType: 'audio/pcm;rate=16000',
+              },
+            });
+          } catch (err) {
+            console.error('Error processing audio:', err);
           }
-
-          // Convert to base64
-          const base64 = btoa(
-            String.fromCharCode(...new Uint8Array(pcmData.buffer))
-          );
-
-          session.sendRealtimeInput({
-            audio: {
-              data: base64,
-              mimeType: 'audio/pcm;rate=16000',
-            },
-          });
         }
       };
 
@@ -166,16 +323,25 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
       processor.connect(audioContext.destination);
     } catch (err) {
       console.error('Error accessing microphone:', err);
-      setError('Microphone access denied. Please enable microphone permissions.');
+      const errorMessage = err instanceof Error 
+        ? err.message.includes('Permission denied') || err.message.includes('NotAllowedError')
+          ? 'Microphone access denied. Please enable microphone permissions in your browser settings.'
+          : err.message.includes('NotFoundError')
+          ? 'No microphone found. Please connect a microphone and try again.'
+          : err.message
+        : 'Failed to access microphone';
+      
+      setError(errorMessage);
       toast({
         title: 'Microphone Error',
-        description: 'Please allow microphone access to use Live Lawyer.',
+        description: errorMessage,
         variant: 'destructive',
       });
+      throw err;
     }
   }, [isMuted, isConnected, toast]);
 
-  // Start audio playback
+  // Start audio playback with robust error handling
   const startAudioPlayback = useCallback(() => {
     const audioContext = initAudioContext();
 
@@ -183,6 +349,10 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
       if (audioQueueRef.current.length === 0) {
         isPlayingRef.current = false;
         return;
+      }
+
+      if (isPlayingRef.current) {
+        return; // Already playing
       }
 
       isPlayingRef.current = true;
@@ -193,15 +363,27 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
       }
 
       try {
+        // Ensure audio context is running
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume();
+        }
+
         // Convert PCM data to AudioBuffer
         // Live API returns 24kHz, 16-bit PCM, mono
         const sampleRate = 24000;
         const length = audioData.length / 2; // 16-bit = 2 bytes per sample
+        
+        if (length === 0) {
+          isPlayingRef.current = false;
+          playAudio(); // Try next chunk
+          return;
+        }
+
         const audioBuffer = audioContext.createBuffer(1, length, sampleRate);
         const channelData = audioBuffer.getChannelData(0);
 
         // Convert Int16 PCM to Float32 (-1 to 1)
-        const int16Array = new Int16Array(audioData.buffer);
+        const int16Array = new Int16Array(audioData.buffer, audioData.byteOffset, length);
         for (let i = 0; i < length; i++) {
           const sample = int16Array[i];
           if (sample !== undefined) {
@@ -213,45 +395,78 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
         source.buffer = audioBuffer;
         source.connect(audioContext.destination);
 
+        // Store current source for interruption handling
+        currentSourceRef.current = source;
+
         source.onended = () => {
-          playAudio();
+          currentSourceRef.current = null;
+          isPlayingRef.current = false;
+          // Continue playing next chunk
+          setTimeout(() => playAudio(), 0);
         };
 
         source.start(0);
       } catch (err) {
         console.error('Error playing audio:', err);
+        currentSourceRef.current = null;
         isPlayingRef.current = false;
-        // Try next chunk
+        // Try next chunk after short delay
         setTimeout(() => playAudio(), 10);
       }
     };
 
     // Start playback loop
-    const interval = setInterval(() => {
+    playbackIntervalRef.current = setInterval(() => {
       if (!isPlayingRef.current && audioQueueRef.current.length > 0) {
         playAudio();
       }
     }, 50);
 
-    // Cleanup on disconnect
+    // Cleanup function
     return () => {
-      clearInterval(interval);
+      if (playbackIntervalRef.current) {
+        clearInterval(playbackIntervalRef.current);
+        playbackIntervalRef.current = null;
+      }
+      if (currentSourceRef.current) {
+        try {
+          currentSourceRef.current.stop();
+        } catch {
+          // Ignore errors
+        }
+        currentSourceRef.current = null;
+      }
+      isPlayingRef.current = false;
     };
   }, [initAudioContext]);
 
-  // Connect to Live API
-  const connect = useCallback(async () => {
+  // Reconnect function ref (will be set after connect is defined)
+  const reconnectWithResumptionRef = useRef<((useResumption: boolean) => Promise<void>) | null>(null);
+
+  // Connect to Live API with comprehensive error handling
+  const connect = useCallback(async (useResumption = false) => {
+    if (isConnecting) {
+      return; // Prevent multiple simultaneous connection attempts
+    }
+
     try {
+      setIsConnecting(true);
       setError(null);
+      setConnectionStatus('connecting');
       
-      const token = await getApiKey();
-      const ai = new GoogleGenAI({ apiKey: token });
+      // Get ephemeral token from server
+      const ephemeralToken = await getEphemeralToken();
+      const ai = new GoogleGenAI({ apiKey: ephemeralToken });
       aiRef.current = ai;
 
       // Build system instruction with contract context
       let systemInstruction = 'You are a helpful legal AI assistant specializing in music industry contracts. ';
       if (simplifiedContract) {
-        systemInstruction += `The user has a contract that has been analyzed. You can reference the analysis to answer questions. `;
+        // Truncate contract if too long (keep it reasonable for context)
+        const contractPreview = simplifiedContract.length > 5000 
+          ? simplifiedContract.substring(0, 5000) + '...'
+          : simplifiedContract;
+        systemInstruction += `The user has a contract that has been analyzed. Here is the simplified version: ${contractPreview} `;
       }
       systemInstruction += 'Provide clear, concise answers about contract terms, rights, obligations, and recommendations.';
 
@@ -266,6 +481,14 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
             },
           },
         },
+        // Enable context window compression for longer sessions
+        contextWindowCompression: {
+          slidingWindow: {},
+        },
+        // Enable session resumption for reconnection
+        sessionResumption: useResumption && sessionHandleRef.current
+          ? { handle: sessionHandleRef.current }
+          : {},
       };
 
       const session = await ai.live.connect({
@@ -276,24 +499,43 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
             console.log('Live API connected');
             setIsConnected(true);
             setIsListening(true);
+            setConnectionStatus('connected');
+            retryCountRef.current = 0; // Reset retry count on successful connection
           },
           onmessage: handleMessage,
-          onerror: (e: { message?: string; reason?: string }) => {
+          onerror: (e: { message?: string; reason?: string; code?: number }) => {
             console.error('Live API error:', e);
             const errorMsg = e.message || e.reason || 'Connection error';
             setError(errorMsg);
             setIsConnected(false);
             setIsListening(false);
+            setConnectionStatus('error');
+            
+            // Attempt reconnection for certain errors
+            if (e.code !== 400 && e.code !== 401 && e.code !== 403) {
+              if (retryCountRef.current < maxRetries && reconnectWithResumptionRef.current) {
+                setTimeout(() => reconnectWithResumptionRef.current?.(true), 2000);
+              }
+            }
+            
             toast({
               title: 'Connection Error',
               description: errorMsg,
               variant: 'destructive',
             });
           },
-          onclose: (e: { reason?: string }) => {
-            console.log('Live API closed:', e.reason);
+          onclose: (e: { reason?: string; code?: number }) => {
+            console.log('Live API closed:', e.reason, e.code);
             setIsConnected(false);
             setIsListening(false);
+            
+            // Attempt reconnection if not a normal close
+            if (e.code !== 1000 && retryCountRef.current < maxRetries && reconnectWithResumptionRef.current) {
+              setConnectionStatus('reconnecting');
+              setTimeout(() => reconnectWithResumptionRef.current?.(true), 1000);
+            } else {
+              setConnectionStatus('idle');
+            }
           },
         },
       });
@@ -311,42 +553,130 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
       sessionWithCleanup._playbackCleanup = playbackCleanup;
     } catch (err) {
       console.error('Error connecting to Live API:', err);
-      setError(err instanceof Error ? err.message : 'Failed to connect');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to connect';
+      setError(errorMessage);
+      setConnectionStatus('error');
+      setIsConnected(false);
+      setIsListening(false);
+      
       toast({
         title: 'Connection Error',
-        description: 'Failed to connect to Live Lawyer. Please try again.',
+        description: errorMessage,
         variant: 'destructive',
       });
+    } finally {
+      setIsConnecting(false);
     }
-  }, [simplifiedContract, getApiKey, toast, handleMessage, startMicrophone, startAudioPlayback]);
+  }, [simplifiedContract, getEphemeralToken, toast, handleMessage, startMicrophone, startAudioPlayback, isConnecting]);
 
-  // Disconnect
-  const disconnect = useCallback(() => {
+  // Disconnect with comprehensive cleanup (defined before reconnect to avoid dependency issues)
+  const disconnect = useCallback((clearSessionHandle = true) => {
+    // Clear reconnection timeout
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
+    }
+
+    // Cleanup session
     if (sessionRef.current) {
-      // Cleanup playback if exists
-      const session = sessionRef.current as { _playbackCleanup?: () => void; close: () => void };
-      if (session._playbackCleanup) {
-        session._playbackCleanup();
+      try {
+        // Cleanup playback
+        const session = sessionRef.current as { _playbackCleanup?: () => void; close: () => void };
+        if (session._playbackCleanup) {
+          session._playbackCleanup();
+        }
+        
+        // Close session
+        try {
+          session.close();
+        } catch (err) {
+          console.warn('Error closing session:', err);
+        }
+      } catch (err) {
+        console.warn('Error during session cleanup:', err);
       }
-      session.close();
       sessionRef.current = null;
     }
 
+    // Cleanup audio processor
+    cleanupAudioProcessor();
+
+    // Cleanup media stream
     if (mediaStreamRef.current) {
-      mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+      try {
+        mediaStreamRef.current.getTracks().forEach((track) => {
+          track.stop();
+          track.onended = null; // Clear event handlers
+        });
+      } catch (err) {
+        console.warn('Error stopping media stream:', err);
+      }
       mediaStreamRef.current = null;
     }
 
+    // Cleanup audio contexts
     if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-      audioContextRef.current.close();
+      try {
+        audioContextRef.current.close();
+      } catch (err) {
+        console.warn('Error closing audio context:', err);
+      }
       audioContextRef.current = null;
     }
 
+    // Clear playback interval
+    if (playbackIntervalRef.current) {
+      clearInterval(playbackIntervalRef.current);
+      playbackIntervalRef.current = null;
+    }
+
+    // Clear audio queue
     audioQueueRef.current = [];
     isPlayingRef.current = false;
+    currentSourceRef.current = null;
+
+    // Clear session handle if requested
+    if (clearSessionHandle) {
+      sessionHandleRef.current = null;
+    }
+
     setIsConnected(false);
     setIsListening(false);
-  }, []);
+    setConnectionStatus('idle');
+  }, [cleanupAudioProcessor]);
+
+  // Reconnect with session resumption (defined after connect and disconnect)
+  const reconnectWithResumption = useCallback(async (useResumption = true): Promise<void> => {
+    if (retryCountRef.current >= maxRetries) {
+      setError('Max reconnection attempts reached. Please refresh the page.');
+      setConnectionStatus('error');
+      return;
+    }
+
+    retryCountRef.current++;
+    setConnectionStatus('reconnecting');
+    
+    try {
+      disconnect(false); // Disconnect without clearing session handle
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await connect(useResumption); // Connect with resumption
+    } catch (err) {
+      console.error('Reconnection failed:', err);
+      if (retryCountRef.current < maxRetries) {
+        reconnectTimeoutRef.current = setTimeout(() => {
+          reconnectWithResumption(useResumption);
+        }, 2000 * retryCountRef.current);
+      } else {
+        setError('Failed to reconnect. Please try starting a new call.');
+        setConnectionStatus('error');
+      }
+    }
+  }, [connect, disconnect]);
+
+  // Store reconnect function in ref
+  useEffect(() => {
+    reconnectWithResumptionRef.current = reconnectWithResumption;
+  }, [reconnectWithResumption]);
 
   // Toggle mute
   const toggleMute = useCallback(() => {
@@ -355,12 +685,12 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
 
   // Handle connect/disconnect
   const handleToggleConnection = useCallback(() => {
-    if (isConnected) {
+    if (isConnected || isConnecting) {
       disconnect();
     } else {
       connect();
     }
-  }, [isConnected, connect, disconnect]);
+  }, [isConnected, isConnecting, connect, disconnect]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -373,6 +703,21 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
   if (!simplifiedContract) {
     return null;
   }
+
+  const getStatusText = () => {
+    switch (connectionStatus) {
+      case 'connecting':
+        return 'Connecting...';
+      case 'reconnecting':
+        return 'Reconnecting...';
+      case 'connected':
+        return isListening ? 'Listening...' : 'Connected';
+      case 'error':
+        return 'Connection Error';
+      default:
+        return 'Ask questions about your contract';
+    }
+  };
 
   return (
     <motion.div
@@ -389,11 +734,7 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
           <div>
             <h3 className="font-semibold text-lg">Live Lawyer</h3>
             <p className="text-sm text-purple-100">
-              {isConnected
-                ? isListening
-                  ? 'Listening...'
-                  : 'Connected'
-                : 'Ask questions about your contract'}
+              {getStatusText()}
             </p>
           </div>
           {onClose && (
@@ -411,14 +752,19 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
 
       <div className="p-4 space-y-4">
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700">
-            {error}
+          <div className="p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700 flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="font-medium">Error</p>
+              <p className="text-xs mt-1">{error}</p>
+            </div>
           </div>
         )}
 
         <div className="flex items-center justify-center gap-4">
           <Button
             onClick={handleToggleConnection}
+            disabled={isConnecting || connectionStatus === 'reconnecting'}
             variant={isConnected ? 'destructive' : 'default'}
             size="lg"
             className="flex items-center gap-2"
@@ -427,6 +773,11 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
               <>
                 <PhoneOff className="w-5 h-5" />
                 End Call
+              </>
+            ) : isConnecting ? (
+              <>
+                <Phone className="w-5 h-5 animate-pulse" />
+                Connecting...
               </>
             ) : (
               <>
@@ -467,7 +818,7 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
           </div>
         )}
 
-        {!isConnected && (
+        {!isConnected && !isConnecting && (
           <div className="text-center text-sm text-gray-600">
             <p>Click &quot;Start Call&quot; to begin a real-time conversation with an AI lawyer about your contract.</p>
           </div>
