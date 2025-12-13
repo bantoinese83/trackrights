@@ -1,0 +1,44 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": [
+    "src/app/**/*.{ts,tsx}",
+    "src/app/**/route.{ts,tsx}",
+    "src/app/**/page.{ts,tsx}",
+    "src/app/**/layout.{ts,tsx}",
+    "next.config.mjs",
+    "tailwind.config.ts",
+    "postcss.config.mjs",
+    "src/**/*.{ts,tsx}"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx,js,jsx}",
+    "*.{ts,tsx,js,jsx,mjs}",
+    "next.config.*",
+    "tailwind.config.*",
+    "postcss.config.*"
+  ],
+  "ignore": [
+    "**/*.d.ts",
+    "**/node_modules/**",
+    ".next/**",
+    "out/**",
+    "build/**",
+    "dist/**",
+    "public/**",
+    "next-env.d.ts",
+    "declarations.d.ts",
+    "index.d.ts",
+    "react-pdf.d.ts",
+    "pdfjs-dist.d.ts"
+  ],
+  "ignoreDependencies": ["@types/*"],
+  "ignoreBinaries": ["lsof"],
+  "next": {
+    "entry": [
+      "src/app/**/*.{ts,tsx}",
+      "src/app/**/route.{ts,tsx}",
+      "src/app/**/page.{ts,tsx}",
+      "src/app/**/layout.{ts,tsx}"
+    ]
+  }
+}

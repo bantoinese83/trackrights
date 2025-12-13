@@ -153,7 +153,7 @@ TrackRights is an innovative AI-powered platform designed to simplify and analyz
         </tr>
           <tr>
             <td style="padding: 10px; border: 1px solid #444; text-align: center;"><strong>Database</strong></td>
-             <td style="padding: 10px; border: 1px solid #444; text-align: center;"><em>(To be implemented)</em></td>
+             <td style="padding: 10px; border: 1px solid #444; text-align: center;">Neon (PostgreSQL)</td>
         </tr>
         <tr>
             <td style="padding: 10px; border: 1px solid #444; text-align: center;"><strong>Deployment</strong></td>
@@ -187,8 +187,10 @@ TrackRights is an innovative AI-powered platform designed to simplify and analyz
     <li style="margin-bottom: 10px;">Install dependencies:
         <pre style="background-color: #282a36; padding: 10px; border-radius: 5px; color: #f8f8f2;"><code class="language-bash">npm install</code></pre>
     </li>
-    <li style="margin-bottom: 10px;">Create a `.env` file in the root directory and add your Google Cloud API key:
-        <pre style="background-color: #282a36; padding: 10px; border-radius: 5px; color: #f8f8f2;"><code class="language-bash">GEMINI_API_KEY=your_google_cloud_api_key</code></pre>
+    <li style="margin-bottom: 10px;">Create a `.env` file in the root directory and add your API keys:
+        <pre style="background-color: #282a36; padding: 10px; border-radius: 5px; color: #f8f8f2;"><code class="language-bash">GEMINI_API_KEY=your_google_cloud_api_key
+DATABASE_URL=your_neon_database_connection_string</code></pre>
+        <p style="margin-top: 10px; color: #bd93f9;">Get your Neon database URL from <a href="https://console.neon.tech" style="color: #8be9fd;">Neon Console</a></p>
     </li>
     <li style="margin-bottom: 10px;">Start the development server:
         <pre style="background-color: #282a36; padding: 10px; border-radius: 5px; color: #f8f8f2;"><code class="language-bash">npm run dev</code></pre>
