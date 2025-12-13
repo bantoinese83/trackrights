@@ -4,6 +4,9 @@ import { corsHeaders, getApiKey, handleError, cacheGet, cacheSet } from '../util
 import { hashContract, optimizeContractText } from '@/lib/utils/contract-optimizer';
 import { rateLimiter, calculateRetryDelay } from '@/lib/utils/rate-limiter';
 
+// Set max duration for Vercel serverless function (30 seconds)
+export const maxDuration = 30;
+
 const apiKey = getApiKey();
 const ai = new GoogleGenAI({ apiKey });
 

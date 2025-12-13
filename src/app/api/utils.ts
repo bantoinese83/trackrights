@@ -30,9 +30,14 @@ export function handleError(error: unknown): {
   let statusCode = 500;
 
   if (error instanceof Error) {
-    const errorStatus = (error as { status?: number }).status;
+    const errorStatus = (error as { status?: number })?.status;
+    const errorMsgLower = error.message.toLowerCase();
     
-    if (errorStatus === 429) {
+    // Handle timeout errors
+    if (errorMsgLower.includes('timeout') || errorStatus === 504) {
+      errorMessage = 'Request timed out. The contract is too large or the service is busy. Please try again or use a shorter contract.';
+      statusCode = 504;
+    } else if (errorStatus === 429) {
       // Check if it's a daily quota limit or rate limit
       const errorString = JSON.stringify(error);
       const isDailyQuota = 

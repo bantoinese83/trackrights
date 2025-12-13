@@ -5,6 +5,9 @@ import type { Content, SimplifyRequest } from '@/lib/types/api';
 import { optimizeContractText } from '@/lib/utils/contract-optimizer';
 import { rateLimiter, calculateRetryDelay } from '@/lib/utils/rate-limiter';
 
+// Set max duration for Vercel serverless function (60 seconds)
+export const maxDuration = 60;
+
 const apiKey = getApiKey();
 const ai = new GoogleGenAI({ apiKey });
 
@@ -143,21 +146,23 @@ async function generateWithRetry(
   }
 
   try {
-    // Rate limit check before making request
+    // Rate limit check before making request (minimal delay to avoid timeouts)
     await rateLimiter.waitIfNeeded();
 
     const contents = content.map((item) => item.text).join('\n\n');
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-pro',
-      contents,
-      config: {
-        tools: [
-          {
-            googleSearch: {},
-          },
-        ],
-      },
+    // Remove googleSearch tool to speed up processing and avoid timeouts
+    // Use streaming timeout: 50 seconds max for API call
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('Request timeout after 50 seconds')), 50000);
     });
+
+    const result = await Promise.race([
+      ai.models.generateContent({
+        model: 'gemini-2.5-pro',
+        contents,
+      }),
+      timeoutPromise,
+    ]);
     const responseText = result.text ?? '';
     if (!responseText) {
       throw new Error('No response text received from API');

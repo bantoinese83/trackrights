@@ -1,16 +1,19 @@
 {
   "functions": {
-    "app/api/simplify-contract/route.ts": {
+    "src/app/api/simplify-contract/route.ts": {
       "maxDuration": 60
     },
-    "app/api/revise-contract/route.ts": {
+    "src/app/api/revise-contract/route.ts": {
       "maxDuration": 60
     },
-    "app/api/generate-contract/route.ts": {
+    "src/app/api/generate-contract/route.ts": {
       "maxDuration": 60
     },
-    "app/api/og/route.tsx": {
-      "maxDuration": 60
+    "src/app/api/generate-examples/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/og/route.tsx": {
+      "maxDuration": 10
     }
   }
 }

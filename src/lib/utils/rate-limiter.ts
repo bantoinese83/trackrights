@@ -12,42 +12,35 @@ interface RequestRecord {
 
 class RateLimiter {
   private requests: RequestRecord[] = [];
-  private readonly maxRequests = 60; // Free tier limit
-  private readonly windowMs = 60 * 1000; // 1 minute window
-  private readonly minDelayMs = 1000; // Minimum 1 second between requests
+  // Note: In serverless, state doesn't persist, so we use minimal delays
+  private readonly minDelayMs = 500; // Minimum 500ms between requests (reduced for speed)
+
+  private get minDelay(): number {
+    return this.minDelayMs;
+  }
 
   /**
    * Check if we can make a request now, or calculate wait time
+   * Optimized for serverless: minimal delay to avoid timeouts
    */
   async waitIfNeeded(): Promise<void> {
     const now = Date.now();
+    const windowMs = 60 * 1000; // 1 minute window
 
     // Remove requests outside the time window
     this.requests = this.requests.filter(
-      (req) => now - req.timestamp < this.windowMs
+      (req) => now - req.timestamp < windowMs
     );
 
-    // If we're at the limit, wait until the oldest request expires
-    if (this.requests.length >= this.maxRequests && this.requests[0]) {
-      const oldestRequest = this.requests[0];
-      const waitTime = this.windowMs - (now - oldestRequest.timestamp) + 100; // Add 100ms buffer
-      console.log(
-        `Rate limit reached. Waiting ${Math.ceil(waitTime / 1000)}s...`
-      );
-      await this.delay(waitTime);
-      // Clean up again after waiting
-      this.requests = this.requests.filter(
-        (req) => Date.now() - req.timestamp < this.windowMs
-      );
-    }
-
-    // Ensure minimum delay between requests (1 second)
+    // In serverless, state doesn't persist, so be less aggressive
+    // Only enforce minimum delay to avoid hitting rate limits too quickly
     if (this.requests.length > 0) {
       const lastRequest = this.requests[this.requests.length - 1];
       if (lastRequest !== undefined) {
         const timeSinceLastRequest = now - lastRequest.timestamp;
-        if (timeSinceLastRequest < this.minDelayMs) {
-          const waitTime = this.minDelayMs - timeSinceLastRequest;
+        // Reduced minimum delay to avoid timeouts
+        if (timeSinceLastRequest < this.minDelay) {
+          const waitTime = this.minDelay - timeSinceLastRequest;
           await this.delay(waitTime);
         }
       }
@@ -55,6 +48,11 @@ class RateLimiter {
 
     // Record this request
     this.requests.push({ timestamp: Date.now() });
+    
+    // Limit request history to prevent memory issues in long-running instances
+    if (this.requests.length > 100) {
+      this.requests = this.requests.slice(-60);
+    }
   }
 
   /**
@@ -62,8 +60,9 @@ class RateLimiter {
    */
   getCurrentCount(): number {
     const now = Date.now();
+    const windowMs = 60 * 1000; // 1 minute window
     this.requests = this.requests.filter(
-      (req) => now - req.timestamp < this.windowMs
+      (req) => now - req.timestamp < windowMs
     );
     return this.requests.length;
   }
