@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, RefreshCw, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ErrorDisplayProps {
@@ -31,7 +31,10 @@ export function ErrorDisplay({ error }: ErrorDisplayProps) {
           <p className="text-sm mb-3">{error}</p>
           {isRateLimit && (
             <div className="mt-3 p-3 bg-red-100 rounded border border-red-200">
-              <p className="text-xs font-medium mb-1">💡 What to do:</p>
+              <p className="text-xs font-medium mb-1 flex items-center">
+                <Lightbulb className="w-3 h-3 mr-1" />
+                What to do:
+              </p>
               <p className="text-xs">
                 Please wait a moment and try again. The service is temporarily
                 busy.
@@ -40,7 +43,10 @@ export function ErrorDisplay({ error }: ErrorDisplayProps) {
           )}
           {isQuota && (
             <div className="mt-3 p-3 bg-red-100 rounded border border-red-200">
-              <p className="text-xs font-medium mb-1">💡 Daily Quota Exceeded:</p>
+              <p className="text-xs font-medium mb-1 flex items-center">
+                <Lightbulb className="w-3 h-3 mr-1" />
+                Daily Quota Exceeded:
+              </p>
               <p className="text-xs mb-2">
                 The free tier allows 20 requests per day. Your daily quota has been reached.
               </p>

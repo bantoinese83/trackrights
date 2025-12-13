@@ -8,7 +8,7 @@ import {
 } from 'framer-motion';
 import {
   FileText,
-  Sparkles,
+  Wand2,
   Shield,
   DollarSign,
   Calculator,
@@ -27,7 +27,7 @@ const featureList: Feature[] = [
     text: 'Upload your contract',
   },
   {
-    icon: Sparkles,
+    icon: Wand2,
     text: 'AI simplifies terms',
   },
   {

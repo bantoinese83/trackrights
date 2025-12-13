@@ -16,6 +16,7 @@ import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useAppState } from '@/lib/contexts/StateContext';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import Loader from '@/components/kokonutui/loader';
+import { Wand2 } from 'lucide-react';
 
 export function ContractInput() {
   const [draftText, setDraftText, clearDraft] = useLocalStorage<string>(
@@ -68,11 +69,11 @@ export function ContractInput() {
     try {
       const result = await simplifyContract.execute({ contractText });
       if (result) {
-        toast({
-          title: '✅ Analysis Started!',
-          description:
-            'Your contract is being analyzed. Results will appear shortly.',
-        });
+      toast({
+        title: 'Analysis Started!',
+        description:
+          'Your contract is being analyzed. Results will appear shortly.',
+      });
         resetForm();
         clearDraft(); // Clear draft after successful submission
       }
@@ -127,7 +128,7 @@ export function ContractInput() {
             className="w-full sm:w-auto bg-white text-purple-900 hover:bg-purple-50 font-semibold py-3 px-8 rounded-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:hover:scale-100 shadow-lg"
             disabled={!contractText.trim()}
           >
-            <span className="mr-2">✨</span>
+            <Wand2 className="w-4 h-4 mr-2" />
             Analyze Contract
           </Button>
         </div>

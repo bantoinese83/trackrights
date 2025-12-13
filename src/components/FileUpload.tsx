@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Upload, AlertCircle, Music } from 'lucide-react';
+import { Upload, AlertCircle, Music, Wand2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Loader from '@/components/kokonutui/loader';
 import { ContractInput } from './ContractInput';
@@ -197,7 +197,7 @@ export function FileUpload() {
                 type="submit"
                 className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-full transform transition-all duration-200 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100"
               >
-                <span className="mr-2">✨</span>
+                <Wand2 className="w-4 h-4 mr-2" />
                 Analyze Contract
               </Button>
             </div>

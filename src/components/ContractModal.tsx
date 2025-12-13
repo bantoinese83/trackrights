@@ -139,7 +139,7 @@ export function ContractModal() {
       celebrate();
 
       toast({
-        title: '✨ Contract Generated!',
+        title: 'Contract Generated!',
         description: 'Your contract has been successfully generated.',
       });
     } catch (error) {

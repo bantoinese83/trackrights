@@ -109,7 +109,7 @@ export default function Hero() {
       celebrate('analyze');
 
       toast({
-        title: '🎉 Analysis Complete!',
+        title: 'Analysis Complete!',
         description:
           'Your contract has been simplified. Scroll down to view results.',
       });
@@ -137,7 +137,7 @@ export default function Hero() {
       celebrate('revise');
 
       toast({
-        title: '✨ Revision Complete!',
+        title: 'Revision Complete!',
         description:
           'Your contract has been revised according to your instructions.',
       });
@@ -173,7 +173,7 @@ export default function Hero() {
         >
           <HeroTitle
             title="Decode Your Music Contracts with AI - 100% Free"
-            description="Upload your contract, and our AI will break it down in plain language. Perfect for artists, producers, songwriters, managers, and all music industry professionals. No cost, no catch - just clear insights without the legal jargon headaches!"
+            description="Upload your contract, and our AI will break it down in plain language. Perfect for artists, producers, songwriters, managers, and all music industry professionals. No cost, no catch - just clear insights without the legal jargon headaches! Plus, chat with our Live Lawyer AI in real-time to ask questions about your contract."
             className="mt-8"
           />
         </motion.div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Mic, FileText, Zap, DollarSign, Shield, Edit2 } from 'lucide-react';
+import { Mic, FileText, Zap, DollarSign, Shield, Edit2, Phone } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 
@@ -40,6 +40,12 @@ const features = [
     title: 'AI-Powered Contract Revision',
     description:
       'Get suggestions for contract revisions that favor your specific role in the music industry.',
+  },
+  {
+    icon: <Phone className="h-10 w-10 text-purple-600" />,
+    title: 'Live Lawyer - Real-Time AI Consultation',
+    description:
+      'Have a real-time voice conversation with an AI lawyer about your contract. Ask questions and get instant audio responses.',
   },
 ];
 

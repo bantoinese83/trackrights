@@ -49,6 +49,11 @@ const faqItems = [
     answer:
       'Our free tier allows for a limited number of contract analyses per month for all users. For music professionals who need to analyze more contracts, we offer premium plans with higher or unlimited usage, catering to different needs across the industry.',
   },
+  {
+    question: 'What is Live Lawyer and how does it work?',
+    answer:
+      'Live Lawyer is our real-time AI consultation feature. After analyzing your contract, you can have a voice conversation with our AI lawyer to ask questions about your contract. Simply click "Start Call" in the Live Lawyer widget, allow microphone access, and speak naturally. The AI will respond with audio answers, referencing your contract analysis. This feature uses advanced voice AI technology to provide instant, conversational legal guidance.',
+  },
 ];
 
 export function FAQ({ id }: { id?: string }) {

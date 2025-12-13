@@ -6,7 +6,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Edit2 } from 'lucide-react';
+import { Edit2, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import Loader from '@/components/kokonutui/loader';
@@ -139,8 +139,9 @@ export function ContractRevision() {
           rewrite it based on your instructions.
         </p>
         <div className="mb-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
-          <p className="text-sm font-semibold text-purple-800 mb-3">
-            💡 Example instructions (click to use):
+          <p className="text-sm font-semibold text-purple-800 mb-3 flex items-center">
+            <Lightbulb className="w-4 h-4 mr-2" />
+            Example instructions (click to use):
           </p>
           {isLoadingExamples ? (
             <div className="text-sm text-gray-500 italic">

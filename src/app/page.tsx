@@ -13,12 +13,15 @@ import { FAQ } from '@/components/FAQ';
 
 // Metadata for the page
 export const metadata: Metadata = {
-  title: 'TrackRights | AI-Powered Music Contract Analysis',
+  title: 'TrackRights | AI-Powered Music Contract Analysis with Live Lawyer',
   description:
-    'TrackRights uses AI to analyze and simplify music contracts. Get clear insights into your music contracts with our free AI-powered analysis tool.',
+    'TrackRights uses AI to analyze and simplify music contracts. Get clear insights into your music contracts with our free AI-powered analysis tool. Plus, chat with our Live Lawyer AI in real-time to ask questions about your contract.',
   keywords: [
     'music contract analysis AI',
     'AI music contract review',
+    'live lawyer AI',
+    'real-time contract consultation',
+    'voice AI legal assistant',
     'music contract analyzer',
     'music contract analysis for all professionals',
     'artist contract analysis',
@@ -255,6 +258,7 @@ export default function Home() {
             'Instant Results',
             'Royalty Calculations',
             'Contract Generation',
+            'Live Lawyer - Real-Time AI Consultation',
           ],
         })}
       />

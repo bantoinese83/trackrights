@@ -25,6 +25,7 @@ import {
 import { Diamond, Copy, Download, Check } from 'lucide-react';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
+import { LiveLawyerWidget } from '@/components/LiveLawyerWidget';
 
 const PDFViewer = lazy(() => import('./PDFViewer'));
 
@@ -299,6 +300,9 @@ export function ContractComparison() {
           src: url('https://fonts.cdnfonts.com/css/trajan-pro') format('woff2');
         }
       `}</style>
+      
+      {/* Live Lawyer Widget */}
+      <LiveLawyerWidget />
     </motion.div>
   );
 }
