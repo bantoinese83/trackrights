@@ -22,7 +22,7 @@ interface HeroTitleProps {
 }
 
 export function HeroTitle({ title, description, className }: HeroTitleProps) {
-  const { openTour } = useTour();
+  const { openTour, hasCompletedTour, restartTour } = useTour();
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
 
   useEffect(() => {
@@ -97,10 +97,10 @@ export function HeroTitle({ title, description, className }: HeroTitleProps) {
             size="lg"
             variant="outline"
             className="bg-white text-purple-600 border-purple-600 hover:bg-purple-600 hover:text-white px-8 py-3 rounded-full font-bold transition-all duration-300 flex items-center mx-auto"
-            onClick={openTour}
+            onClick={hasCompletedTour ? restartTour : openTour}
           >
             <Map className="mr-2 h-5 w-5" />
-            Take a Tour
+            {hasCompletedTour ? 'Restart Tour' : 'Take a Tour'}
           </Button>
         </motion.div>
         <motion.div
