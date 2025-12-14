@@ -65,13 +65,13 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
   const initAudioContext = useCallback(() => {
     if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
       try {
-        const AudioContextClass = window.AudioContext || (window as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-        if (!AudioContextClass) {
+      const AudioContextClass = window.AudioContext || (window as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioContextClass) {
           throw new Error('AudioContext not supported in this browser');
-        }
-        audioContextRef.current = new AudioContextClass({
-          sampleRate: 24000, // Live API output sample rate
-        });
+      }
+      // Use browser's default sample rate for better compatibility
+      // We'll handle resampling in the playback function if needed
+      audioContextRef.current = new AudioContextClass();
         
         // Resume audio context if suspended (required by some browsers)
         if (audioContextRef.current.state === 'suspended') {
@@ -145,26 +145,30 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
   }): void => {
     try {
       // Handle audio data
-      if (message.serverContent?.modelTurn?.parts) {
-        for (const part of message.serverContent.modelTurn.parts) {
-          if (part.inlineData?.data) {
+    if (message.serverContent?.modelTurn?.parts) {
+      for (const part of message.serverContent.modelTurn.parts) {
+        if (part.inlineData?.data) {
             try {
-              // Decode base64 audio data
-              const audioData = Uint8Array.from(
-                atob(part.inlineData.data),
-                (c) => c.charCodeAt(0)
-              );
-              audioQueueRef.current.push(audioData);
+          // Decode base64 audio data more efficiently
+          const binaryString = atob(part.inlineData.data);
+          const audioData = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            audioData[i] = binaryString.charCodeAt(i);
+          }
+          // Only add non-empty chunks to prevent issues
+          if (audioData.length > 0) {
+            audioQueueRef.current.push(audioData);
+          }
             } catch (err) {
               console.error('Error decoding audio data:', err);
             }
-          }
         }
       }
+    }
 
       // Handle interruptions - clear queue and stop playback
-      if (message.serverContent?.interrupted) {
-        audioQueueRef.current = [];
+    if (message.serverContent?.interrupted) {
+      audioQueueRef.current = [];
         if (currentSourceRef.current) {
           try {
             currentSourceRef.current.stop();
@@ -331,53 +335,54 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
         };
 
         source.connect(processor);
-        processor.connect(audioContext.destination);
+        // Don't connect processor to destination - we only need to capture input, not play it back
       } catch (workletError) {
         // Fallback to ScriptProcessorNode if AudioWorklet is not supported
         console.warn('AudioWorklet not supported, falling back to ScriptProcessorNode:', workletError);
         
-        const processor = audioContext.createScriptProcessor(4096, 1, 1);
+      // Use larger buffer size (8192) for better performance and less choppy audio
+      const processor = audioContext.createScriptProcessor(8192, 1, 1);
         
         // Store for cleanup
         if (sessionRef.current) {
           sessionRef.current._audioProcessor = processor;
         }
 
-        processor.onaudioprocess = (e) => {
+      processor.onaudioprocess = (e) => {
           if (!isMuted && session && isConnected && audioContext.state === 'running') {
             try {
-              const inputData = e.inputBuffer.getChannelData(0);
+          const inputData = e.inputBuffer.getChannelData(0);
               
-              // Convert Float32Array to Int16Array (16-bit PCM)
-              const pcmData = new Int16Array(inputData.length);
-              for (let i = 0; i < inputData.length; i++) {
-                const sample = inputData[i];
-                if (sample !== undefined) {
-                  const s = Math.max(-1, Math.min(1, sample));
-                  pcmData[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
-                }
-              }
+          // Convert Float32Array to Int16Array (16-bit PCM)
+          const pcmData = new Int16Array(inputData.length);
+          for (let i = 0; i < inputData.length; i++) {
+            const sample = inputData[i];
+            if (sample !== undefined) {
+              const s = Math.max(-1, Math.min(1, sample));
+              pcmData[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+            }
+          }
 
               // Convert to base64 efficiently
               const uint8Array = new Uint8Array(pcmData.buffer);
-              const base64 = btoa(
+          const base64 = btoa(
                 String.fromCharCode.apply(null, Array.from(uint8Array))
-              );
+          );
 
-              session.sendRealtimeInput({
-                audio: {
-                  data: base64,
-                  mimeType: 'audio/pcm;rate=16000',
-                },
-              });
+          session.sendRealtimeInput({
+            audio: {
+              data: base64,
+              mimeType: 'audio/pcm;rate=16000',
+            },
+          });
             } catch (err) {
               console.error('Error processing audio:', err);
             }
-          }
-        };
+        }
+      };
 
-        source.connect(processor);
-        processor.connect(audioContext.destination);
+      source.connect(processor);
+      // Don't connect processor to destination - we only need to capture input, not play it back
       }
     } catch (err) {
       console.error('Error accessing microphone:', err);
@@ -402,23 +407,52 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
   // Start audio playback with robust error handling
   const startAudioPlayback = useCallback(() => {
     const audioContext = initAudioContext();
+    const inputSampleRate = 24000; // Live API output sample rate
+    const outputSampleRate = audioContext.sampleRate;
+
+    // Combine multiple small chunks into larger buffers for smoother playback
+    const combineChunks = (): Uint8Array | null => {
+      if (audioQueueRef.current.length === 0) return null;
+      
+      // Collect chunks until we have at least 4800 samples (200ms at 24kHz)
+      // or use all available chunks if queue is getting large
+      const minSamples = 4800;
+      const chunks: Uint8Array[] = [];
+      let totalLength = 0;
+      
+      while (audioQueueRef.current.length > 0 && (totalLength < minSamples * 2 || chunks.length < 3)) {
+        const chunk = audioQueueRef.current.shift();
+        if (chunk) {
+          chunks.push(chunk);
+          totalLength += chunk.length;
+        }
+      }
+      
+      if (chunks.length === 0) return null;
+      
+      // Combine chunks into single buffer
+      const combined = new Uint8Array(totalLength);
+      let offset = 0;
+      for (const chunk of chunks) {
+        combined.set(chunk, offset);
+        offset += chunk.length;
+      }
+      
+      return combined;
+    };
 
     const playAudio = async () => {
-      if (audioQueueRef.current.length === 0) {
-        isPlayingRef.current = false;
-        return;
-      }
-
       if (isPlayingRef.current) {
         return; // Already playing
       }
 
-      isPlayingRef.current = true;
-      const audioData = audioQueueRef.current.shift();
+      const audioData = combineChunks();
       if (!audioData) {
         isPlayingRef.current = false;
         return;
       }
+
+      isPlayingRef.current = true;
 
       try {
         // Ensure audio context is running
@@ -428,7 +462,6 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
 
         // Convert PCM data to AudioBuffer
         // Live API returns 24kHz, 16-bit PCM, mono
-        const sampleRate = 24000;
         const length = audioData.length / 2; // 16-bit = 2 bytes per sample
         
         if (length === 0) {
@@ -437,16 +470,39 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
           return;
         }
 
-        const audioBuffer = audioContext.createBuffer(1, length, sampleRate);
-        const channelData = audioBuffer.getChannelData(0);
+        // Create buffer at input sample rate first
+        const inputBuffer = audioContext.createBuffer(1, length, inputSampleRate);
+        const channelData = inputBuffer.getChannelData(0);
 
         // Convert Int16 PCM to Float32 (-1 to 1)
         const int16Array = new Int16Array(audioData.buffer, audioData.byteOffset, length);
         for (let i = 0; i < length; i++) {
           const sample = int16Array[i];
           if (sample !== undefined) {
-            channelData[i] = sample / 32768.0;
+            // Clamp to prevent clipping
+            channelData[i] = Math.max(-1, Math.min(1, sample / 32768.0));
           }
+        }
+
+        // Resample if needed (browser will handle this, but we create buffer at correct rate)
+        let audioBuffer = inputBuffer;
+        if (inputSampleRate !== outputSampleRate) {
+          // Create output buffer with resampled length
+          const outputLength = Math.round(length * outputSampleRate / inputSampleRate);
+          const outputBuffer = audioContext.createBuffer(1, outputLength, outputSampleRate);
+          const outputData = outputBuffer.getChannelData(0);
+          
+          // Simple linear resampling
+          for (let i = 0; i < outputLength; i++) {
+            const srcIndex = (i * inputSampleRate) / outputSampleRate;
+            const srcIndexFloor = Math.floor(srcIndex);
+            const srcIndexCeil = Math.min(srcIndexFloor + 1, length - 1);
+            const fraction = srcIndex - srcIndexFloor;
+            
+            outputData[i] = channelData[srcIndexFloor] * (1 - fraction) + 
+                           channelData[srcIndexCeil] * fraction;
+          }
+          audioBuffer = outputBuffer;
         }
 
         const source = audioContext.createBufferSource();
@@ -459,8 +515,8 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
         source.onended = () => {
           currentSourceRef.current = null;
           isPlayingRef.current = false;
-          // Continue playing next chunk
-          setTimeout(() => playAudio(), 0);
+          // Continue playing next chunk immediately
+          requestAnimationFrame(() => playAudio());
         };
 
         source.start(0);
@@ -469,16 +525,16 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
         currentSourceRef.current = null;
         isPlayingRef.current = false;
         // Try next chunk after short delay
-        setTimeout(() => playAudio(), 10);
+        setTimeout(() => playAudio(), 5);
       }
     };
 
-    // Start playback loop
+    // Start playback loop - check more frequently for smoother playback
     playbackIntervalRef.current = setInterval(() => {
       if (!isPlayingRef.current && audioQueueRef.current.length > 0) {
         playAudio();
       }
-    }, 50);
+    }, 10); // Reduced from 50ms to 10ms for more responsive playback
 
     // Cleanup function
     return () => {
@@ -522,7 +578,7 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
       aiRef.current = ai;
 
       // Build system instruction with contract context
-      let systemInstruction = 'You are a helpful legal AI assistant specializing in music industry contracts. ';
+      let systemInstruction = 'You are a helpful legal AI assistant specializing in music industry contracts. Your role is to help users understand their contracts by answering questions, explaining terms, and providing recommendations. ';
       if (simplifiedContract) {
         // Truncate contract if too long (keep it reasonable for context)
         const contractPreview = simplifiedContract.length > 5000 
@@ -530,7 +586,7 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
           : simplifiedContract;
         systemInstruction += `The user has a contract that has been analyzed. Here is the simplified version: ${contractPreview} `;
       }
-      systemInstruction += 'Provide clear, concise answers about contract terms, rights, obligations, and recommendations.';
+      systemInstruction += 'When the conversation starts, introduce yourself as their Live Lawyer AI assistant and let them know you are ready to help answer questions about their contract. Provide clear, concise answers about contract terms, rights, obligations, and recommendations. Always remember: you are the AI assistant, and the user is the person asking questions.';
 
       const model = 'gemini-2.5-flash-native-audio-preview-12-2025';
       const config = {
@@ -605,14 +661,10 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
       sessionRef.current = session;
 
       // Send initial greeting to start the conversation
-      // This makes the AI speak first so users don't have to initiate
+      // Send a simple "Hello" from the user, and the AI will respond with its introduction
       try {
-        const greetingMessage = simplifiedContract
-          ? "Hello! I'm your Live Lawyer AI assistant. I've reviewed your contract analysis and I'm here to help answer any questions you have about your music contract. What would you like to know?"
-          : "Hello! I'm your Live Lawyer AI assistant, here to help you understand your music contract. What questions do you have?";
-        
         session.sendClientContent({
-          turns: greetingMessage,
+          turns: "Hello",
           turnComplete: true,
         });
       } catch (err) {
@@ -659,14 +711,14 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
     if (sessionRef.current) {
       try {
         // Cleanup playback
-        const session = sessionRef.current as { _playbackCleanup?: () => void; close: () => void };
-        if (session._playbackCleanup) {
-          session._playbackCleanup();
-        }
+      const session = sessionRef.current as { _playbackCleanup?: () => void; close: () => void };
+      if (session._playbackCleanup) {
+        session._playbackCleanup();
+      }
         
         // Close session
         try {
-          session.close();
+      session.close();
         } catch (err) {
           console.warn('Error closing session:', err);
         }
@@ -695,7 +747,7 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
     // Cleanup audio contexts
     if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
       try {
-        audioContextRef.current.close();
+      audioContextRef.current.close();
       } catch (err) {
         console.warn('Error closing audio context:', err);
       }

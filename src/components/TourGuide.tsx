@@ -143,7 +143,7 @@ export function TourGuide() {
         if (document.activeElement === firstElement) {
           e.preventDefault();
           lastElement?.focus();
-        }
+    }
       } else {
         if (document.activeElement === lastElement) {
           e.preventDefault();
@@ -207,7 +207,7 @@ export function TourGuide() {
         >
           {/* Progress bar */}
           <div className="h-1 bg-gray-200 rounded-t-lg overflow-hidden">
-            <motion.div
+          <motion.div
               className="h-full bg-gradient-to-r from-purple-600 to-purple-800"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
@@ -224,7 +224,7 @@ export function TourGuide() {
                   className="text-2xl font-bold text-purple-800 mb-1"
                 >
                   {currentStepData.title}
-                </h2>
+              </h2>
                 <p className="text-sm text-gray-500">
                   Step {currentStep + 1} of {steps.length}
                 </p>
@@ -247,7 +247,7 @@ export function TourGuide() {
                   className="text-gray-500 hover:text-gray-700"
                 >
                   <X className="h-5 w-5" />
-                </Button>
+              </Button>
               </div>
             </div>
 
@@ -311,7 +311,7 @@ export function TourGuide() {
                       <ChevronRight className="h-4 w-4" />
                     </>
                   )}
-                </Button>
+              </Button>
               </div>
             </div>
 
