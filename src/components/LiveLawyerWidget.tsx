@@ -500,8 +500,13 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
             const srcIndexCeil = Math.min(srcIndexFloor + 1, length - 1);
             const fraction = srcIndex - srcIndexFloor;
             
-            outputData[i] = channelData[srcIndexFloor] * (1 - fraction) + 
-                           channelData[srcIndexCeil] * fraction;
+            // Ensure indices are within bounds
+            const floorIndex = Math.max(0, Math.min(srcIndexFloor, length - 1));
+            const ceilIndex = Math.max(0, Math.min(srcIndexCeil, length - 1));
+            const floorValue = channelData[floorIndex] ?? 0;
+            const ceilValue = channelData[ceilIndex] ?? 0;
+            
+            outputData[i] = floorValue * (1 - fraction) + ceilValue * fraction;
           }
           audioBuffer = outputBuffer;
         }
