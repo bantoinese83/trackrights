@@ -555,6 +555,22 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
             setIsListening(true);
             setConnectionStatus('connected');
             retryCountRef.current = 0; // Reset retry count on successful connection
+            
+            // Send initial greeting to start the conversation
+            // This makes the AI speak first so users don't have to initiate
+            try {
+              const greetingMessage = simplifiedContract
+                ? "Hello! I'm your Live Lawyer AI assistant. I've reviewed your contract analysis and I'm here to help answer any questions you have about your music contract. What would you like to know?"
+                : "Hello! I'm your Live Lawyer AI assistant, here to help you understand your music contract. What questions do you have?";
+              
+              session.sendClientContent({
+                turns: greetingMessage,
+                turnComplete: true,
+              });
+            } catch (err) {
+              console.warn('Error sending initial greeting:', err);
+              // Non-critical error, continue anyway
+            }
           },
           onmessage: handleMessage,
           onerror: (e: { message?: string; reason?: string; code?: number }) => {
