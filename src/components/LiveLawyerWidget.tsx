@@ -456,7 +456,11 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
       
       // Get ephemeral token from server
       const ephemeralToken = await getEphemeralToken();
-      const ai = new GoogleGenAI({ apiKey: ephemeralToken });
+      // IMPORTANT: Must use v1alpha API version for ephemeral tokens
+      const ai = new GoogleGenAI({ 
+        apiKey: ephemeralToken,
+        httpOptions: { apiVersion: 'v1alpha' }
+      });
       aiRef.current = ai;
 
       // Build system instruction with contract context
