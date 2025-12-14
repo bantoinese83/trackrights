@@ -35,7 +35,7 @@
 
 ## 🎯 Overview
 
-TrackRights is an innovative AI-powered platform designed to simplify and analyze music industry contracts. It caters to a wide array of professionals, including artists, producers, performers, songwriters, and managers. Our mission is to provide clear, actionable contract insights, enabling informed decision-making in the music industry.
+TrackRights is an innovative AI-powered platform designed to simplify and analyze contracts for creative professionals. It caters to a wide array of professionals, including artists, producers, performers, songwriters, streamers, influencers, and managers. Our mission is to provide clear, actionable contract insights, enabling informed decision-making in the music and creator industries.
 
 ---
 
@@ -44,9 +44,9 @@ TrackRights is an innovative AI-powered platform designed to simplify and analyz
 | Feature                   | Description                                                                           |
 | ------------------------- | ------------------------------------------------------------------------------------- |
 | **AI Contract Analysis**  | Upload a contract to receive a simplified and easy-to-understand summary              |
-| **Contract Generation**   | Create custom music contracts tailored to various roles within the industry           |
+| **Contract Generation**   | Create custom contracts tailored to various roles in music and creator industries      |
 | **Contract Revision**     | Use AI-assisted suggestions to revise contracts in your favor                         |
-| **Multi-Role Support**    | Provides specialized analysis and generation for different music industry roles       |
+| **Multi-Role Support**    | Provides specialized analysis and generation for music professionals, streamers, and influencers |
 | **Royalty Calculator**    | Estimate potential earnings from various streaming platforms                          |
 | **Educational Resources** | Access a comprehensive FAQ and educational content regarding music industry contracts |
 | **Responsive Design**     | Fully functional and accessible on desktop and mobile devices                         |

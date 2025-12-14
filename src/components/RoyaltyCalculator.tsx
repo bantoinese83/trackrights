@@ -47,7 +47,7 @@ export default function RoyaltyCalculator() {
       saved ??
       streamingPlatforms[0] ?? {
         name: 'Qobuz',
-        rate: 0.022,
+        rate: 0.0204,
         logo: '',
         width: 100,
         height: 30,

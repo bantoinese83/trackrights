@@ -11,6 +11,7 @@ export type Category =
   | 'producer'
   | 'licensing'
   | 'studio'
+  | 'creator'
   | 'other';
 
 export const categories: Record<Category, string> = {
@@ -18,6 +19,7 @@ export const categories: Record<Category, string> = {
   producer: 'Producer Agreements',
   licensing: 'Licensing',
   studio: 'Studio Agreements',
+  creator: 'Creator & Influencer Contracts',
   other: 'Other Documents',
 };
 
@@ -237,5 +239,45 @@ export const contracts: Contract[] = [
     tags: ['side-artist', 'no-royalty', 'no-song-rights'],
     description:
       'Agreement for side artists performing on a recording, with no royalties and no song rights.',
+  },
+  {
+    id: 'bsa',
+    title: 'Brand Sponsorship Agreement',
+    category: 'creator',
+    tags: ['sponsorship', 'brand-deal', 'influencer', 'streamer'],
+    description:
+      'Agreement for streamers and influencers to promote brands through sponsored content, including payment terms, content requirements, and FTC compliance.',
+  },
+  {
+    id: 'ppa-twitch',
+    title: 'Twitch Partnership Agreement',
+    category: 'creator',
+    tags: ['twitch', 'platform', 'partnership', 'streamer'],
+    description:
+      'Partnership agreement for Twitch streamers, including revenue share terms, exclusivity requirements, and platform-specific obligations.',
+  },
+  {
+    id: 'ppa-youtube',
+    title: 'YouTube Partner Program Agreement',
+    category: 'creator',
+    tags: ['youtube', 'platform', 'partnership', 'creator'],
+    description:
+      'Partnership agreement for YouTube creators, including monetization terms, content ownership, and platform policies.',
+  },
+  {
+    id: 'ppa-tiktok',
+    title: 'TikTok Creator Fund Agreement',
+    category: 'creator',
+    tags: ['tiktok', 'platform', 'partnership', 'creator'],
+    description:
+      'Creator Fund agreement for TikTok creators, including payment terms, content requirements, and platform-specific terms.',
+  },
+  {
+    id: 'imc',
+    title: 'Influencer Management Contract',
+    category: 'creator',
+    tags: ['management', 'influencer', 'streamer', 'agent'],
+    description:
+      'Management contract for influencers and streamers, including management fees, services provided, term length, and commission structure.',
   },
 ];

@@ -17,15 +17,15 @@ import { useState, useRef, useEffect } from 'react';
 const features = [
   {
     icon: <Mic className="h-10 w-10 text-purple-600" />,
-    title: 'Music Industry Focused',
+    title: 'Creative Professional Focused',
     description:
-      'Tailored analysis for artists, producers, songwriters, managers, labels, publishers, and all music industry professionals.',
+      'Tailored analysis for artists, producers, songwriters, streamers, influencers, managers, labels, publishers, and all creative professionals.',
   },
   {
     icon: <FileText className="h-10 w-10 text-purple-600" />,
     title: 'Plain English Explanations',
     description:
-      'Complex legal terms simplified for easy understanding by all music professionals.',
+      'Complex legal terms simplified for easy understanding by all creative professionals, from musicians to streamers and influencers.',
   },
   {
     icon: <Zap className="h-10 w-10 text-purple-600" />,
@@ -35,9 +35,9 @@ const features = [
   },
   {
     icon: <DollarSign className="h-10 w-10 text-purple-600" />,
-    title: 'Royalty Clarification',
+    title: 'Royalty & Payment Clarification',
     description:
-      "Understand your earnings and payment structures clearly, whether you're an artist, producer, songwriter, manager, or any music industry professional.",
+      "Understand your earnings and payment structures clearly, whether you're an artist, producer, songwriter, streamer, influencer, manager, or any creative professional.",
   },
   {
     icon: <Shield className="h-10 w-10 text-purple-600" />,
@@ -49,7 +49,7 @@ const features = [
     icon: <Edit2 className="h-10 w-10 text-purple-600" />,
     title: 'AI-Powered Contract Revision',
     description:
-      'Get suggestions for contract revisions that favor your specific role in the music industry.',
+      'Get suggestions for contract revisions that favor your specific role, whether in music, streaming, or influencer marketing.',
   },
   {
     icon: <Phone className="h-10 w-10 text-purple-600" />,
@@ -61,7 +61,7 @@ const features = [
     icon: <GitCompare className="h-10 w-10 text-purple-600" />,
     title: 'Contract Comparison',
     description:
-      'Compare multiple contract versions side-by-side to understand changes and negotiate better terms for your music career.',
+      'Compare multiple contract versions side-by-side to understand changes and negotiate better terms for your creative career.',
   },
   {
     icon: <Lock className="h-10 w-10 text-purple-600" />,
@@ -126,7 +126,7 @@ export function Features({ id }: { id?: string }) {
               WebkitTextStroke: '2px rgba(128, 90, 213, 0.8)',
             }}
           >
-            Features for All Music Professionals
+            Features for All Creative Professionals
           </h2>
         </div>
 

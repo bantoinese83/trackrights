@@ -9,8 +9,8 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">TrackRights.com</h3>
             <p className="text-sm text-purple-200">
-              Empowering artists, producers, songwriters, managers, and all
-              music industry professionals with AI-powered contract analysis.
+              Empowering artists, producers, songwriters, streamers, influencers, managers, and all
+              creative professionals with AI-powered contract analysis.
             </p>
           </div>
           <div>

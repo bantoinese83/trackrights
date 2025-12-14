@@ -10,12 +10,12 @@ const faqItems = [
   {
     question: 'Who can benefit from TrackRights?',
     answer:
-      'TrackRights is designed for all music industry professionals, including artists, producers, performers, songwriters, managers, and more. Our AI-powered tool simplifies and analyzes contracts relevant to various roles in the music industry.',
+      'TrackRights is designed for all creative professionals, including artists, producers, performers, songwriters, streamers, influencers, managers, and more. Our AI-powered tool simplifies and analyzes contracts relevant to various roles in music, streaming, and influencer marketing.',
   },
   {
-    question: 'How does TrackRights work for different music professionals?',
+    question: 'How does TrackRights work for different creative professionals?',
     answer:
-      'Upload your music-related contract to our platform, and our AI will analyze the document based on your specific role in the industry. It then provides a simplified version of the contract, highlighting key points and explaining complex legal jargon in plain English, tailored to your position.',
+      'Upload your contract (music, streaming, brand deals, etc.) to our platform, and our AI will analyze the document based on your specific role. It then provides a simplified version of the contract, highlighting key points and explaining complex legal jargon in plain English, tailored to your position.',
   },
   {
     question: 'Is my contract information secure?',
@@ -30,24 +30,24 @@ const faqItems = [
   {
     question: 'What types of contracts can TrackRights analyze?',
     answer:
-      'TrackRights is designed to analyze various music industry contracts, including recording agreements, publishing deals, licensing agreements, performance contracts, management contracts, and more. Our system is continually updated to cover a wide range of contract types relevant to different music industry roles.',
+      'TrackRights can analyze various contracts including music industry agreements (recording, publishing, licensing), brand sponsorship deals, platform partnership agreements (Twitch, YouTube, TikTok), influencer management contracts, collaboration agreements, and more. Our system is continually updated to cover a wide range of contract types relevant to different creative professional roles.',
   },
   {
     question:
-      'How accurate is the AI-powered analysis for different music professions?',
+      'How accurate is the AI-powered analysis for different creative professions?',
     answer:
-      "Our AI model is trained on a vast database of music contracts and legal documents covering various roles in the music industry. While it's highly accurate, we always recommend using it as a supplementary tool alongside professional legal advice, especially for complex or high-stakes agreements.",
+      "Our AI model is trained on a vast database of contracts and legal documents covering various roles in music, streaming, and influencer marketing. While it's highly accurate, we always recommend using it as a supplementary tool alongside professional legal advice, especially for complex or high-stakes agreements.",
   },
   {
     question:
       'Can I use TrackRights for contracts in languages other than English?',
     answer:
-      "Currently, TrackRights is optimized for English-language contracts across all music industry roles. We're working on expanding our language capabilities in the future to serve a more diverse global music community.",
+      "Currently, TrackRights is optimized for English-language contracts across all creative professional roles. We're working on expanding our language capabilities in the future to serve a more diverse global creative community.",
   },
   {
     question: 'Is there a limit to how many contracts I can analyze?',
     answer:
-      'Our free tier allows for a limited number of contract analyses per month for all users. For music professionals who need to analyze more contracts, we offer premium plans with higher or unlimited usage, catering to different needs across the industry.',
+      'Our free tier allows for a limited number of contract analyses per month for all users. For creative professionals who need to analyze more contracts, we offer premium plans with higher or unlimited usage, catering to different needs across music, streaming, and influencer industries.',
   },
   {
     question: 'What is Live Lawyer and how does it work?',
@@ -85,7 +85,7 @@ export function FAQ({ id }: { id?: string }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          FAQs for All Music Professionals
+          FAQs for All Creative Professionals
         </motion.h2>
 
         <motion.div

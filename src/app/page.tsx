@@ -15,7 +15,7 @@ import { FAQ } from '@/components/FAQ';
 export const metadata: Metadata = {
   title: 'TrackRights | AI-Powered Music Contract Analysis with Live Lawyer',
   description:
-    'TrackRights uses AI to analyze and simplify music contracts. Get clear insights into your music contracts with our free AI-powered analysis tool. Plus, chat with our Live Lawyer AI in real-time to ask questions about your contract.',
+    'TrackRights uses AI to analyze and simplify contracts for music professionals, streamers, and influencers. Get clear insights into your contracts with our free AI-powered analysis tool. Plus, chat with our Live Lawyer AI in real-time to ask questions about your contract.',
   keywords: [
     'music contract analysis AI',
     'AI music contract review',
@@ -27,6 +27,14 @@ export const metadata: Metadata = {
     'artist contract analysis',
     'songwriter contract analysis',
     'indie artist contracts',
+    'streamer contract analysis',
+    'influencer contract analysis',
+    'creator contract review',
+    'Twitch contract analysis',
+    'YouTube contract analysis',
+    'TikTok creator contract',
+    'brand sponsorship agreement',
+    'influencer management contract',
 
     // Benefits & Features
     'free music contract analysis',
@@ -61,6 +69,16 @@ export const metadata: Metadata = {
     'artist management deals review',
     'digital distribution agreements analysis',
     'streaming platform contracts analysis',
+    'brand deal analysis',
+    'sponsorship agreement review',
+    'influencer collaboration agreement',
+    'platform partnership agreement',
+    'Twitch partnership contract',
+    'YouTube Partner Program contract',
+    'TikTok Creator Fund contract',
+    'Instagram influencer contract',
+    'streamer brand deal',
+    'influencer brand deal',
 
     // Rights & Legal Aspects
     'music rights management',
@@ -182,6 +200,9 @@ export const metadata: Metadata = {
     'artist contract aid',
     'artist deal mentor',
     'artist agreement analysis',
+    'streamer contract review',
+    'influencer contract review',
+    'creator contract analysis',
     'music professional protection system',
     'music agreement aid',
     'music deal guide',
@@ -194,9 +215,9 @@ export const metadata: Metadata = {
     'music contract guide',
   ],
   openGraph: {
-    title: 'TrackRights - AI Music Contract Analysis',
+    title: 'TrackRights - AI Contract Analysis for Creative Professionals',
     description:
-      'Analyze and understand your music contracts with AI. Free, instant, and designed for all music industry professionals.',
+      'Analyze and understand your contracts with AI. Free, instant, and designed for music professionals, streamers, influencers, and all creative professionals.',
     url: 'https://trackrights.com',
     siteName: 'TrackRights',
     images: [

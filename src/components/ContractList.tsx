@@ -46,6 +46,7 @@ export function ContractList() {
     producer: false,
     licensing: false,
     studio: false,
+    creator: true,
     other: false,
   });
   const { modalState, openModal } = useModal();

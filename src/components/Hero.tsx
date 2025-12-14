@@ -171,8 +171,8 @@ export default function Hero() {
           transition={{ duration: 0.5 }}
         >
           <HeroTitle
-            title="Decode Your Music Contracts with AI - 100% Free"
-            description="Upload your contract, and our AI will break it down in plain language. Perfect for artists, producers, songwriters, managers, and all music industry professionals. No cost, no catch - just clear insights without the legal jargon headaches! Plus, chat with our Live Lawyer AI in real-time to ask questions about your contract."
+            title="Decode Your Contracts with AI - 100% Free"
+            description="Upload your contract, and our AI will break it down in plain language. Perfect for artists, producers, songwriters, streamers, influencers, managers, and all creative professionals. No cost, no catch - just clear insights without the legal jargon headaches! Plus, chat with our Live Lawyer AI in real-time to ask questions about your contract."
             className="mt-8"
           />
         </motion.div>

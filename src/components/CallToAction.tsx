@@ -92,7 +92,7 @@ export function CallToAction() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Ready to Simplify Your Music Contracts?
+          Ready to Simplify Your Contracts?
         </motion.h2>
         <motion.p
           className="text-2xl mb-8 text-white text-shadow-lg"
@@ -100,9 +100,7 @@ export function CallToAction() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          Join thousands of artists, producers, songwriters, managers, and music
-          industry professionals who trust TrackRights.com for clear, concise
-          contract analysis.
+          Join thousands of artists, producers, songwriters, streamers, influencers, managers, and creative professionals who trust TrackRights.com for clear, concise contract analysis.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
