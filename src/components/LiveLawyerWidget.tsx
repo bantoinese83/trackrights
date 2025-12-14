@@ -5,13 +5,12 @@ import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { GoogleGenAI, Modality } from '@google/genai';
 import { Button } from '@/components/ui/button';
-import { Mic, MicOff, Phone, PhoneOff, X, AlertCircle } from 'lucide-react';
+import { Mic, MicOff, Phone, PhoneOff, X, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAppState } from '@/lib/contexts/StateContext';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
 interface LiveLawyerWidgetProps {
-  onClose?: () => void;
   className?: string;
 }
 
@@ -24,11 +23,12 @@ interface GoAwayMessage {
   timeLeft?: string;
 }
 
-export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) {
+export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
   const { state } = useAppState();
   const { simplifiedContract } = state;
   const { toast } = useToast();
   
+  const [isOpen, setIsOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -842,6 +842,11 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
     setIsMounted(true);
   }, []);
 
+  // Toggle panel open/closed
+  const togglePanel = useCallback(() => {
+    setIsOpen((prev) => !prev);
+  }, []);
+
   // Only show widget if contract is analyzed
   if (!simplifiedContract) {
     return null;
@@ -863,121 +868,193 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
   };
 
   const widgetContent = (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      className={cn(
-        'fixed bottom-6 right-6 z-[9999] w-80 bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden',
-        className
+    <>
+      {/* Backdrop overlay for mobile */}
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={togglePanel}
+          className="fixed inset-0 bg-black/50 z-[9997] md:hidden"
+          style={{ zIndex: 9997 }}
+        />
       )}
-      style={{ zIndex: 9999 }}
-    >
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold text-lg">Live Lawyer</h3>
-            <p className="text-sm text-purple-100">
-              {getStatusText()}
-            </p>
-          </div>
-          {onClose && (
+
+      {/* Toggle Button - Always visible */}
+      <motion.button
+        onClick={togglePanel}
+        className={cn(
+          'fixed right-0 top-1/2 -translate-y-1/2 z-[9998]',
+          'bg-gradient-to-r from-purple-600 to-indigo-600 text-white',
+          'px-3 py-6 rounded-l-lg shadow-lg hover:shadow-xl',
+          'transition-all duration-300',
+          'flex items-center justify-center',
+          'hover:from-purple-700 hover:to-indigo-700',
+          isOpen && 'right-[100%] sm:right-[384px] md:right-[450px]'
+        )}
+        style={{ zIndex: 9998 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        aria-label={isOpen ? 'Close Live Lawyer' : 'Open Live Lawyer'}
+      >
+        <div className="flex flex-col items-center gap-1">
+          {isOpen ? (
+            <>
+              <ChevronRight className="w-5 h-5" />
+              <span className="text-[10px] font-medium hidden sm:inline">Close</span>
+            </>
+          ) : (
+            <>
+              <ChevronLeft className="w-5 h-5" />
+              <span className="text-[10px] font-medium hidden sm:inline">Live Lawyer</span>
+            </>
+          )}
+        </div>
+      </motion.button>
+
+      {/* Side Panel */}
+      <motion.div
+        initial={false}
+        animate={{
+          x: isOpen ? 0 : '100%',
+          opacity: isOpen ? 1 : 0,
+        }}
+        transition={{
+          type: 'spring',
+          stiffness: 300,
+          damping: 30,
+        }}
+        className={cn(
+          'fixed right-0 top-0 h-full z-[9999]',
+          'w-full sm:w-96 md:w-[450px]',
+          'bg-white shadow-2xl border-l border-gray-200',
+          'flex flex-col',
+          className
+        )}
+        style={{ zIndex: 9999 }}
+      >
+        {/* Header */}
+        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <h3 className="font-semibold text-lg">Live Lawyer</h3>
+              <p className="text-sm text-purple-100">
+                {getStatusText()}
+              </p>
+            </div>
             <Button
               variant="ghost"
               size="icon"
-              className="text-white hover:bg-white/20"
-              onClick={onClose}
+              className="text-white hover:bg-white/20 ml-2"
+              onClick={togglePanel}
             >
               <X className="w-4 h-4" />
             </Button>
-          )}
-        </div>
-      </div>
-
-      <div className="p-4 space-y-4">
-        {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700 flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-            <div className="flex-1">
-              <p className="font-medium">Error</p>
-              <p className="text-xs mt-1">{error}</p>
-            </div>
           </div>
-        )}
+        </div>
 
-        <div className="flex items-center justify-center gap-4">
-          <Button
-            onClick={handleToggleConnection}
-            disabled={isConnecting || connectionStatus === 'reconnecting'}
-            variant={isConnected ? 'destructive' : 'default'}
-            size="lg"
-            className="flex items-center gap-2"
-          >
-            {isConnected ? (
-              <>
-                <PhoneOff className="w-5 h-5" />
-                End Call
-              </>
-            ) : isConnecting ? (
-              <>
-                <Phone className="w-5 h-5 animate-pulse" />
-                Connecting...
-              </>
-            ) : (
-              <>
-                <Phone className="w-5 h-5" />
-                Start Call
-              </>
-            )}
-          </Button>
+        {/* Content - Scrollable */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700 flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="font-medium">Error</p>
+                <p className="text-xs mt-1">{error}</p>
+              </div>
+            </div>
+          )}
 
-          {isConnected && (
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
-              onClick={toggleMute}
-              variant="outline"
+              onClick={handleToggleConnection}
+              disabled={isConnecting || connectionStatus === 'reconnecting'}
+              variant={isConnected ? 'destructive' : 'default'}
               size="lg"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 w-full sm:w-auto"
             >
-              {isMuted ? (
+              {isConnected ? (
                 <>
-                  <MicOff className="w-5 h-5" />
-                  Unmute
+                  <PhoneOff className="w-5 h-5" />
+                  End Call
+                </>
+              ) : isConnecting ? (
+                <>
+                  <Phone className="w-5 h-5 animate-pulse" />
+                  Connecting...
                 </>
               ) : (
                 <>
-                  <Mic className="w-5 h-5" />
-                  Mute
+                  <Phone className="w-5 h-5" />
+                  Start Call
                 </>
               )}
             </Button>
+
+            {isConnected && (
+              <Button
+                onClick={toggleMute}
+                variant="outline"
+                size="lg"
+                className="flex items-center gap-2 w-full sm:w-auto"
+              >
+                {isMuted ? (
+                  <>
+                    <MicOff className="w-5 h-5" />
+                    Unmute
+                  </>
+                ) : (
+                  <>
+                    <Mic className="w-5 h-5" />
+                    Mute
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
+
+          {isConnected && (
+            <div className="text-center text-sm text-gray-600 space-y-2">
+              <p>Speak naturally to ask questions about your contract.</p>
+              <p className="text-xs text-gray-500">
+                The AI can reference your contract analysis to provide answers.
+              </p>
+            </div>
+          )}
+
+          {!isConnected && !isConnecting && (
+            <div className="text-center text-sm text-gray-600 space-y-2">
+              <p className="font-medium">Get Instant Legal Help</p>
+              <p>Click &quot;Start Call&quot; to begin a real-time conversation with an AI lawyer about your contract.</p>
+              <div className="mt-4 p-3 bg-purple-50 rounded-lg text-left">
+                <p className="text-xs font-semibold text-purple-900 mb-1">What you can ask:</p>
+                <ul className="text-xs text-purple-700 space-y-1 list-disc list-inside">
+                  <li>Explain specific contract terms</li>
+                  <li>Understand your rights and obligations</li>
+                  <li>Get recommendations for improvements</li>
+                  <li>Clarify confusing legal language</li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {isListening && (
+            <div className="flex items-center justify-center gap-2 text-purple-600 py-2">
+              <div className="w-2 h-2 bg-purple-600 rounded-full animate-pulse" />
+              <span className="text-sm font-medium">Listening...</span>
+            </div>
           )}
         </div>
 
-        {isConnected && (
-          <div className="text-center text-sm text-gray-600">
-            <p>Speak naturally to ask questions about your contract.</p>
-            <p className="mt-2 text-xs text-gray-500">
-              The AI can reference your contract analysis to provide answers.
-            </p>
-          </div>
-        )}
-
-        {!isConnected && !isConnecting && (
-          <div className="text-center text-sm text-gray-600">
-            <p>Click &quot;Start Call&quot; to begin a real-time conversation with an AI lawyer about your contract.</p>
-          </div>
-        )}
-      </div>
-
-      {isListening && (
-        <div className="px-4 pb-4">
-          <div className="flex items-center justify-center gap-2 text-purple-600">
-            <div className="w-2 h-2 bg-purple-600 rounded-full animate-pulse" />
-            <span className="text-xs font-medium">Listening...</span>
-          </div>
+        {/* Footer */}
+        <div className="border-t border-gray-200 p-4 bg-gray-50 flex-shrink-0">
+          <p className="text-xs text-center text-gray-500">
+            Powered by Google Gemini AI
+          </p>
         </div>
-      )}
-    </motion.div>
+      </motion.div>
+    </>
   );
 
   // Render to portal on client side to ensure it's always on top
