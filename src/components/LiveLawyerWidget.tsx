@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { GoogleGenAI, Modality } from '@google/genai';
 import { Button } from '@/components/ui/button';
@@ -829,6 +830,13 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
     };
   }, [disconnect]);
 
+  // Track if we're on the client side for portal rendering
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Only show widget if contract is analyzed
   if (!simplifiedContract) {
     return null;
@@ -849,15 +857,16 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
     }
   };
 
-  return (
+  const widgetContent = (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       className={cn(
-        'fixed bottom-6 right-6 z-50 w-80 bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden',
+        'fixed bottom-6 right-6 z-[9999] w-80 bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden',
         className
       )}
+      style={{ zIndex: 9999 }}
     >
       <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white">
         <div className="flex items-center justify-between">
@@ -965,4 +974,11 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
       )}
     </motion.div>
   );
+
+  // Render to portal on client side to ensure it's always on top
+  if (!isMounted) {
+    return null;
+  }
+
+  return createPortal(widgetContent, document.body);
 }
