@@ -23,6 +23,56 @@ interface GoAwayMessage {
   timeLeft?: string;
 }
 
+// Speech Recognition types
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  onend: (() => void) | null;
+}
+
+interface SpeechRecognitionEvent {
+  resultIndex: number;
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionErrorEvent {
+  error: string;
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionResult {
+  length: number;
+  item(index: number): SpeechRecognitionAlternative;
+  isFinal: boolean;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: {
+      new (): SpeechRecognition;
+    };
+    webkitSpeechRecognition: {
+      new (): SpeechRecognition;
+    };
+  }
+}
+
 export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
   const { state } = useAppState();
   const { simplifiedContract } = state;
@@ -35,6 +85,16 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
   const [error, setError] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<'idle' | 'connecting' | 'connected' | 'reconnecting' | 'error'>('idle');
+  
+  // Transcript state
+  const [transcripts, setTranscripts] = useState<Array<{
+    id: string;
+    type: 'user' | 'ai';
+    text: string;
+    timestamp: Date;
+    isComplete: boolean;
+  }>>([]);
+  const transcriptEndRef = useRef<HTMLDivElement>(null);
   
   const sessionRef = useRef<{
     _playbackCleanup?: () => void;
@@ -61,6 +121,8 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
   const maxRetries = 3;
   const playbackIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const currentSourceRef = useRef<AudioBufferSourceNode | null>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const isUserSpeakingRef = useRef(false);
 
   // Initialize audio context with error handling
   const initAudioContext = useCallback(() => {
@@ -124,6 +186,64 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
     }
   }, []);
 
+  // Add AI transcript entry
+  const addAITranscript = useCallback((text: string, isComplete: boolean = false) => {
+    setTranscripts((prev) => {
+      const lastTranscript = prev[prev.length - 1];
+      // If last transcript is incomplete AI message, update it
+      if (lastTranscript && lastTranscript.type === 'ai' && !lastTranscript.isComplete) {
+        return [
+          ...prev.slice(0, -1),
+          {
+            ...lastTranscript,
+            text: lastTranscript.text + text,
+            isComplete,
+          },
+        ];
+      }
+      // Otherwise, add new transcript
+      return [
+        ...prev,
+        {
+          id: `ai-${Date.now()}-${Math.random()}`,
+          type: 'ai' as const,
+          text,
+          timestamp: new Date(),
+          isComplete,
+        },
+      ];
+    });
+  }, []);
+
+  // Add user transcript entry
+  const addUserTranscript = useCallback((text: string, isComplete: boolean = false) => {
+    setTranscripts((prev) => {
+      const lastTranscript = prev[prev.length - 1];
+      // If last transcript is incomplete user message, update it
+      if (lastTranscript && lastTranscript.type === 'user' && !lastTranscript.isComplete) {
+        return [
+          ...prev.slice(0, -1),
+          {
+            ...lastTranscript,
+            text: lastTranscript.text + text,
+            isComplete,
+          },
+        ];
+      }
+      // Otherwise, add new transcript
+      return [
+        ...prev,
+        {
+          id: `user-${Date.now()}-${Math.random()}`,
+          type: 'user' as const,
+          text,
+          timestamp: new Date(),
+          isComplete,
+        },
+      ];
+    });
+  }, []);
+
   // Handle incoming messages with comprehensive error handling
   const handleMessage = useCallback((message: {
     serverContent?: {
@@ -132,6 +252,7 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
           inlineData?: {
             data?: string;
           };
+          text?: string;
         }>;
       };
       interrupted?: boolean;
@@ -145,9 +266,14 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
     };
   }): void => {
     try {
-      // Handle audio data
+      // Handle audio data and text transcripts
     if (message.serverContent?.modelTurn?.parts) {
       for (const part of message.serverContent.modelTurn.parts) {
+        // Handle text transcripts if available
+        if (part.text) {
+          addAITranscript(part.text, false);
+        }
+        
         if (part.inlineData?.data) {
             try {
           // Decode base64 audio data more efficiently
@@ -203,14 +329,51 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
         setConnectionStatus('reconnecting');
       }
 
+      // Handle turn complete - mark current AI transcript as complete
+      if (message.serverContent?.turnComplete) {
+        setTranscripts((prev) => {
+          const last = prev[prev.length - 1];
+          if (prev.length > 0 && last && last.type === 'ai' && !last.isComplete) {
+            return [
+              ...prev.slice(0, -1),
+              {
+                id: last.id,
+                type: last.type,
+                text: last.text,
+                timestamp: last.timestamp,
+                isComplete: true,
+              },
+            ];
+          }
+          return prev;
+        });
+      }
+
       // Handle generation complete
       if (message.serverContent?.generationComplete) {
         console.log('Generation complete');
+        // Mark any incomplete AI transcript as complete
+        setTranscripts((prev) => {
+          const last = prev[prev.length - 1];
+          if (prev.length > 0 && last && last.type === 'ai' && !last.isComplete) {
+            return [
+              ...prev.slice(0, -1),
+              {
+                id: last.id,
+                type: last.type,
+                text: last.text,
+                timestamp: last.timestamp,
+                isComplete: true,
+              },
+            ];
+          }
+          return prev;
+        });
       }
     } catch (err) {
       console.error('Error handling message:', err);
     }
-  }, [toast]);
+  }, [toast, addAITranscript]);
 
   // Cleanup audio processor
   const cleanupAudioProcessor = useCallback(() => {
@@ -239,6 +402,89 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
       sessionRef.current._inputAudioContext = undefined;
     }
   }, []);
+
+  // Initialize speech recognition for user transcripts
+  const initSpeechRecognition = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      console.log('Speech recognition not supported');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      let interimTranscript = '';
+      let finalTranscript = '';
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i];
+        const alternative = result?.[0];
+        if (!alternative) continue;
+        
+        const transcript = alternative.transcript;
+        if (result.isFinal) {
+          finalTranscript += transcript + ' ';
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+
+      if (finalTranscript) {
+        addUserTranscript(finalTranscript.trim(), true);
+        isUserSpeakingRef.current = false;
+      } else if (interimTranscript && !isUserSpeakingRef.current) {
+        isUserSpeakingRef.current = true;
+        addUserTranscript(interimTranscript, false);
+      } else if (interimTranscript) {
+        // Update existing incomplete transcript
+        setTranscripts((prev) => {
+          const last = prev[prev.length - 1];
+          if (last && last.type === 'user' && !last.isComplete) {
+            return [
+              ...prev.slice(0, -1),
+              { ...last, text: interimTranscript },
+            ];
+          }
+          return prev;
+        });
+      }
+    };
+
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      console.error('Speech recognition error:', event.error);
+      if (event.error === 'no-speech') {
+        isUserSpeakingRef.current = false;
+      }
+    };
+
+    recognition.onend = () => {
+      isUserSpeakingRef.current = false;
+      // Restart if still connected and not muted
+      if (isConnected && !isMuted && sessionRef.current) {
+        try {
+          recognition.start();
+        } catch {
+          // Recognition might already be starting
+        }
+      }
+    };
+
+    recognitionRef.current = recognition;
+    
+    if (isConnected && !isMuted) {
+      try {
+        recognition.start();
+      } catch (err) {
+        console.warn('Failed to start speech recognition:', err);
+      }
+    }
+  }, [isConnected, isMuted, addUserTranscript]);
 
   // Start microphone capture with comprehensive error handling
   const startMicrophone = useCallback(async (session: {
@@ -669,6 +915,7 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
       // Send initial greeting to start the conversation
       // Send a simple "Hello" from the user, and the AI will respond with its introduction
       try {
+        addUserTranscript("Hello", true);
         session.sendClientContent({
           turns: "Hello",
           turnComplete: true,
@@ -680,6 +927,9 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
 
       // Start microphone capture
       await startMicrophone(session);
+
+      // Initialize speech recognition for transcripts
+      initSpeechRecognition();
 
       // Start audio playback loop
       const playbackCleanup = startAudioPlayback();
@@ -703,7 +953,7 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
     } finally {
       setIsConnecting(false);
     }
-  }, [simplifiedContract, getEphemeralToken, toast, handleMessage, startMicrophone, startAudioPlayback, isConnecting]);
+  }, [simplifiedContract, getEphemeralToken, toast, handleMessage, startMicrophone, startAudioPlayback, isConnecting, addUserTranscript, initSpeechRecognition]);
 
   // Disconnect with comprehensive cleanup (defined before reconnect to avoid dependency issues)
   const disconnect = useCallback((clearSessionHandle = true) => {
@@ -736,6 +986,17 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
 
     // Cleanup audio processor
     cleanupAudioProcessor();
+
+    // Stop speech recognition
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (err) {
+        console.warn('Error stopping speech recognition:', err);
+      }
+      recognitionRef.current = null;
+    }
+    isUserSpeakingRef.current = false;
 
     // Cleanup media stream
     if (mediaStreamRef.current) {
@@ -846,6 +1107,20 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
   const togglePanel = useCallback(() => {
     setIsOpen((prev) => !prev);
   }, []);
+
+  // Auto-scroll transcripts to bottom
+  useEffect(() => {
+    if (transcriptEndRef.current) {
+      transcriptEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [transcripts]);
+
+  // Clear transcripts when disconnecting
+  useEffect(() => {
+    if (!isConnected && transcripts.length > 0) {
+      setTranscripts([]);
+    }
+  }, [isConnected, transcripts.length]);
 
   // Only show widget if contract is analyzed
   if (!simplifiedContract) {
@@ -1043,6 +1318,50 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
             <div className="flex items-center justify-center gap-2 text-purple-600 py-2">
               <div className="w-2 h-2 bg-purple-600 rounded-full animate-pulse" />
               <span className="text-sm font-medium">Listening...</span>
+            </div>
+          )}
+
+          {/* Live Transcripts Section */}
+          {isConnected && (
+            <div className="mt-6 border-t border-gray-200 pt-4">
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">Live Transcript</h4>
+              <div className="bg-gray-50 rounded-lg p-4 max-h-[300px] overflow-y-auto space-y-3">
+                {transcripts.length === 0 ? (
+                  <p className="text-sm text-gray-500 text-center py-4">
+                    Conversation will appear here...
+                  </p>
+                ) : (
+                  transcripts.map((transcript) => (
+                    <div
+                      key={transcript.id}
+                      className={cn(
+                        'flex flex-col gap-1',
+                        transcript.type === 'user' ? 'items-end' : 'items-start'
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          'rounded-lg px-3 py-2 max-w-[85%] text-sm',
+                          transcript.type === 'user'
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-white border border-gray-200 text-gray-800'
+                        )}
+                      >
+                        <p className="whitespace-pre-wrap break-words">
+                          {transcript.text || (transcript.type === 'user' ? 'Speaking...' : 'Responding...')}
+                        </p>
+                        {!transcript.isComplete && (
+                          <span className="inline-block w-2 h-2 bg-current rounded-full animate-pulse ml-1" />
+                        )}
+                      </div>
+                      <span className="text-xs text-gray-400 px-1">
+                        {transcript.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  ))
+                )}
+                <div ref={transcriptEndRef} />
+              </div>
             </div>
           )}
         </div>
