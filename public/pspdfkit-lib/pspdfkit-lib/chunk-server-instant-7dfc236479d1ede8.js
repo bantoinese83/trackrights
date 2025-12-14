@@ -36,22 +36,22 @@
         u = s(38119);
       class m {
         constructor(e, t) {
-          (this.callback = e),
+          ((this.callback = e),
             (this.timerCalc = t),
             (this.timer = null),
-            (this.tries = 0);
+            (this.tries = 0));
         }
         reset() {
-          (this.tries = 0), this.timer && clearTimeout(this.timer);
+          ((this.tries = 0), this.timer && clearTimeout(this.timer));
         }
         scheduleTimeout() {
-          this.timer && clearTimeout(this.timer),
+          (this.timer && clearTimeout(this.timer),
             (this.timer = setTimeout(
               () => {
-                (this.tries = this.tries + 1), this.callback();
+                ((this.tries = this.tries + 1), this.callback());
               },
               this.timerCalc(this.tries + 1)
-            ));
+            )));
         }
       }
       var p = s(75675);
@@ -70,7 +70,7 @@
           } = arguments.length > 2 && void 0 !== arguments[2]
             ? arguments[2]
             : {};
-          (this.eventEmitter = new u.A(
+          ((this.eventEmitter = new u.A(
             ['connect', 'disconnect', 'error'].concat(o)
           )),
             (this.serverURL = e),
@@ -80,10 +80,10 @@
             (this.requestsWaitingForAnswers = (0, n.T5)()),
             i &&
               (this.reconnectTimer = new m(() => {
-                this.socket && (this.socket.close(), (this.socket = null)),
-                  this.connect();
+                (this.socket && (this.socket.close(), (this.socket = null)),
+                  this.connect());
               }, s)),
-            this.clearAuthenticationInformation();
+            this.clearAuthenticationInformation());
         }
         registerEvents(e) {
           this.eventEmitter.events.push(...e);
@@ -91,16 +91,16 @@
         connect() {
           if (this.socket) return;
           const e = new WebSocket(this.serverURL);
-          (e.onopen = this.onOpen.bind(this)),
+          ((e.onopen = this.onOpen.bind(this)),
             (e.onmessage = this.onMessage.bind(this)),
             (e.onerror = () => {
-              (this.socket = null),
+              ((this.socket = null),
                 this.eventEmitter.emit(
                   'error',
                   `Failed to create the WebSocket connection to ${this.serverURL}. Please check your firewall or proxy settings.`
-                );
+                ));
             }),
-            (this.socket = e);
+            (this.socket = e));
         }
         disconnect() {
           this.socket &&
@@ -178,9 +178,9 @@
               this.requestsWaitingForAnswers =
                 this.requestsWaitingForAnswers.delete(t);
             } else
-              this.eventEmitter.events.includes(e.action) &&
+              (this.eventEmitter.events.includes(e.action) &&
                 this.eventEmitter.emit(e.action, e.payload),
-                this.log('incoming info message', e);
+                this.log('incoming info message', e));
           } else {
             const e = this.parseUnauthenticatedFrame(t);
             switch (e.action) {
@@ -199,19 +199,19 @@
           }
         }
         onClose(e) {
-          this.clearAuthenticationInformation(),
+          (this.clearAuthenticationInformation(),
             this.abortOpenRequests(),
             this.reconnectTimer && this.reconnectTimer.scheduleTimeout(),
             this.eventEmitter.emit('disconnect'),
-            this.log('close', e);
+            this.log('close', e));
         }
         onError(e) {
-          this.reconnectTimer && this.reconnectTimer.scheduleTimeout(),
-            this.log('error', e);
+          (this.reconnectTimer && this.reconnectTimer.scheduleTimeout(),
+            this.log('error', e));
         }
         nextRequestId() {
           const e = this.lastRequestId + 1;
-          return (this.lastRequestId = e), e;
+          return ((this.lastRequestId = e), e);
         }
         onHello(e) {
           const t = this.socket;
@@ -224,19 +224,19 @@
             };
             t.send(`hello_web:${JSON.stringify(e)}`);
           } else
-            t.send(
+            (t.send(
               `handshake_failed:${JSON.stringify({ reason: 'protocol_mismatch', protocol_version: 2, client_version: _, client_info: g })}`
             ),
-              this.eventEmitter.emit('error', 'protocol_mismatch');
+              this.eventEmitter.emit('error', 'protocol_mismatch'));
         }
         onAuthenticated(e) {
-          (0, p.V)(e.client_id, '`authenticated` message has no `client_id`'),
+          ((0, p.V)(e.client_id, '`authenticated` message has no `client_id`'),
             (this.clientId = e.client_id),
             (this.userId = e.user_id || null),
             this.eventEmitter.emit('connect', {
               clientId: this.clientId,
               userId: this.userId,
-            });
+            }));
         }
         log() {
           if ('development' === (0, h.uc)()) {
@@ -260,13 +260,13 @@
           return { action: t, payload: JSON.parse(s) };
         }
         abortOpenRequests() {
-          this.requestsWaitingForAnswers.forEach((e) => {
+          (this.requestsWaitingForAnswers.forEach((e) => {
             e.reject(new o.uE('request aborted'));
           }),
-            (this.requestsWaitingForAnswers = (0, n.T5)());
+            (this.requestsWaitingForAnswers = (0, n.T5)()));
         }
         clearAuthenticationInformation() {
-          (this.clientId = ''), (this.userId = null);
+          ((this.clientId = ''), (this.userId = null));
         }
       }
       function F(e) {
@@ -296,11 +296,11 @@
               arguments.length > 1 && void 0 !== arguments[1]
                 ? arguments[1]
                 : y;
-          (this.state = e), (this.connectionClass = t);
+          ((this.state = e), (this.connectionClass = t));
         }
         load(e, t, s) {
           return new Promise((i, n) => {
-            (this.setState = (e) => {
+            ((this.setState = (e) => {
               this.state = e;
             }),
               (this.connection = new this.connectionClass(e, t, {
@@ -312,14 +312,14 @@
                   userId: e.userId,
                   presenceContent: s,
                 });
-                this.setState(
+                (this.setState(
                   this.state.set('status', 'online').set('currentClient', t)
                 ),
                   this.populateClients(s)
                     .then(() => {
                       i(this);
                     })
-                    .catch(n);
+                    .catch(n));
               }),
               this.connection.on('error', (e) => {
                 n(new o.uE(e.toString()));
@@ -327,7 +327,7 @@
               this.connection.on('client_presence', (e) =>
                 this.onInfoClientPresence(e)
               ),
-              this.connection.connect();
+              this.connection.connect());
           });
         }
         populateClients(e) {
@@ -335,7 +335,7 @@
             this.connection
               .sendRequest('enter_layer', { presence: e })
               .then((e) => {
-                this.setState(
+                (this.setState(
                   (function (e, t) {
                     return (
                       (0, p.V)(
@@ -351,7 +351,7 @@
                     );
                   })(this.state, e)
                 ),
-                  t();
+                  t());
               })
               .catch(s);
           });
@@ -376,14 +376,14 @@
                     }
                   if (t.clients.updated)
                     for (const i of t.clients.updated) {
-                      (0, p.V)(
+                      ((0, p.V)(
                         'string' == typeof i.client_id,
                         'The client payload must have a `client_id`'
                       ),
                         (0, p.V)(
                           'object' == typeof i.presence,
                           'The client payload must have a `presence`'
-                        );
+                        ));
                       const t = e.clients.get(i.client_id);
                       if (!t)
                         throw new o.uE(
@@ -420,8 +420,8 @@
                 .toMap();
             }
             let i = (0, n.B8)();
-            e.clients.updated && (i = (0, n.B8)(e.clients.left)),
-              this.clientUpdatesCallback(t, s, i);
+            (e.clients.updated && (i = (0, n.B8)(e.clients.left)),
+              this.clientUpdatesCallback(t, s, i));
           }
         }
         disconnect() {
@@ -437,7 +437,8 @@
         }
         getClients() {
           return (
-            (this.shouldFireClientUpdatesCallback = !0), this.state.clients
+            (this.shouldFireClientUpdatesCallback = !0),
+            this.state.clients
           );
         }
         updatePresence(e) {
@@ -448,7 +449,7 @@
               .sendRequest('update_client_presence', { presence: e })
               .then(
                 () => {
-                  this.setState(
+                  (this.setState(
                     (function (e, t) {
                       return e
                         .setIn(['currentClient', 'presenceContent'], t)
@@ -462,7 +463,7 @@
                         );
                     })(this.state, e)
                   ),
-                    t(!0);
+                    t(!0));
                 },
                 () => {
                   s(new o.uE('Unable to update presence'));
@@ -567,8 +568,8 @@
             throw new TypeError('recordsUpdateCallback must be a function');
           if ('function' != typeof t)
             throw new TypeError('acceptedRecordsCallback must be a function');
-          (this._recordsUpdatesCallback = e),
-            (this._acceptedRecordsResponseCallback = t);
+          ((this._recordsUpdatesCallback = e),
+            (this._acceptedRecordsResponseCallback = t));
         }
         destroy() {
           this._cycle && this._cycle.destroy();
@@ -582,7 +583,7 @@
               arguments.length > 1 && void 0 !== arguments[1]
                 ? arguments[1]
                 : R.Ay;
-          (0, i.A)(this, '_recordsUpdatesCallback', () => {}),
+          ((0, i.A)(this, '_recordsUpdatesCallback', () => {}),
             (0, i.A)(this, '_acceptedRecordsResponseCallback', () => {}),
             (0, i.A)(this, '_shouldFireRecordsUpdateCallback', !1),
             (0, i.A)(this, 'onChanges', (e) => {
@@ -616,14 +617,14 @@
               (0, V.A)(() => this._cycle.nextCycle())
             ),
             (this._state = e),
-            (this._CycleClass = t);
+            (this._CycleClass = t));
         }
         load(e, t) {
           let s =
             !(arguments.length > 2 && void 0 !== arguments[2]) || arguments[2];
           return new Promise((i, n) => {
             const o = this.setState.bind(this);
-            this.setState(
+            (this.setState(
               this._state.set('requestInfo', { serverURL: e, authPayload: t })
             ),
               (this._cycle = new this._CycleClass({
@@ -638,7 +639,7 @@
                 .then(() => {
                   i(this);
                 })
-                .catch(n);
+                .catch(n));
           });
         }
         setState(e) {
@@ -694,7 +695,7 @@
             arguments.length > 3 && void 0 !== arguments[3]
               ? arguments[3]
               : S.S;
-          (0, i.A)(this, '_existingBookmarksIds', (0, n.NZ)()),
+          ((0, i.A)(this, '_existingBookmarksIds', (0, n.NZ)()),
             (0, i.A)(this, '_existingFormFieldsIds', (0, n.NZ)()),
             (0, i.A)(this, '_existingFormFieldValuesIds', (0, n.NZ)()),
             (0, i.A)(this, '_existingCommentIds', (0, n.NZ)()),
@@ -707,10 +708,10 @@
               this._setDocumentHandleOutdatedCallback = e;
             }),
             (0, i.A)(this, 'onDocumentHandleConflict', () => {
-              this._documentHandleConflictCallback &&
+              (this._documentHandleConflictCallback &&
                 this._documentHandleConflictCallback(),
                 this._setDocumentHandleOutdatedCallback &&
-                  this._setDocumentHandleOutdatedCallback(!0);
+                  this._setDocumentHandleOutdatedCallback(!0));
             }),
             (this._serverURL = e),
             (this._documentURL = t),
@@ -719,7 +720,7 @@
             (this._hasLoadedInitialRecords = !1),
             (this._setReadStateCallbacksPromise = new Promise((e) => {
               this._setReadStateCallbacksPromiseResolve = e;
-            }));
+            })));
         }
         load() {
           let e =
@@ -785,8 +786,8 @@
           this._formsEnabledInConfig = e;
         }
         setReadStateCallbacks(e) {
-          (this._readStateCallbacks = e),
-            this._setReadStateCallbacksPromiseResolve?.();
+          ((this._readStateCallbacks = e),
+            this._setReadStateCallbacksPromiseResolve?.());
         }
         setAnnotationCallbacks(e) {
           this._annotationCallbacks = e;
@@ -989,7 +990,7 @@
               return !!t;
             });
             const e = [];
-            t.forEach((t, s) => {
+            (t.forEach((t, s) => {
               t.content
                 ? B(C, t) || ((k = k.push(t)), e.push(s))
                 : B(C, t)
@@ -1004,7 +1005,7 @@
                   this._existingFormFieldsIds.has(e) ||
                   this._existingCommentIds.has(e) ||
                   this._existingBookmarksIds.has(e)
-              ));
+              )));
           }
           let y = (0, n.B8)().withMutations((e) => {
             this._filterRecords(k).forEach((t) => {
@@ -1037,16 +1038,16 @@
                           (0, a.LK)(i) ||
                           e.push((0, a.h8)(s, i, p));
               } catch (e) {
-                (0, o.pq)(
+                ((0, o.pq)(
                   `Skipped creating record #${s} from payload because an error occurred while deserializing.`,
                   i
                 ),
-                  (0, o.pq)(e);
+                  (0, o.pq)(e));
               }
             });
           });
           const F = !C || (0, z.cY)(C.features, C.signatureFeatureAvailability);
-          l.length > 0 &&
+          (l.length > 0 &&
             ((0, o.V1)(this._formFieldCallbacks),
             C && !F
               ? this._formFieldCallbacks.createFormFields(
@@ -1085,7 +1086,7 @@
               this._commentCallbacks.createComments(h, i)),
             c.size > 0 &&
               ((0, o.V1)(this._bookmarkCallbacks),
-              this._bookmarkCallbacks.createBookmarks(c, i));
+              this._bookmarkCallbacks.createBookmarks(c, i)));
           const w = (0, n.B8)().asMutable(),
             I = [],
             v = [],
@@ -1105,58 +1106,58 @@
                     try {
                       I.push((0, a.mh)(s, i, d));
                     } catch (e) {
-                      (p = p.add(s)),
+                      ((p = p.add(s)),
                         (0, o.pq)(
                           `Skipped updating form field #${s} from payload because an error occurred while deserializing. To avoid issues, we have removed the previous version from the application state.`,
                           i
                         ),
-                        (0, o.pq)(e);
+                        (0, o.pq)(e));
                     }
                   else if ((0, a.UR)(i))
                     try {
                       v.push((0, a.R5)(i));
                     } catch (e) {
-                      (_ = _.add(s)),
+                      ((_ = _.add(s)),
                         (0, o.pq)(
                           `Skipped updating form field value #${s} from payload because an error occurred while deserializing. To avoid issues, we have removed the previous version from the application state.`,
                           i
                         ),
-                        (0, o.pq)(e);
+                        (0, o.pq)(e));
                     }
                   else if ((0, a.fW)(i))
                     try {
                       w.push((0, r.r)(s, i));
                     } catch (e) {
-                      (m = m.add(s)),
+                      ((m = m.add(s)),
                         (0, o.pq)(
                           `Skipped updating bookmark #${s} from payload because an error occurred while deserializing. To avoid issues, we have removed the previous version from the application state.`,
                           i
                         ),
-                        (0, o.pq)(e);
+                        (0, o.pq)(e));
                     }
                   else if ((0, a.Eh)(i))
                     try {
                       R.push((0, D._)(s, i, d));
                     } catch (e) {
-                      (f = f.add(s)),
+                      ((f = f.add(s)),
                         (0, o.pq)(
                           `Skipped updating comment #${s} from payload because an error occurred while deserializing. To avoid issues, we have removed the previous version from the application state.`,
                           i,
                           e
-                        );
+                        ));
                     }
                   else e.push((0, a.h8)(s, i, d));
                 } catch (e) {
-                  (u = u.add(s)),
+                  ((u = u.add(s)),
                     (0, o.pq)(
                       `Skipped updating annotation #${s} from payload because an error occurred while deserializing. To avoid issues, we have removed the previous version from the application state.`,
                       i
                     ),
-                    (0, o.pq)(e);
+                    (0, o.pq)(e));
                 }
               });
             });
-          A.size > 0 &&
+          (A.size > 0 &&
             ((0, o.V1)(this._annotationCallbacks),
             this._annotationCallbacks.updateAnnotations(A)),
             w.size > 0 &&
@@ -1250,7 +1251,7 @@
             )),
             f.size > 0 &&
               ((0, o.V1)(this._commentCallbacks),
-              this._commentCallbacks.deleteComments(f));
+              this._commentCallbacks.deleteComments(f)));
         }
         _onAcceptedRecords(e, t) {
           const s = this._getState ? this._getState() : void 0;
@@ -1272,7 +1273,7 @@
             if (n && 'string' != typeof n) {
               (0, O.Tr)(t);
               const e = (0, O.ah)(t);
-              (n = n.merge(e)),
+              ((n = n.merge(e)),
                 n instanceof q.A
                   ? t.permissions && t.permissions.view
                     ? i.push(n)
@@ -1284,10 +1285,10 @@
                     : n instanceof U.Ay &&
                       (t.permissions && t.permissions.view
                         ? r.push(n)
-                        : d.push(n.id));
+                        : d.push(n.id)));
             }
           }
-          e.isEmpty() || e.forEach(h),
+          (e.isEmpty() || e.forEach(h),
             t.isEmpty() || t.forEach(h),
             i.length > 0 &&
               ((0, o.V1)(this._annotationCallbacks),
@@ -1306,7 +1307,7 @@
               this._commentCallbacks.deleteComments((0, n.NZ)(l))),
             d.length > 0 &&
               ((0, o.V1)(this._formFieldCallbacks),
-              this._formFieldCallbacks.deleteFormFields((0, n.NZ)(d)));
+              this._formFieldCallbacks.deleteFormFields((0, n.NZ)(d))));
         }
         onClientsChange(e) {
           if ('function' != typeof e)

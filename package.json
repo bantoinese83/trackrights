@@ -6,14 +6,18 @@
     "dev": "lsof -ti:3000 | xargs kill -9 2>/dev/null || true && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint --max-warnings 0",
+    "lint:fix": "next lint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "analyze": "ANALYZE=true next build",
     "knip": "knip",
     "knip:production": "knip --production",
     "type-check": "tsc --noEmit",
-    "quality-check": "npm run type-check && npm run lint && npm run format:check && npm run knip && npm run build"
+    "type-check:strict": "tsc --noEmit --strict",
+    "quality-check": "npm run type-check && npm run lint && npm run format:check && npm run knip",
+    "quality-check:full": "npm run type-check && npm run lint && npm run format:check && npm run knip && npm run build",
+    "quality-gate": "npm run type-check && npm run lint && npm run format:check && npm run knip && npm run build"
   },
   "dependencies": {
     "@google/genai": "^1.33.0",
@@ -81,7 +85,8 @@
     "styled-jsx": "^5.1.7",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "vaul": "^1.1.2"
+    "vaul": "^1.1.2",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^15.1.5",

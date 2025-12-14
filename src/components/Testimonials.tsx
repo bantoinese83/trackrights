@@ -11,7 +11,8 @@ const testimonials = [
       "TrackRights.com has been a game-changer for my career. I finally understand what I'm signing!",
     author: 'DJ Harmony',
     role: 'Electronic Music Producer',
-    avatar: 'https://ui-avatars.com/api/?name=DJ+Harmony&background=8b5cf6&color=fff&size=128&bold=true',
+    avatar:
+      'https://ui-avatars.com/api/?name=DJ+Harmony&background=8b5cf6&color=fff&size=128&bold=true',
     instagram: '@dj_harmony',
   },
   {
@@ -19,7 +20,8 @@ const testimonials = [
       'This tool saved me from a terrible deal. Every indie artist needs this in their toolkit.',
     author: 'Lyrical Genius',
     role: 'Hip Hop Artist',
-    avatar: 'https://ui-avatars.com/api/?name=Lyrical+Genius&background=7c3aed&color=fff&size=128&bold=true',
+    avatar:
+      'https://ui-avatars.com/api/?name=Lyrical+Genius&background=7c3aed&color=fff&size=128&bold=true',
     instagram: '@lyrical_genius',
   },
   {
@@ -27,7 +29,8 @@ const testimonials = [
       'TrackRights.com simplifies the legal jargon, letting me focus on what I do best - making music.',
     author: 'Melody Maker',
     role: 'Singer-Songwriter',
-    avatar: 'https://ui-avatars.com/api/?name=Melody+Maker&background=a855f7&color=fff&size=128&bold=true',
+    avatar:
+      'https://ui-avatars.com/api/?name=Melody+Maker&background=a855f7&color=fff&size=128&bold=true',
     instagram: '@melodymaker',
   },
   {
@@ -35,7 +38,8 @@ const testimonials = [
       "As a manager, I use TrackRights to review all my clients' contracts. It's essential for protecting their interests.",
     author: 'Sarah Chen',
     role: 'Artist Manager',
-    avatar: 'https://ui-avatars.com/api/?name=Sarah+Chen&background=9333ea&color=fff&size=128&bold=true',
+    avatar:
+      'https://ui-avatars.com/api/?name=Sarah+Chen&background=9333ea&color=fff&size=128&bold=true',
     instagram: '@sarah_chen_mgmt',
   },
   {
@@ -43,7 +47,8 @@ const testimonials = [
       'TrackRights helped me negotiate better terms. Understanding the contract language gave me confidence at the table.',
     author: 'Marcus Johnson',
     role: 'Record Label Executive',
-    avatar: 'https://ui-avatars.com/api/?name=Marcus+Johnson&background=6d28d9&color=fff&size=128&bold=true',
+    avatar:
+      'https://ui-avatars.com/api/?name=Marcus+Johnson&background=6d28d9&color=fff&size=128&bold=true',
     instagram: '@marcus_johnson',
   },
   {
@@ -51,7 +56,8 @@ const testimonials = [
       "I've never felt more confident about my contracts. This service is worth its weight in gold!",
     author: 'Bass Master',
     role: 'EDM Producer',
-    avatar: 'https://ui-avatars.com/api/?name=Bass+Master&background=5b21b6&color=fff&size=128&bold=true',
+    avatar:
+      'https://ui-avatars.com/api/?name=Bass+Master&background=5b21b6&color=fff&size=128&bold=true',
     instagram: '@bass_master',
   },
   {
@@ -59,7 +65,8 @@ const testimonials = [
       'As an independent artist, TrackRights.com has been an invaluable resource. Highly recommended!',
     author: 'Indie Rocker',
     role: 'Rock Musician',
-    avatar: 'https://ui-avatars.com/api/?name=Indie+Rocker&background=4c1d95&color=fff&size=128&bold=true',
+    avatar:
+      'https://ui-avatars.com/api/?name=Indie+Rocker&background=4c1d95&color=fff&size=128&bold=true',
     instagram: '@indie_rocker',
   },
   {
@@ -67,7 +74,8 @@ const testimonials = [
       'Finally, a tool that speaks my language! TrackRights breaks down complex publishing agreements in terms I can actually understand.',
     author: 'Emma Williams',
     role: 'Music Publisher',
-    avatar: 'https://ui-avatars.com/api/?name=Emma+Williams&background=7c3aed&color=fff&size=128&bold=true',
+    avatar:
+      'https://ui-avatars.com/api/?name=Emma+Williams&background=7c3aed&color=fff&size=128&bold=true',
     instagram: '@emma_williams',
   },
 ];

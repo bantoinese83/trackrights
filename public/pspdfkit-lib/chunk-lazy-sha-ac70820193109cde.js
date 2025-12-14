@@ -16,18 +16,18 @@
   {
     21119: (t, r, e) => {
       e.d(r, { Sha256: () => s, bytes_to_hex: () => c });
-      'undefined' == typeof atob || atob, 'undefined' == typeof btoa || btoa;
+      ('undefined' == typeof atob || atob, 'undefined' == typeof btoa || btoa);
       function c(t) {
         for (var r = '', e = 0; e < t.length; e++) {
           var c = (255 & t[e]).toString(16);
-          c.length < 2 && (r += '0'), (r += c);
+          (c.length < 2 && (r += '0'), (r += c));
         }
         return r;
       }
       function n(t, r, e, c, n) {
         var i = t.length - r,
           a = i < n ? i : n;
-        return t.set(e.subarray(c, c + a), r), a;
+        return (t.set(e.subarray(c, c + a), r), a);
       }
       var i,
         a =
@@ -44,11 +44,11 @@
             function e() {
               this.constructor = t;
             }
-            i(t, r),
+            (i(t, r),
               (t.prototype =
                 null === r
                   ? Object.create(r)
-                  : ((e.prototype = r.prototype), new e()));
+                  : ((e.prototype = r.prototype), new e())));
           }),
         o = (function (t) {
           function r() {
@@ -62,7 +62,7 @@
               c
             );
           }
-          return a(r, t), r;
+          return (a(r, t), r);
         })(Error),
         f =
           ((function (t) {
@@ -95,7 +95,7 @@
           })(Error),
           (function () {
             function t() {
-              (this.pos = 0), (this.len = 0);
+              ((this.pos = 0), (this.len = 0));
             }
             return (
               (t.prototype.reset = function () {
@@ -119,14 +119,13 @@
                     f = t.length,
                     x = 0;
                   f > 0;
-
                 )
-                  (i += x = n(e, c + i, t, a, f)),
+                  ((i += x = n(e, c + i, t, a, f)),
                     (a += x),
                     (f -= x),
                     (c += x = r.process(c, i)),
-                    (i -= x) || (c = 0);
-                return (this.pos = c), (this.len = i), this;
+                    (i -= x) || (c = 0));
+                return ((this.pos = c), (this.len = i), this);
               }),
               (t.prototype.finish = function () {
                 if (null !== this.result)
@@ -157,11 +156,11 @@
             function c() {
               this.constructor = r;
             }
-            t(r, e),
+            (t(r, e),
               (r.prototype =
                 null === e
                   ? Object.create(e)
-                  : ((c.prototype = e.prototype), new c()));
+                  : ((c.prototype = e.prototype), new c())));
           };
         })(),
         s = (function (t) {
@@ -2699,14 +2698,14 @@
                   if (t & 63) return -1;
                   if (~e) if (e & 31) return -1;
                   v = B(t, r, -1) | 0;
-                  (u = c),
+                  ((u = c),
                     (h = n),
                     (b = i),
                     (p = a),
                     (l = o),
                     (y = f),
                     (d = x),
-                    (_ = s);
+                    (_ = s));
                   F();
                   H(u, h, b, p, l, y, d, _, 0x80000000, 0, 0, 0, 0, 0, 0, 768);
                   if (~e) U(e);
@@ -2741,14 +2740,14 @@
                   k[(t + r + 2) | 0] = (e >>> 8) & 255;
                   k[(t + r + 3) | 0] = e & 255;
                   M(t, (r + 4) | 0, -1) | 0;
-                  (b = g = c),
+                  ((b = g = c),
                     (p = m = n),
                     (l = E = i),
                     (y = A = a),
                     (d = S = o),
                     (_ = O = f),
                     (v = P = x),
-                    (w = j = s);
+                    (w = j = s));
                   u = (u - 1) | 0;
                   while ((u | 0) > 0) {
                     D();
@@ -2770,14 +2769,14 @@
                       0,
                       768
                     );
-                    (g = c),
+                    ((g = c),
                       (m = n),
                       (E = i),
                       (A = a),
                       (S = o),
                       (O = f),
                       (P = x),
-                      (j = s);
+                      (j = s));
                     F();
                     H(
                       g,
@@ -2797,14 +2796,14 @@
                       0,
                       768
                     );
-                    (g = c),
+                    ((g = c),
                       (m = n),
                       (E = i),
                       (A = a),
                       (S = o),
                       (O = f),
                       (P = x),
-                      (j = s);
+                      (j = s));
                     b = b ^ c;
                     p = p ^ n;
                     l = l ^ i;
@@ -2841,7 +2840,7 @@
               r
             );
           }
-          return x(r, t), (r.NAME = 'sha256'), r;
+          return (x(r, t), (r.NAME = 'sha256'), r);
         })(f);
     },
   },

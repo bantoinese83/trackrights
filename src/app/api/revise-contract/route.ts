@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
-import { corsHeaders, getApiKey, handleError } from '../utils';
+import {
+  corsHeaders,
+  getApiKey,
+  handleError,
+  cacheGet,
+  cacheSet,
+} from '../utils';
 import { optimizeContractText } from '@/lib/utils/contract-optimizer';
-import { rateLimiter, calculateRetryDelay } from '@/lib/utils/rate-limiter';
+import { generateWithRetry } from '@/lib/ai-retry';
+import { validate, reviseContractRequestSchema } from '@/lib/validation';
 
 // Set max duration for Vercel serverless function (60 seconds)
 export const maxDuration = 60;
@@ -31,151 +38,37 @@ Follow these guidelines:
 
 Format your response using standard contract structure and language. Use clear and concise language that is easily understandable by both parties, regardless of their level of experience in the music industry.`;
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// Adjusted for free tier: 60 requests/minute
-const MAX_RETRIES = 5;
-
-interface RevisionRequest {
-  originalContract: string;
-  instructions: string;
-  role: string;
-}
-
-const cache = new Map<string, { value: string; timestamp: number }>();
-// Extended cache TTL to 24 hours for better performance and reduced API calls
-const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-
-function cacheGet(key: string): string | null {
-  const cached = cache.get(key);
-  if (cached) {
-    const isExpired = Date.now() - cached.timestamp > CACHE_TTL;
-    if (!isExpired) {
-      return cached.value;
-    }
-    cache.delete(key);
-  }
-  return null;
-}
-
-function cacheSet(key: string, value: string): void {
-  cache.set(key, { value, timestamp: Date.now() });
-}
-
-async function generateWithRetry(
-  content: string[],
-  retryCount = 0
-): Promise<string> {
+// Helper function to generate content with caching
+async function generateContent(content: string[]): Promise<string> {
   const cacheKey = JSON.stringify(content);
   const cachedResponse = cacheGet(cacheKey);
   if (cachedResponse) {
     return cachedResponse;
   }
 
-  try {
-    // Rate limit check before making request (minimal delay to avoid timeouts)
-    await rateLimiter.waitIfNeeded();
+  const contentString = content.join('\n\n');
+  const response = await generateWithRetry(ai, contentString);
 
-    // Remove googleSearch tool to speed up processing and avoid timeouts
-    // Use streaming timeout: 50 seconds max for API call
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Request timeout after 50 seconds')), 50000);
-    });
-
-    const result = await Promise.race([
-      ai.models.generateContent({
-        model: 'gemini-2.5-pro',
-        contents: content.join('\n\n'),
-      }),
-      timeoutPromise,
-    ]);
-    const responseText = result.text ?? '';
-    if (!responseText) {
-      throw new Error('No response text received from API');
-    }
-    cacheSet(cacheKey, responseText);
-    return responseText;
-  } catch (error: unknown) {
-    const errorStatus = (error as { status?: number })?.status;
-    
-    // Check if it's a daily quota error (don't retry, quota won't reset until tomorrow)
-    if (errorStatus === 429) {
-      const errorString = JSON.stringify(error);
-      const isDailyQuota = 
-        errorString.includes('GenerateRequestsPerDayPerProjectPerModel') ||
-        errorString.includes('free_tier_requests') ||
-        errorString.includes('quotaValue');
-      
-      if (isDailyQuota) {
-        // Don't retry daily quota errors - they won't reset until tomorrow
-        throw error;
-      }
-    }
-    
-    if (
-      error instanceof Error &&
-      errorStatus &&
-      (errorStatus === 429 || errorStatus === 503) &&
-      retryCount < MAX_RETRIES
-    ) {
-      // Calculate retry delay based on rate limits
-      let waitTime: number;
-      try {
-        const errorDetails = error as {
-          error?: {
-            details?: Array<{
-              '@type'?: string;
-              retryDelay?: string;
-            }>;
-          };
-        };
-        const retryInfo = errorDetails?.error?.details?.find(
-          (detail) =>
-            detail['@type'] === 'type.googleapis.com/google.rpc.RetryInfo'
-        );
-        waitTime = calculateRetryDelay(
-          retryCount,
-          retryInfo?.retryDelay
-        );
-      } catch {
-        // Fall back to calculated delay
-        waitTime = calculateRetryDelay(retryCount);
-      }
-      console.log(
-        `Rate limit or service unavailable. Retrying in ${Math.ceil(waitTime / 1000)}s... (Attempt ${retryCount + 1}/${MAX_RETRIES})`
-      );
-      await delay(waitTime);
-      return generateWithRetry(content, retryCount + 1);
-    }
-    throw error;
-  }
+  cacheSet(cacheKey, response);
+  return response;
 }
 
 export async function POST(req: NextRequest) {
   if (req.method === 'OPTIONS') {
-    return NextResponse.json({}, { headers: corsHeaders() });
+    return NextResponse.json({}, { headers: corsHeaders(req) });
   }
 
   if (req.headers.get('content-type') !== 'application/json') {
     return NextResponse.json(
       { error: 'Invalid content type. Please use application/json.' },
-      { status: 400, headers: corsHeaders() }
+      { status: 400, headers: corsHeaders(req) }
     );
   }
 
   try {
-    const { originalContract, instructions, role }: RevisionRequest =
-      await req.json();
-
-    if (!originalContract || !instructions || !role) {
-      return NextResponse.json(
-        {
-          error:
-            'Missing original contract, instructions, or professional role. Please provide all necessary information.',
-        },
-        { status: 400, headers: corsHeaders() }
-      );
-    }
+    const body = await req.json();
+    const validated = await validate(reviseContractRequestSchema, body);
+    const { originalContract, instructions, role } = validated;
 
     // Optimize contract text to reduce tokens while preserving important information
     const optimizedContract = optimizeContractText(originalContract, 10000);
@@ -188,22 +81,9 @@ export async function POST(req: NextRequest) {
       'Please revise the contract based on the given instructions, making it more favorable for the specified music industry professional.',
     ];
 
-    const cacheKey = JSON.stringify(content);
-    const cachedResponse = cacheGet(cacheKey);
-    if (cachedResponse) {
-      return NextResponse.json(
-        {
-          revisedContract: cachedResponse,
-          message: 'Contract revised successfully (from cache).',
-        },
-        { status: 200, headers: corsHeaders() }
-      );
-    }
-
     const startTime = Date.now();
-    const revisedContract = await generateWithRetry(content);
+    const revisedContract = await generateContent(content);
     const processingTimeMs = Date.now() - startTime;
-    cacheSet(cacheKey, revisedContract);
 
     // Track contract revision (non-blocking)
     fetch(`${req.nextUrl.origin}/api/track-contract`, {
@@ -219,20 +99,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { revisedContract, message: 'Contract revised successfully.' },
-      { status: 200, headers: corsHeaders() }
+      { status: 200, headers: corsHeaders(req) }
     );
   } catch (error: unknown) {
-    const { errorMessage, statusCode } = handleError(error);
-    return NextResponse.json(
-      {
-        error: errorMessage,
-        message: 'Failed to revise contract. Please try again later.',
-      },
-      { status: statusCode, headers: corsHeaders() }
-    );
+    return handleError(error, req);
   }
 }
 
-export async function OPTIONS() {
-  return NextResponse.json({}, { headers: corsHeaders() });
+export async function OPTIONS(req: NextRequest) {
+  return NextResponse.json({}, { headers: corsHeaders(req) });
 }

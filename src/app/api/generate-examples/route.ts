@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
-import { corsHeaders, getApiKey, handleError, cacheGet, cacheSet } from '../utils';
-import { hashContract, optimizeContractText } from '@/lib/utils/contract-optimizer';
+import {
+  corsHeaders,
+  getApiKey,
+  handleError,
+  cacheGet,
+  cacheSet,
+} from '../utils';
+import {
+  hashContract,
+  optimizeContractText,
+} from '@/lib/utils/contract-optimizer';
 import { rateLimiter, calculateRetryDelay } from '@/lib/utils/rate-limiter';
 
 // Set max duration for Vercel serverless function (30 seconds)
@@ -39,7 +48,7 @@ async function generateWithRetry(
   // Use hash for cache key to save memory
   const contractHash = hashContract(contractText);
   const cacheKey = `examples:${contractHash}`;
-  
+
   // Check cache first
   const cached = cacheGet(cacheKey);
   if (cached) {
@@ -102,17 +111,17 @@ async function generateWithRetry(
       const errorStatus = (error as { status?: number })?.status;
       if (errorStatus === 429) {
         const errorString = JSON.stringify(error);
-        const isDailyQuota = 
+        const isDailyQuota =
           errorString.includes('GenerateRequestsPerDayPerProjectPerModel') ||
           errorString.includes('free_tier_requests') ||
           errorString.includes('quotaValue');
-        
+
         if (isDailyQuota) {
           // Don't retry daily quota errors - they won't reset until tomorrow
           throw error;
         }
       }
-      
+
       if (attempt === maxRetries) {
         throw error;
       }
@@ -136,13 +145,13 @@ async function generateWithRetry(
 
 export async function POST(req: NextRequest) {
   if (req.method === 'OPTIONS') {
-    return NextResponse.json({}, { headers: corsHeaders() });
+    return NextResponse.json({}, { headers: corsHeaders(req) });
   }
 
   if (req.headers.get('content-type') !== 'application/json') {
     return NextResponse.json(
       { error: 'Invalid content type. Please use application/json.' },
-      { status: 400, headers: corsHeaders() }
+      { status: 400, headers: corsHeaders(req) }
     );
   }
 
@@ -152,7 +161,7 @@ export async function POST(req: NextRequest) {
     if (!contractText || !contractText.trim()) {
       return NextResponse.json(
         { error: 'Contract text is required.' },
-        { status: 400, headers: corsHeaders() }
+        { status: 400, headers: corsHeaders(req) }
       );
     }
 
@@ -161,14 +170,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { examples },
-      { status: 200, headers: corsHeaders() }
+      { status: 200, headers: corsHeaders(req) }
     );
   } catch (error) {
-    console.error('Error generating examples:', error);
-    const { errorMessage, statusCode } = handleError(error);
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: statusCode, headers: corsHeaders() }
-    );
+    return handleError(error, req);
   }
 }

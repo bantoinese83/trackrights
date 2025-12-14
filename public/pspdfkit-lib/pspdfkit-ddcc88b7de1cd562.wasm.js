@@ -21,7 +21,7 @@ var PSPDFModuleInit = (() => {
         a,
         i = r,
         s = new Promise((e, r) => {
-          (t = e), (n = r);
+          ((t = e), (n = r));
         }),
         l = 'object' == typeof window,
         u = 'function' == typeof importScripts,
@@ -38,9 +38,10 @@ var PSPDFModuleInit = (() => {
       if (d) {
         var m = require('fs'),
           v = require('path');
-        (p = __dirname + '/'),
+        ((p = __dirname + '/'),
           (a = (e) => (
-            (e = q(e) ? new URL(e) : v.normalize(e)), m.readFileSync(e)
+            (e = q(e) ? new URL(e) : v.normalize(e)),
+            m.readFileSync(e)
           )),
           (o = (e, r = !0) => (
             (e = q(e) ? new URL(e) : v.normalize(e)),
@@ -56,7 +57,7 @@ var PSPDFModuleInit = (() => {
           process.argv.slice(2),
           (h = (e, r) => {
             throw ((process.exitCode = e), r);
-          });
+          }));
       } else
         (l || u) &&
           (u
@@ -82,15 +83,15 @@ var PSPDFModuleInit = (() => {
             q(e)
               ? new Promise((r, t) => {
                   var n = new XMLHttpRequest();
-                  n.open('GET', e, !0),
+                  (n.open('GET', e, !0),
                     (n.responseType = 'arraybuffer'),
                     (n.onload = () => {
-                      (200 == n.status || (0 == n.status && n.response)) &&
+                      ((200 == n.status || (0 == n.status && n.response)) &&
                         t(n.response),
-                        r(n.status);
+                        r(n.status));
                     }),
                     (n.onerror = r),
-                    n.send(null);
+                    n.send(null));
                 })
               : fetch(e, { credentials: 'same-origin' }).then((e) =>
                   e.ok
@@ -101,12 +102,12 @@ var PSPDFModuleInit = (() => {
         g,
         w = i.print || console.log.bind(console),
         E = i.printErr || console.error.bind(console);
-      Object.assign(i, c),
+      (Object.assign(i, c),
         (c = null),
         i.arguments && i.arguments,
         i.thisProgram && (f = i.thisProgram),
         i.quit && (h = i.quit),
-        i.wasmBinary && (y = i.wasmBinary);
+        i.wasmBinary && (y = i.wasmBinary));
       var _,
         b,
         k,
@@ -121,14 +122,14 @@ var PSPDFModuleInit = (() => {
       }
       function M() {
         var e = g.buffer;
-        (i.HEAP8 = _ = new Int8Array(e)),
+        ((i.HEAP8 = _ = new Int8Array(e)),
           (i.HEAP16 = k = new Int16Array(e)),
           (i.HEAPU8 = b = new Uint8Array(e)),
           (i.HEAPU16 = C = new Uint16Array(e)),
           (i.HEAP32 = $ = new Int32Array(e)),
           (i.HEAPU32 = P = new Uint32Array(e)),
           (i.HEAPF32 = T = new Float32Array(e)),
-          (i.HEAPF64 = D = new Float64Array(e));
+          (i.HEAPF64 = D = new Float64Array(e)));
       }
       var A = [],
         j = [],
@@ -138,7 +139,7 @@ var PSPDFModuleInit = (() => {
         z = null,
         x = null;
       function U(e) {
-        N++, i.monitorRunDependencies?.(N);
+        (N++, i.monitorRunDependencies?.(N));
       }
       function W(e) {
         if (
@@ -147,16 +148,16 @@ var PSPDFModuleInit = (() => {
           0 == N && (null !== z && (clearInterval(z), (z = null)), x))
         ) {
           var r = x;
-          (x = null), r();
+          ((x = null), r());
         }
       }
       function L(e) {
-        i.onAbort?.(e),
+        (i.onAbort?.(e),
           E((e = 'Aborted(' + e + ')')),
           (F = !0),
           1,
           (e += '. Build with -sASSERTIONS for more info.'),
-          R && Dt();
+          R && Dt());
         var r = new WebAssembly.RuntimeError(e);
         throw (n(r), r);
       }
@@ -186,14 +187,14 @@ var PSPDFModuleInit = (() => {
         })(e)
           .then((e) => WebAssembly.instantiate(e, r))
           .then(t, (e) => {
-            E(`failed to asynchronously prepare wasm: ${e}`), L(e);
+            (E(`failed to asynchronously prepare wasm: ${e}`), L(e));
           });
       }
       var J = { 3119896: () => 'undefined' != typeof wasmOffsetConverter };
       function K(e) {
-        (this.name = 'ExitStatus'),
+        ((this.name = 'ExitStatus'),
           (this.message = `Program terminated with exit(${e})`),
-          (this.status = e);
+          (this.status = e));
       }
       var Z = (e) => {
           for (; e.length > 0; ) e.shift()(i);
@@ -274,7 +275,7 @@ var PSPDFModuleInit = (() => {
                   'Arguments to path.resolve must be strings'
                 );
               if (!o) return '';
-              (r = o + '/' + r), (t = ee.isAbs(o));
+              ((r = o + '/' + r), (t = ee.isAbs(o)));
             }
             return (
               (t ? '/' : '') +
@@ -292,7 +293,7 @@ var PSPDFModuleInit = (() => {
               for (var t = e.length - 1; t >= 0 && '' === e[t]; t--);
               return r > t ? [] : e.slice(r, t - r + 1);
             }
-            (e = te.resolve(e).substr(1)), (r = te.resolve(r).substr(1));
+            ((e = te.resolve(e).substr(1)), (r = te.resolve(r).substr(1)));
             for (
               var n = t(e.split('/')),
                 o = t(r.split('/')),
@@ -368,41 +369,41 @@ var PSPDFModuleInit = (() => {
               r[t++] = s;
             } else if (s <= 2047) {
               if (t + 1 >= a) break;
-              (r[t++] = 192 | (s >> 6)), (r[t++] = 128 | (63 & s));
+              ((r[t++] = 192 | (s >> 6)), (r[t++] = 128 | (63 & s)));
             } else if (s <= 65535) {
               if (t + 2 >= a) break;
-              (r[t++] = 224 | (s >> 12)),
+              ((r[t++] = 224 | (s >> 12)),
                 (r[t++] = 128 | ((s >> 6) & 63)),
-                (r[t++] = 128 | (63 & s));
+                (r[t++] = 128 | (63 & s)));
             } else {
               if (t + 3 >= a) break;
-              (r[t++] = 240 | (s >> 18)),
+              ((r[t++] = 240 | (s >> 18)),
                 (r[t++] = 128 | ((s >> 12) & 63)),
                 (r[t++] = 128 | ((s >> 6) & 63)),
-                (r[t++] = 128 | (63 & s));
+                (r[t++] = 128 | (63 & s)));
             }
           }
-          return (r[t] = 0), t - o;
+          return ((r[t] = 0), t - o);
         };
       function le(e, r, t) {
         var n = t > 0 ? t : ie(e) + 1,
           o = new Array(n),
           a = se(e, o, 0, o.length);
-        return r && (o.length = a), o;
+        return (r && (o.length = a), o);
       }
       var ue = {
           ttys: [],
           init() {},
           shutdown() {},
           register(e, r) {
-            (ue.ttys[e] = { input: [], output: [], ops: r }),
-              ye.registerDevice(e, ue.stream_ops);
+            ((ue.ttys[e] = { input: [], output: [], ops: r }),
+              ye.registerDevice(e, ue.stream_ops));
           },
           stream_ops: {
             open(e) {
               var r = ue.ttys[e.node.rdev];
               if (!r) throw new ye.ErrnoError(43);
-              (e.tty = r), (e.seekable = !1);
+              ((e.tty = r), (e.seekable = !1));
             },
             close(e) {
               e.tty.ops.fsync(e.tty);
@@ -421,9 +422,9 @@ var PSPDFModuleInit = (() => {
                 }
                 if (void 0 === s && 0 === a) throw new ye.ErrnoError(6);
                 if (null == s) break;
-                a++, (r[t + i] = s);
+                (a++, (r[t + i] = s));
               }
-              return a && (e.node.timestamp = Date.now()), a;
+              return (a && (e.node.timestamp = Date.now()), a);
             },
             write(e, r, t, n, o) {
               if (!e.tty || !e.tty.ops.put_char) throw new ye.ErrnoError(60);
@@ -432,7 +433,7 @@ var PSPDFModuleInit = (() => {
               } catch (e) {
                 throw new ye.ErrnoError(29);
               }
-              return n && (e.node.timestamp = Date.now()), a;
+              return (n && (e.node.timestamp = Date.now()), a);
             },
           },
           default_tty_ops: {
@@ -583,22 +584,22 @@ var PSPDFModuleInit = (() => {
           expandFileStorage(e, r) {
             var t = e.contents ? e.contents.length : 0;
             if (!(t >= r)) {
-              (r = Math.max(r, (t * (t < 1048576 ? 2 : 1.125)) >>> 0)),
-                0 != t && (r = Math.max(r, 256));
+              ((r = Math.max(r, (t * (t < 1048576 ? 2 : 1.125)) >>> 0)),
+                0 != t && (r = Math.max(r, 256)));
               var n = e.contents;
-              (e.contents = new Uint8Array(r)),
+              ((e.contents = new Uint8Array(r)),
                 e.usedBytes > 0 &&
-                  e.contents.set(n.subarray(0, e.usedBytes), 0);
+                  e.contents.set(n.subarray(0, e.usedBytes), 0));
             }
           },
           resizeFileStorage(e, r) {
             if (e.usedBytes != r)
-              if (0 == r) (e.contents = null), (e.usedBytes = 0);
+              if (0 == r) ((e.contents = null), (e.usedBytes = 0));
               else {
                 var t = e.contents;
-                (e.contents = new Uint8Array(r)),
+                ((e.contents = new Uint8Array(r)),
                   t && e.contents.set(t.subarray(0, Math.min(r, e.usedBytes))),
-                  (e.usedBytes = r);
+                  (e.usedBytes = r));
               }
           },
           node_ops: {
@@ -628,9 +629,9 @@ var PSPDFModuleInit = (() => {
               );
             },
             setattr(e, r) {
-              void 0 !== r.mode && (e.mode = r.mode),
+              (void 0 !== r.mode && (e.mode = r.mode),
                 void 0 !== r.timestamp && (e.timestamp = r.timestamp),
-                void 0 !== r.size && ce.resizeFileStorage(e, r.size);
+                void 0 !== r.size && ce.resizeFileStorage(e, r.size));
             },
             lookup(e, r) {
               throw ye.genericErrors[44];
@@ -644,19 +645,19 @@ var PSPDFModuleInit = (() => {
                 } catch (e) {}
                 if (n) for (var o in n.contents) throw new ye.ErrnoError(55);
               }
-              delete e.parent.contents[e.name],
+              (delete e.parent.contents[e.name],
                 (e.parent.timestamp = Date.now()),
                 (e.name = t),
                 (r.contents[t] = e),
-                (r.timestamp = e.parent.timestamp);
+                (r.timestamp = e.parent.timestamp));
             },
             unlink(e, r) {
-              delete e.contents[r], (e.timestamp = Date.now());
+              (delete e.contents[r], (e.timestamp = Date.now()));
             },
             rmdir(e, r) {
               var t = ye.lookupNode(e, r);
               for (var n in t.contents) throw new ye.ErrnoError(55);
-              delete e.contents[r], (e.timestamp = Date.now());
+              (delete e.contents[r], (e.timestamp = Date.now()));
             },
             readdir(e) {
               var r = ['.', '..'];
@@ -665,7 +666,7 @@ var PSPDFModuleInit = (() => {
             },
             symlink(e, r, t) {
               var n = ce.createNode(e, r, 41471, 0);
-              return (n.link = t), n;
+              return ((n.link = t), n);
             },
             readlink(e) {
               if (!ye.isLink(e.mode)) throw new ye.ErrnoError(28);
@@ -690,12 +691,18 @@ var PSPDFModuleInit = (() => {
               ) {
                 if (a)
                   return (
-                    (i.contents = r.subarray(t, t + n)), (i.usedBytes = n), n
+                    (i.contents = r.subarray(t, t + n)),
+                    (i.usedBytes = n),
+                    n
                   );
                 if (0 === i.usedBytes && 0 === o)
-                  return (i.contents = r.slice(t, t + n)), (i.usedBytes = n), n;
+                  return (
+                    (i.contents = r.slice(t, t + n)),
+                    (i.usedBytes = n),
+                    n
+                  );
                 if (o + n <= i.usedBytes)
-                  return i.contents.set(r.subarray(t, t + n), o), n;
+                  return (i.contents.set(r.subarray(t, t + n), o), n);
               }
               if (
                 (ce.expandFileStorage(i, o + n),
@@ -703,7 +710,7 @@ var PSPDFModuleInit = (() => {
               )
                 i.contents.set(r.subarray(t, t + n), o);
               else for (var s = 0; s < n; s++) i.contents[o + s] = r[t + s];
-              return (i.usedBytes = Math.max(i.usedBytes, o + n)), n;
+              return ((i.usedBytes = Math.max(i.usedBytes, o + n)), n);
             },
             llseek(e, r, t) {
               var n = r;
@@ -719,8 +726,8 @@ var PSPDFModuleInit = (() => {
               return n;
             },
             allocate(e, r, t) {
-              ce.expandFileStorage(e.node, r + t),
-                (e.node.usedBytes = Math.max(e.node.usedBytes, r + t));
+              (ce.expandFileStorage(e.node, r + t),
+                (e.node.usedBytes = Math.max(e.node.usedBytes, r + t)));
             },
             mmap(e, r, t, n, o) {
               if (!ye.isFile(e.node.mode)) throw new ye.ErrnoError(43);
@@ -738,11 +745,12 @@ var PSPDFModuleInit = (() => {
                 )
                   throw new ye.ErrnoError(48);
                 _.set(s, a);
-              } else (i = !1), (a = s.byteOffset);
+              } else ((i = !1), (a = s.byteOffset));
               return { ptr: a, allocated: i };
             },
             msync: (e, r, t, n, o) => (
-              ce.stream_ops.write(e, r, 0, n, t, !1), 0
+              ce.stream_ops.write(e, r, 0, n, t, !1),
+              0
             ),
           },
         },
@@ -754,7 +762,7 @@ var PSPDFModuleInit = (() => {
           var c = r ? te.resolve(ee.join2(e, r)) : e;
           function f(t) {
             function o(t) {
-              d?.(), l || fe(e, r, t, n, a, u), i?.(), W();
+              (d?.(), l || fe(e, r, t, n, a, u), i?.(), W());
             }
             ((e, r, t, n) => {
               'undefined' != typeof Browser && Browser.init();
@@ -766,42 +774,42 @@ var PSPDFModuleInit = (() => {
                 o
               );
             })(t, c, o, () => {
-              s?.(), W();
+              (s?.(), W());
             }) || o(t);
           }
-          U(),
+          (U(),
             'string' == typeof t
               ? ((e, r, t, n) => {
                   var a = n ? '' : `al ${e}`;
-                  o(e).then(
+                  (o(e).then(
                     (e) => {
-                      r(new Uint8Array(e)), a && W();
+                      (r(new Uint8Array(e)), a && W());
                     },
                     (r) => {
                       if (!t) throw `Loading data file "${e}" failed.`;
                       t();
                     }
                   ),
-                    a && U();
+                    a && U());
                 })(t, f, s)
-              : f(t);
+              : f(t));
         },
         me = (e, r) => {
           var t = 0;
-          return e && (t |= 365), r && (t |= 146), t;
+          return (e && (t |= 365), r && (t |= 146), t);
         },
         ve = {
           DIR_MODE: 16895,
           FILE_MODE: 33279,
           reader: null,
           mount(e) {
-            S(u), ve.reader || (ve.reader = new FileReaderSync());
+            (S(u), ve.reader || (ve.reader = new FileReaderSync()));
             var r = ve.createNode(null, '/', ve.DIR_MODE, 0),
               t = {};
             function n(e) {
               for (var n = e.split('/'), o = r, a = 0; a < n.length - 1; a++) {
                 var i = n.slice(0, a + 1).join('/');
-                (t[i] ||= ve.createNode(o, n[a], ve.DIR_MODE, 0)), (o = t[i]);
+                ((t[i] ||= ve.createNode(o, n[a], ve.DIR_MODE, 0)), (o = t[i]));
               }
               return o;
             }
@@ -870,8 +878,8 @@ var PSPDFModuleInit = (() => {
               blocks: Math.ceil(e.size / 4096),
             }),
             setattr(e, r) {
-              void 0 !== r.mode && (e.mode = r.mode),
-                void 0 !== r.timestamp && (e.timestamp = r.timestamp);
+              (void 0 !== r.mode && (e.mode = r.mode),
+                void 0 !== r.timestamp && (e.timestamp = r.timestamp));
             },
             lookup(e, r) {
               throw new ye.ErrnoError(44);
@@ -902,7 +910,7 @@ var PSPDFModuleInit = (() => {
               if (o >= e.node.size) return 0;
               var a = e.node.contents.slice(o, o + n),
                 i = ve.reader.readAsArrayBuffer(a);
-              return r.set(new Uint8Array(i), t), a.size;
+              return (r.set(new Uint8Array(i), t), a.size);
             },
             write(e, r, t, n, o) {
               throw new ye.ErrnoError(29);
@@ -932,7 +940,7 @@ var PSPDFModuleInit = (() => {
           ignorePermissions: !0,
           ErrnoError: class {
             constructor(e) {
-              (this.name = 'ErrnoError'), (this.errno = e);
+              ((this.name = 'ErrnoError'), (this.errno = e));
             }
           },
           genericErrors: {},
@@ -972,7 +980,7 @@ var PSPDFModuleInit = (() => {
           },
           FSNode: class {
             constructor(e, r, t, n) {
-              e || (e = this),
+              (e || (e = this),
                 (this.parent = e),
                 (this.mount = e.mount),
                 (this.mounted = null),
@@ -983,7 +991,7 @@ var PSPDFModuleInit = (() => {
                 (this.stream_ops = {}),
                 (this.rdev = n),
                 (this.readMode = 365),
-                (this.writeMode = 146);
+                (this.writeMode = 146));
             }
             get read() {
               return (this.mode & this.readMode) === this.readMode;
@@ -1051,7 +1059,7 @@ var PSPDFModuleInit = (() => {
                 var t = e.mount.mountpoint;
                 return r ? ('/' !== t[t.length - 1] ? `${t}/${r}` : t + r) : t;
               }
-              (r = r ? `${e.name}/${r}` : e.name), (e = e.parent);
+              ((r = r ? `${e.name}/${r}` : e.name), (e = e.parent));
             }
           },
           hashName(e, r) {
@@ -1061,7 +1069,7 @@ var PSPDFModuleInit = (() => {
           },
           hashAddNode(e) {
             var r = ye.hashName(e.parent.id, e.name);
-            (e.name_next = ye.nameTable[r]), (ye.nameTable[r] = e);
+            ((e.name_next = ye.nameTable[r]), (ye.nameTable[r] = e));
           },
           hashRemoveNode(e) {
             var r = ye.hashName(e.parent.id, e.name);
@@ -1090,7 +1098,7 @@ var PSPDFModuleInit = (() => {
           },
           createNode(e, r, t, n) {
             var o = new ye.FSNode(e, r, t, n);
-            return ye.hashAddNode(o), o;
+            return (ye.hashAddNode(o), o);
           },
           destroyNode(e) {
             ye.hashRemoveNode(e);
@@ -1106,7 +1114,7 @@ var PSPDFModuleInit = (() => {
           isSocket: (e) => 49152 == (49152 & e),
           flagsToPermissionString(e) {
             var r = ['r', 'w', 'rw'][3 & e];
-            return 512 & e && (r += 'w'), r;
+            return (512 & e && (r += 'w'), r);
           },
           nodePermissions: (e, r) =>
             ye.ignorePermissions ||
@@ -1175,12 +1183,12 @@ var PSPDFModuleInit = (() => {
           },
           dupStream(e, r = -1) {
             var t = ye.createStream(e, r);
-            return t.stream_ops?.dup?.(t), t;
+            return (t.stream_ops?.dup?.(t), t);
           },
           chrdev_stream_ops: {
             open(e) {
               var r = ye.getDevice(e.node.rdev);
-              (e.stream_ops = r.stream_ops), e.stream_ops.open?.(e);
+              ((e.stream_ops = r.stream_ops), e.stream_ops.open?.(e));
             },
             llseek() {
               throw new ye.ErrnoError(70);
@@ -1196,21 +1204,21 @@ var PSPDFModuleInit = (() => {
           getMounts(e) {
             for (var r = [], t = [e]; t.length; ) {
               var n = t.pop();
-              r.push(n), t.push(...n.mounts);
+              (r.push(n), t.push(...n.mounts));
             }
             return r;
           },
           syncfs(e, r) {
-            'function' == typeof e && ((r = e), (e = !1)),
+            ('function' == typeof e && ((r = e), (e = !1)),
               ye.syncFSRequests++,
               ye.syncFSRequests > 1 &&
                 E(
                   `warning: ${ye.syncFSRequests} FS.syncfs operations in flight at once, probably just doing extra work`
-                );
+                ));
             var t = ye.getMounts(ye.root.mount),
               n = 0;
             function o(e) {
-              return ye.syncFSRequests--, r(e);
+              return (ye.syncFSRequests--, r(e));
             }
             function a(e) {
               if (e) return a.errored ? void 0 : ((a.errored = !0), o(e));
@@ -1249,13 +1257,13 @@ var PSPDFModuleInit = (() => {
             var t = r.node,
               n = t.mounted,
               o = ye.getMounts(n);
-            Object.keys(ye.nameTable).forEach((e) => {
+            (Object.keys(ye.nameTable).forEach((e) => {
               for (var r = ye.nameTable[e]; r; ) {
                 var t = r.name_next;
-                o.includes(r.mount) && ye.destroyNode(r), (r = t);
+                (o.includes(r.mount) && ye.destroyNode(r), (r = t));
               }
             }),
-              (t.mounted = null);
+              (t.mounted = null));
             var a = t.mount.mounts.indexOf(n);
             t.mount.mounts.splice(a, 1);
           },
@@ -1293,7 +1301,9 @@ var PSPDFModuleInit = (() => {
               }
           },
           mkdev: (e, r, t) => (
-            void 0 === t && ((t = r), (r = 438)), (r |= 8192), ye.mknod(e, r, t)
+            void 0 === t && ((t = r), (r = 438)),
+            (r |= 8192),
+            ye.mknod(e, r, t)
           ),
           symlink(e, r) {
             if (!te.resolve(e)) throw new ye.ErrnoError(44);
@@ -1341,7 +1351,7 @@ var PSPDFModuleInit = (() => {
                 throw new ye.ErrnoError(f);
               ye.hashRemoveNode(u);
               try {
-                t.node_ops.rename(u, n, s), (u.parent = n);
+                (t.node_ops.rename(u, n, s), (u.parent = n));
               } catch (e) {
                 throw e;
               } finally {
@@ -1357,7 +1367,7 @@ var PSPDFModuleInit = (() => {
             if (o) throw new ye.ErrnoError(o);
             if (!r.node_ops.rmdir) throw new ye.ErrnoError(63);
             if (ye.isMountpoint(n)) throw new ye.ErrnoError(10);
-            r.node_ops.rmdir(r, t), ye.destroyNode(n);
+            (r.node_ops.rmdir(r, t), ye.destroyNode(n));
           },
           readdir(e) {
             var r = ye.lookupPath(e, { follow: !0 }).node;
@@ -1373,7 +1383,7 @@ var PSPDFModuleInit = (() => {
             if (o) throw new ye.ErrnoError(o);
             if (!r.node_ops.unlink) throw new ye.ErrnoError(63);
             if (ye.isMountpoint(n)) throw new ye.ErrnoError(10);
-            r.node_ops.unlink(r, t), ye.destroyNode(n);
+            (r.node_ops.unlink(r, t), ye.destroyNode(n));
           },
           readlink(e) {
             var r = ye.lookupPath(e).node;
@@ -1480,7 +1490,7 @@ var PSPDFModuleInit = (() => {
             if (64 & r)
               if (n) {
                 if (128 & r) throw new ye.ErrnoError(20);
-              } else (n = ye.mknod(e, t, 0)), (o = !0);
+              } else ((n = ye.mknod(e, t, 0)), (o = !0));
             if (!n) throw new ye.ErrnoError(44);
             if (
               (ye.isChrdev(n.mode) && (r &= -513),
@@ -1491,7 +1501,7 @@ var PSPDFModuleInit = (() => {
               var a = ye.mayOpen(n, r);
               if (a) throw new ye.ErrnoError(a);
             }
-            512 & r && !o && ye.truncate(n, 0), (r &= -131713);
+            (512 & r && !o && ye.truncate(n, 0), (r &= -131713));
             var s = ye.createStream({
               node: n,
               path: ye.getPath(n),
@@ -1546,7 +1556,7 @@ var PSPDFModuleInit = (() => {
               if (!e.seekable) throw new ye.ErrnoError(70);
             } else o = e.position;
             var i = e.stream_ops.read(e, r, t, n, o);
-            return a || (e.position += i), i;
+            return (a || (e.position += i), i);
           },
           write(e, r, t, n, o, a) {
             if (n < 0 || o < 0) throw new ye.ErrnoError(28);
@@ -1560,7 +1570,7 @@ var PSPDFModuleInit = (() => {
               if (!e.seekable) throw new ye.ErrnoError(70);
             } else o = e.position;
             var s = e.stream_ops.write(e, r, t, n, o, a);
-            return i || (e.position += s), s;
+            return (i || (e.position += s), s);
           },
           allocate(e, r, t) {
             if (ye.isClosed(e)) throw new ye.ErrnoError(8);
@@ -1628,10 +1638,10 @@ var PSPDFModuleInit = (() => {
             ye.currentPath = r.path;
           },
           createDefaultDirectories() {
-            ye.mkdir('/tmp'), ye.mkdir('/home'), ye.mkdir('/home/web_user');
+            (ye.mkdir('/tmp'), ye.mkdir('/home'), ye.mkdir('/home/web_user'));
           },
           createDefaultDevices() {
-            ye.mkdir('/dev'),
+            (ye.mkdir('/dev'),
               ye.registerDevice(ye.makedev(1, 3), {
                 read: () => 0,
                 write: (e, r, t, n, o) => n,
@@ -1640,19 +1650,19 @@ var PSPDFModuleInit = (() => {
               ue.register(ye.makedev(5, 0), ue.default_tty_ops),
               ue.register(ye.makedev(6, 0), ue.default_tty1_ops),
               ye.mkdev('/dev/tty', ye.makedev(5, 0)),
-              ye.mkdev('/dev/tty1', ye.makedev(6, 0));
+              ye.mkdev('/dev/tty1', ye.makedev(6, 0)));
             var e = new Uint8Array(1024),
               r = 0,
               t = () => (0 === r && (r = re(e).byteLength), e[--r]);
-            ye.createDevice('/dev', 'random', t),
+            (ye.createDevice('/dev', 'random', t),
               ye.createDevice('/dev', 'urandom', t),
               ye.mkdir('/dev/shm'),
-              ye.mkdir('/dev/shm/tmp');
+              ye.mkdir('/dev/shm/tmp'));
           },
           createSpecialDirectories() {
             ye.mkdir('/proc');
             var e = ye.mkdir('/proc/self');
-            ye.mkdir('/proc/self/fd'),
+            (ye.mkdir('/proc/self/fd'),
               ye.mount(
                 {
                   mount() {
@@ -1667,7 +1677,7 @@ var PSPDFModuleInit = (() => {
                               mount: { mountpoint: 'fake' },
                               node_ops: { readlink: () => n.path },
                             };
-                          return (o.parent = o), o;
+                          return ((o.parent = o), o);
                         },
                       }),
                       r
@@ -1676,10 +1686,10 @@ var PSPDFModuleInit = (() => {
                 },
                 {},
                 '/proc/self/fd'
-              );
+              ));
           },
           createStandardStreams() {
-            i.stdin
+            (i.stdin
               ? ye.createDevice('/dev', 'stdin', i.stdin)
               : ye.symlink('/dev/tty', '/dev/stdin'),
               i.stdout
@@ -1687,29 +1697,29 @@ var PSPDFModuleInit = (() => {
                 : ye.symlink('/dev/tty', '/dev/stdout'),
               i.stderr
                 ? ye.createDevice('/dev', 'stderr', null, i.stderr)
-                : ye.symlink('/dev/tty1', '/dev/stderr');
-            ye.open('/dev/stdin', 0),
+                : ye.symlink('/dev/tty1', '/dev/stderr'));
+            (ye.open('/dev/stdin', 0),
               ye.open('/dev/stdout', 1),
-              ye.open('/dev/stderr', 1);
+              ye.open('/dev/stderr', 1));
           },
           staticInit() {
-            [44].forEach((e) => {
-              (ye.genericErrors[e] = new ye.ErrnoError(e)),
-                (ye.genericErrors[e].stack = '<generic error, no stack>');
+            ([44].forEach((e) => {
+              ((ye.genericErrors[e] = new ye.ErrnoError(e)),
+                (ye.genericErrors[e].stack = '<generic error, no stack>'));
             }),
               (ye.nameTable = new Array(4096)),
               ye.mount(ce, {}, '/'),
               ye.createDefaultDirectories(),
               ye.createDefaultDevices(),
               ye.createSpecialDirectories(),
-              (ye.filesystems = { MEMFS: ce, WORKERFS: ve });
+              (ye.filesystems = { MEMFS: ce, WORKERFS: ve }));
           },
           init(e, r, t) {
-            (ye.init.initialized = !0),
+            ((ye.init.initialized = !0),
               (i.stdin = e || i.stdin),
               (i.stdout = r || i.stdout),
               (i.stderr = t || i.stderr),
-              ye.createStandardStreams();
+              ye.createStandardStreams());
           },
           quit() {
             ye.init.initialized = !1;
@@ -1739,7 +1749,7 @@ var PSPDFModuleInit = (() => {
             };
             try {
               var n = ye.lookupPath(e, { parent: !0 });
-              (t.parentExists = !0),
+              ((t.parentExists = !0),
                 (t.parentPath = n.path),
                 (t.parentObject = n.node),
                 (t.name = ee.basename(e)),
@@ -1748,7 +1758,7 @@ var PSPDFModuleInit = (() => {
                 (t.path = n.path),
                 (t.object = n.node),
                 (t.name = n.node.name),
-                (t.isRoot = '/' === n.path);
+                (t.isRoot = '/' === n.path));
             } catch (e) {
               t.error = e.errno;
             }
@@ -1792,7 +1802,7 @@ var PSPDFModuleInit = (() => {
               }
               ye.chmod(l, 146 | s);
               var f = ye.open(l, 577);
-              ye.write(f, t, 0, t.length, 0, a), ye.close(f), ye.chmod(l, s);
+              (ye.write(f, t, 0, t.length, 0, a), ye.close(f), ye.chmod(l, s));
             }
           },
           createDevice(e, r, t, n) {
@@ -1818,9 +1828,9 @@ var PSPDFModuleInit = (() => {
                     }
                     if (void 0 === l && 0 === i) throw new ye.ErrnoError(6);
                     if (null == l) break;
-                    i++, (r[n + s] = l);
+                    (i++, (r[n + s] = l));
                   }
-                  return i && (e.node.timestamp = Date.now()), i;
+                  return (i && (e.node.timestamp = Date.now()), i);
                 },
                 write(e, r, t, o, a) {
                   for (var i = 0; i < o; i++)
@@ -1829,7 +1839,7 @@ var PSPDFModuleInit = (() => {
                     } catch (e) {
                       throw new ye.ErrnoError(29);
                     }
-                  return o && (e.node.timestamp = Date.now()), i;
+                  return (o && (e.node.timestamp = Date.now()), i);
                 },
               }),
               ye.mkdev(o, a, i)
@@ -1842,7 +1852,7 @@ var PSPDFModuleInit = (() => {
                 'Lazy loading should have been performed (contents set) in createLazyFile, but it was not. Lazy loading only works in web workers. Use --embed-file or --preload-file in emcc on the main thread.'
               );
             try {
-              (e.contents = a(e.url)), (e.usedBytes = e.contents.length);
+              ((e.contents = a(e.url)), (e.usedBytes = e.contents.length));
             } catch (e) {
               throw new ye.ErrnoError(29);
             }
@@ -1850,7 +1860,7 @@ var PSPDFModuleInit = (() => {
           createLazyFile(e, r, t, n, o) {
             class a {
               constructor() {
-                (this.lengthKnown = !1), (this.chunks = []);
+                ((this.lengthKnown = !1), (this.chunks = []));
               }
               get(e) {
                 if (!(e > this.length - 1 || e < 0)) {
@@ -1882,7 +1892,7 @@ var PSPDFModuleInit = (() => {
                   i = 1048576;
                 o || (i = n);
                 var s = this;
-                s.setDataGetter((e) => {
+                (s.setDataGetter((e) => {
                   var r = e * i,
                     o = (e + 1) * i - 1;
                   if (
@@ -1938,13 +1948,16 @@ var PSPDFModuleInit = (() => {
                     )),
                   (this._length = n),
                   (this._chunkSize = i),
-                  (this.lengthKnown = !0);
+                  (this.lengthKnown = !0));
               }
               get length() {
-                return this.lengthKnown || this.cacheLength(), this._length;
+                return (this.lengthKnown || this.cacheLength(), this._length);
               }
               get chunkSize() {
-                return this.lengthKnown || this.cacheLength(), this._chunkSize;
+                return (
+                  this.lengthKnown || this.cacheLength(),
+                  this._chunkSize
+                );
               }
             }
             if ('undefined' != typeof XMLHttpRequest) {
@@ -1953,7 +1966,7 @@ var PSPDFModuleInit = (() => {
               var i = { isDevice: !1, contents: new a() };
             } else i = { isDevice: !1, url: t };
             var s = ye.createFile(e, r, i, n, o);
-            i.contents
+            (i.contents
               ? (s.contents = i.contents)
               : i.url && ((s.contents = null), (s.url = i.url)),
               Object.defineProperties(s, {
@@ -1962,7 +1975,7 @@ var PSPDFModuleInit = (() => {
                     return this.contents.length;
                   },
                 },
-              });
+              }));
             var l = {};
             function d(e, r, t, n, o) {
               var a = e.node.contents;
@@ -1978,13 +1991,14 @@ var PSPDFModuleInit = (() => {
                 l[e] = (...e) => (ye.forceLoadFile(s), r(...e));
               }),
               (l.read = (e, r, t, n, o) => (
-                ye.forceLoadFile(s), d(e, r, t, n, o)
+                ye.forceLoadFile(s),
+                d(e, r, t, n, o)
               )),
               (l.mmap = (e, r, t, n, o) => {
                 ye.forceLoadFile(s);
                 var a = de(r);
                 if (!a) throw new ye.ErrnoError(48);
-                return d(e, _, a, r, t), { ptr: a, allocated: !0 };
+                return (d(e, _, a, r, t), { ptr: a, allocated: !0 });
               }),
               (s.stream_ops = l),
               s
@@ -2006,7 +2020,7 @@ var PSPDFModuleInit = (() => {
           },
           doStat(e, r, t) {
             var n = e(r);
-            ($[t >> 2] = n.dev),
+            (($[t >> 2] = n.dev),
               ($[(t + 4) >> 2] = n.mode),
               (P[(t + 8) >> 2] = n.nlink),
               ($[(t + 12) >> 2] = n.uid),
@@ -2024,7 +2038,7 @@ var PSPDFModuleInit = (() => {
               ($[(t + 24) >> 2] = H[0]),
               ($[(t + 28) >> 2] = H[1]),
               ($[(t + 32) >> 2] = 4096),
-              ($[(t + 36) >> 2] = n.blocks);
+              ($[(t + 36) >> 2] = n.blocks));
             var o = n.atime.getTime(),
               a = n.mtime.getTime(),
               i = n.ctime.getTime();
@@ -2091,7 +2105,7 @@ var PSPDFModuleInit = (() => {
         };
       function Ee() {
         var e = $[+we.varargs >> 2];
-        return (we.varargs += 4), e;
+        return ((we.varargs += 4), e);
       }
       var _e = Ee;
       var be = (e, r) =>
@@ -2122,13 +2136,13 @@ var PSPDFModuleInit = (() => {
               return 8;
             default: {
               const r = Se.pop() || Me.length;
-              return (Me[r] = e), (Me[r + 1] = 1), r;
+              return ((Me[r] = e), (Me[r + 1] = 1), r);
             }
           }
         },
         Ne = (e, r) => {
           var t = Fe(r, function (e) {
-            (this.name = r), (this.message = e);
+            ((this.name = r), (this.message = e));
             var t = new Error(e).stack;
             void 0 !== t &&
               (this.stack =
@@ -2159,38 +2173,38 @@ var PSPDFModuleInit = (() => {
         Le = () => {
           for (; We.length; ) {
             var e = We.pop();
-            (e.$$.deleteScheduled = !1), e.delete();
+            ((e.$$.deleteScheduled = !1), e.delete());
           }
         },
         Ie = (e) => {
-          (Te = e), We.length && Te && Te(Le);
+          ((Te = e), We.length && Te && Te(Le));
         },
         Be = {},
         He = (e, r) => {
           for (void 0 === r && Ae('ptr should not be undefined'); e.baseClass; )
-            (r = e.upcast(r)), (e = e.baseClass);
+            ((r = e.upcast(r)), (e = e.baseClass));
           return r;
         },
         Ve = {},
         qe = (e) => {
           var r = Ct(e),
             t = ze(r);
-          return Pt(r), t;
+          return (Pt(r), t);
         },
         Ye = (e, r) => {
           var t = Ve[e];
-          return void 0 === t && Ae(`${r} has unknown type ${qe(e)}`), t;
+          return (void 0 === t && Ae(`${r} has unknown type ${qe(e)}`), t);
         },
         Ge = (e) => {},
         Xe = !1,
         Je = (e) => {
-          (e.count.value -= 1),
+          ((e.count.value -= 1),
             0 === e.count.value &&
               ((e) => {
                 e.smartPtr
                   ? e.smartPtrType.rawDestructor(e.smartPtr)
                   : e.ptrType.registeredClass.rawDestructor(e.ptr);
-              })(e);
+              })(e));
         },
         Ke = (e, r, t) => {
           if (r === t) return e;
@@ -2212,13 +2226,13 @@ var PSPDFModuleInit = (() => {
         );
       function rr(e) {
         var r = this.getPointee(e);
-        if (!r) return this.destructor(e), null;
+        if (!r) return (this.destructor(e), null);
         var t = ((e, r) => ((r = He(e, r)), Be[r]))(this.registeredClass, r);
         if (void 0 !== t) {
           if (0 === t.$$.count.value)
-            return (t.$$.ptr = r), (t.$$.smartPtr = e), t.clone();
+            return ((t.$$.ptr = r), (t.$$.smartPtr = e), t.clone());
           var n = t.clone();
-          return this.destructor(e), n;
+          return (this.destructor(e), n);
         }
         function o() {
           return this.isSmartPointer
@@ -2290,16 +2304,16 @@ var PSPDFModuleInit = (() => {
           var o = new Array(r.length),
             a = [],
             i = 0;
-          r.forEach((e, r) => {
+          (r.forEach((e, r) => {
             Ve.hasOwnProperty(e)
               ? (o[r] = Ve[e])
               : (a.push(e),
                 ir.hasOwnProperty(e) || (ir[e] = []),
                 ir[e].push(() => {
-                  (o[r] = Ve[e]), ++i === a.length && n(o);
+                  ((o[r] = Ve[e]), ++i === a.length && n(o));
                 }));
           }),
-            0 === a.length && n(o);
+            0 === a.length && n(o));
         };
       function ur(e, r, t = {}) {
         if (!('argPackAdvance' in r))
@@ -2317,7 +2331,7 @@ var PSPDFModuleInit = (() => {
           }
           if (((Ve[e] = r), delete sr[e], ir.hasOwnProperty(e))) {
             var o = ir[e];
-            delete ir[e], o.forEach((e) => e());
+            (delete ir[e], o.forEach((e) => e()));
           }
         })(e, r, t);
       }
@@ -2329,7 +2343,7 @@ var PSPDFModuleInit = (() => {
       var hr = (e, r, t) => {
           if (void 0 === e[r].overloadTable) {
             var n = e[r];
-            (e[r] = function (...n) {
+            ((e[r] = function (...n) {
               return (
                 e[r].overloadTable.hasOwnProperty(n.length) ||
                   Ae(
@@ -2339,7 +2353,7 @@ var PSPDFModuleInit = (() => {
               );
             }),
               (e[r].overloadTable = []),
-              (e[r].overloadTable[n.argCount] = n);
+              (e[r].overloadTable[n.argCount] = n));
           }
         },
         pr = (e, r, t) => {
@@ -2357,7 +2371,7 @@ var PSPDFModuleInit = (() => {
             : ((i[e] = r), void 0 !== t && (i[e].numArguments = t));
         };
       function mr(e, r, t, n, o, a, i, s) {
-        (this.name = e),
+        ((this.name = e),
           (this.constructor = r),
           (this.instancePrototype = t),
           (this.rawDestructor = n),
@@ -2365,24 +2379,27 @@ var PSPDFModuleInit = (() => {
           (this.getActualType = a),
           (this.upcast = i),
           (this.downcast = s),
-          (this.pureVirtualFunctions = []);
+          (this.pureVirtualFunctions = []));
       }
       var vr = (e, r, t) => {
         for (; r !== t; )
-          r.upcast ||
+          (r.upcast ||
             Ae(
               `Expected null or instance of ${t.name}, got an instance of ${r.name}`
             ),
             (e = r.upcast(e)),
-            (r = r.baseClass);
+            (r = r.baseClass));
         return e;
       };
       function yr(e, r) {
         if (null === r)
-          return this.isReference && Ae(`null is not a valid ${this.name}`), 0;
-        r.$$ || Ae(`Cannot pass "${zr(r)}" as a ${this.name}`),
+          return (
+            this.isReference && Ae(`null is not a valid ${this.name}`),
+            0
+          );
+        (r.$$ || Ae(`Cannot pass "${zr(r)}" as a ${this.name}`),
           r.$$.ptr ||
-            Ae(`Cannot pass deleted object as a pointer of type ${this.name}`);
+            Ae(`Cannot pass deleted object as a pointer of type ${this.name}`));
         var t = r.$$.ptrType.registeredClass;
         return vr(r.$$.ptr, t, this.registeredClass);
       }
@@ -2397,14 +2414,14 @@ var PSPDFModuleInit = (() => {
                 t)
               : 0
           );
-        (r && r.$$) || Ae(`Cannot pass "${zr(r)}" as a ${this.name}`),
+        ((r && r.$$) || Ae(`Cannot pass "${zr(r)}" as a ${this.name}`),
           r.$$.ptr ||
             Ae(`Cannot pass deleted object as a pointer of type ${this.name}`),
           !this.isConst &&
             r.$$.ptrType.isConst &&
             Ae(
               `Cannot convert argument of type ${r.$$.smartPtrType ? r.$$.smartPtrType.name : r.$$.ptrType.name} to parameter type ${this.name}`
-            );
+            ));
         var n = r.$$.ptrType.registeredClass;
         if (((t = vr(r.$$.ptr, n, this.registeredClass)), this.isSmartPointer))
           switch (
@@ -2426,11 +2443,11 @@ var PSPDFModuleInit = (() => {
               if (r.$$.smartPtrType === this) t = r.$$.smartPtr;
               else {
                 var o = r.clone();
-                (t = this.rawShare(
+                ((t = this.rawShare(
                   t,
                   Re(() => o.delete())
                 )),
-                  null !== e && e.push(this.rawDestructor, t);
+                  null !== e && e.push(this.rawDestructor, t));
               }
               break;
             default:
@@ -2440,19 +2457,22 @@ var PSPDFModuleInit = (() => {
       }
       function wr(e, r) {
         if (null === r)
-          return this.isReference && Ae(`null is not a valid ${this.name}`), 0;
-        r.$$ || Ae(`Cannot pass "${zr(r)}" as a ${this.name}`),
+          return (
+            this.isReference && Ae(`null is not a valid ${this.name}`),
+            0
+          );
+        (r.$$ || Ae(`Cannot pass "${zr(r)}" as a ${this.name}`),
           r.$$.ptr ||
             Ae(`Cannot pass deleted object as a pointer of type ${this.name}`),
           r.$$.ptrType.isConst &&
             Ae(
               `Cannot convert argument of type ${r.$$.ptrType.name} to parameter type ${this.name}`
-            );
+            ));
         var t = r.$$.ptrType.registeredClass;
         return vr(r.$$.ptr, t, this.registeredClass);
       }
       function Er(e, r, t, n, o, a, i, s, l, u, d) {
-        (this.name = e),
+        ((this.name = e),
           (this.registeredClass = r),
           (this.isReference = t),
           (this.isConst = n),
@@ -2467,21 +2487,22 @@ var PSPDFModuleInit = (() => {
             ? (this.toWireType = gr)
             : n
               ? ((this.toWireType = yr), (this.destructorFunction = null))
-              : ((this.toWireType = wr), (this.destructorFunction = null));
+              : ((this.toWireType = wr), (this.destructorFunction = null)));
       }
       var _r,
         br,
         kr = (e, r, t) => {
-          i.hasOwnProperty(e) || Qe('Replacing nonexistent public symbol'),
+          (i.hasOwnProperty(e) || Qe('Replacing nonexistent public symbol'),
             void 0 !== i[e].overloadTable && void 0 !== t
               ? (i[e].overloadTable[t] = r)
-              : ((i[e] = r), (i[e].argCount = t));
+              : ((i[e] = r), (i[e].argCount = t)));
         },
         Cr = (e) => _r.get(e),
         $r = (e, r, t = []) =>
           e.includes('j')
             ? ((e, r, t) => (
-                (e = e.replace(/p/g, 'i')), (0, i['dynCall_' + e])(r, ...t)
+                (e = e.replace(/p/g, 'i')),
+                (0, i['dynCall_' + e])(r, ...t)
               ))(e, r, t)
             : Cr(r)(...t),
         Pr = (e, r) => {
@@ -2500,12 +2521,12 @@ var PSPDFModuleInit = (() => {
           var t = [],
             n = {};
           throw (
-            (r.forEach(function e(r) {
+            r.forEach(function e(r) {
               n[r] ||
                 Ve[r] ||
                 (sr[r] ? sr[r].forEach(e) : (t.push(r), (n[r] = !0)));
             }),
-            new br(`${e}: ` + t.map(qe).join([', '])))
+            new br(`${e}: ` + t.map(qe).join([', ']))
           );
         };
       function Dr(e) {
@@ -2549,8 +2570,8 @@ var PSPDFModuleInit = (() => {
             l < a - 2;
             ++l
           )
-            (i += (0 !== l ? ', ' : '') + 'arg' + l),
-              (s += (0 !== l ? ', ' : '') + 'arg' + l + 'Wired');
+            ((i += (0 !== l ? ', ' : '') + 'arg' + l),
+              (s += (0 !== l ? ', ' : '') + 'arg' + l + 'Wired'));
           var u = `\n        return function (${i}) {\n        if (arguments.length !== ${a - 2}) {\n          throwBindingError('function ' + humanName + ' called with ' + arguments.length + ' arguments, expected ${a - 2}');\n        }`;
           o && (u += 'var destructors = [];\n');
           var d = o ? 'destructors' : 'null',
@@ -2571,7 +2592,7 @@ var PSPDFModuleInit = (() => {
             l < a - 2;
             ++l
           )
-            (u +=
+            ((u +=
               'var arg' +
               l +
               'Wired = argType' +
@@ -2581,7 +2602,7 @@ var PSPDFModuleInit = (() => {
               ', arg' +
               l +
               ');\n'),
-              c.push('argType' + l);
+              c.push('argType' + l));
           if (
             (r && (s = 'thisWired' + (s.length > 0 ? ', ' : '') + s),
             (u +=
@@ -2631,7 +2652,7 @@ var PSPDFModuleInit = (() => {
           name: 'emscripten::val',
           fromWireType: (e) => {
             var r = Oe(e);
-            return Or(e), r;
+            return (Or(e), r);
           },
           toWireType: (e, r) => Re(r),
           argPackAdvance: dr,
@@ -2694,9 +2715,9 @@ var PSPDFModuleInit = (() => {
             ++a
           ) {
             var i = e.charCodeAt(a);
-            (k[r >> 1] = i), (r += 2);
+            ((k[r >> 1] = i), (r += 2));
           }
-          return (k[r >> 1] = 0), r - n;
+          return ((k[r >> 1] = 0), r - n);
         },
         Br = (e) => 2 * e.length,
         Hr = (e, r) => {
@@ -2718,19 +2739,19 @@ var PSPDFModuleInit = (() => {
               i = (65536 + ((1023 & i) << 10)) | (1023 & e.charCodeAt(++a));
             if ((($[r >> 2] = i), (r += 4) + 4 > o)) break;
           }
-          return ($[r >> 2] = 0), r - n;
+          return (($[r >> 2] = 0), r - n);
         },
         qr = (e) => {
           for (var r = 0, t = 0; t < e.length; ++t) {
             var n = e.charCodeAt(t);
-            n >= 55296 && n <= 57343 && ++t, (r += 4);
+            (n >= 55296 && n <= 57343 && ++t, (r += 4));
           }
           return r;
         },
         Yr = (e, r, t) => {
           var n = [],
             o = e.toWireType(n, t);
-          return n.length && (P[r >> 2] = Re(n)), o;
+          return (n.length && (P[r >> 2] = Re(n)), o);
         },
         Gr = [],
         Xr = {},
@@ -2756,11 +2777,11 @@ var PSPDFModuleInit = (() => {
             var t;
             for (ot.length = 0; (t = b[e++]); ) {
               var n = 105 != t;
-              (r += (n &= 112 != t) && r % 8 ? 4 : 0),
+              ((r += (n &= 112 != t) && r % 8 ? 4 : 0),
                 ot.push(
                   112 == t ? P[r >> 2] : 105 == t ? $[r >> 2] : D[r >> 3]
                 ),
-                (r += n ? 8 : 4);
+                (r += n ? 8 : 4));
             }
             return ot;
           })(r, t);
@@ -2770,7 +2791,7 @@ var PSPDFModuleInit = (() => {
       var it = (e) => {
           var r = (e - g.buffer.byteLength + 65535) / 65536;
           try {
-            return g.grow(r), M(), 1;
+            return (g.grow(r), M(), 1);
           } catch (e) {}
         },
         st = (e) => (
@@ -2825,12 +2846,12 @@ var PSPDFModuleInit = (() => {
             var n = Zr(t.getFullYear()),
               o = t.getMonth(),
               a = (n ? pt : mt)[o];
-            if (!(r > a - t.getDate())) return t.setDate(t.getDate() + r), t;
-            (r -= a - t.getDate() + 1),
+            if (!(r > a - t.getDate())) return (t.setDate(t.getDate() + r), t);
+            ((r -= a - t.getDate() + 1),
               t.setDate(1),
               o < 11
                 ? t.setMonth(o + 1)
-                : (t.setMonth(0), t.setFullYear(t.getFullYear() + 1));
+                : (t.setMonth(0), t.setFullYear(t.getFullYear() + 1)));
           }
           return t;
         },
@@ -2838,7 +2859,7 @@ var PSPDFModuleInit = (() => {
         gt = ye.createPath,
         wt = ye.createLazyFile,
         Et = ye.createDevice;
-      (ye.createPreloadedFile = pe),
+      ((ye.createPreloadedFile = pe),
         ye.staticInit(),
         (i.FS_createPath = ye.createPath),
         (i.FS_createDataFile = ye.createDataFile),
@@ -2849,7 +2870,7 @@ var PSPDFModuleInit = (() => {
         (Ce = i.BindingError =
           class extends Error {
             constructor(e) {
-              super(e), (this.name = 'BindingError');
+              (super(e), (this.name = 'BindingError'));
             }
           }),
         Me.push(0, 1, void 0, 1, null, 1, !0, 1, !1, 1),
@@ -2867,7 +2888,7 @@ var PSPDFModuleInit = (() => {
         (De = i.InternalError =
           class extends Error {
             constructor(e) {
-              super(e), (this.name = 'InternalError');
+              (super(e), (this.name = 'InternalError'));
             }
           }),
         Object.assign(fr.prototype, {
@@ -2880,15 +2901,14 @@ var PSPDFModuleInit = (() => {
             for (
               var n = e.$$.ptrType.registeredClass, o = e.$$.ptr;
               r.baseClass;
-
             )
-              (t = r.upcast(t)), (r = r.baseClass);
-            for (; n.baseClass; ) (o = n.upcast(o)), (n = n.baseClass);
+              ((t = r.upcast(t)), (r = r.baseClass));
+            for (; n.baseClass; ) ((o = n.upcast(o)), (n = n.baseClass));
             return r === n && t === o;
           },
           clone() {
             if ((this.$$.ptr || cr(this), this.$$.preservePointerOnDelete))
-              return (this.$$.count.value += 1), this;
+              return ((this.$$.count.value += 1), this);
             var e,
               r = tr(
                 Object.create(Object.getPrototypeOf(this), {
@@ -2907,17 +2927,17 @@ var PSPDFModuleInit = (() => {
                   },
                 })
               );
-            return (r.$$.count.value += 1), (r.$$.deleteScheduled = !1), r;
+            return ((r.$$.count.value += 1), (r.$$.deleteScheduled = !1), r);
           },
           delete() {
-            this.$$.ptr || cr(this),
+            (this.$$.ptr || cr(this),
               this.$$.deleteScheduled &&
                 !this.$$.preservePointerOnDelete &&
                 Ae('Object already scheduled for deletion'),
               Ge(this),
               Je(this.$$),
               this.$$.preservePointerOnDelete ||
-                ((this.$$.smartPtr = void 0), (this.$$.ptr = void 0));
+                ((this.$$.smartPtr = void 0), (this.$$.ptr = void 0)));
           },
           isDeleted() {
             return !this.$$.ptr;
@@ -2937,7 +2957,7 @@ var PSPDFModuleInit = (() => {
         }),
         Object.assign(Er.prototype, {
           getPointee(e) {
-            return this.rawGetPointee && (e = this.rawGetPointee(e)), e;
+            return (this.rawGetPointee && (e = this.rawGetPointee(e)), e);
           },
           destructor(e) {
             this.rawDestructor?.(e);
@@ -2946,7 +2966,7 @@ var PSPDFModuleInit = (() => {
           readValueFromPointer: ar,
           fromWireType: rr,
         }),
-        (br = i.UnboundTypeError = Ne(Error, 'UnboundTypeError'));
+        (br = i.UnboundTypeError = Ne(Error, 'UnboundTypeError')));
       var _t,
         bt = {
           qa: function () {
@@ -2983,7 +3003,7 @@ var PSPDFModuleInit = (() => {
                 _ < e;
                 _++
               ) {
-                var b = 1 << _ % 32;
+                var b = 1 << (_ % 32);
                 if (E(_, g, w, b)) {
                   var k = we.getStreamFromFD(_),
                     C = we.DEFAULT_POLLMASK;
@@ -2995,13 +3015,15 @@ var PSPDFModuleInit = (() => {
                         ((r ? $[o >> 2] : 0) + (r ? $[(o + 4) >> 2] : 0) / 1e6);
                     C = k.stream_ops.poll(k, P);
                   }
-                  1 & C && E(_, i, s, b) && (_ < 32 ? (f |= b) : (h |= b), a++),
+                  (1 & C &&
+                    E(_, i, s, b) &&
+                    (_ < 32 ? (f |= b) : (h |= b), a++),
                     4 & C &&
                       E(_, l, u, b) &&
                       (_ < 32 ? (p |= b) : (m |= b), a++),
                     2 & C &&
                       E(_, d, c, b) &&
-                      (_ < 32 ? (v |= b) : (y |= b), a++);
+                      (_ < 32 ? (v |= b) : (y |= b), a++));
                 }
               }
               return (
@@ -3017,7 +3039,7 @@ var PSPDFModuleInit = (() => {
           },
           ia: function (e, r) {
             try {
-              return (e = we.getStr(e)), ye.chmod(e, r), 0;
+              return ((e = we.getStr(e)), ye.chmod(e, r), 0);
             } catch (e) {
               if (void 0 === ye || 'ErrnoError' !== e.name) throw e;
               return -e.errno;
@@ -3043,7 +3065,7 @@ var PSPDFModuleInit = (() => {
           },
           ja: function (e, r) {
             try {
-              return ye.fchmod(e, r), 0;
+              return (ye.fchmod(e, r), 0);
             } catch (e) {
               if (void 0 === ye || 'ErrnoError' !== e.name) throw e;
               return -e.errno;
@@ -3067,10 +3089,10 @@ var PSPDFModuleInit = (() => {
                   return n.flags;
                 case 4:
                   var o = Ee();
-                  return (n.flags |= o), 0;
+                  return ((n.flags |= o), 0);
                 case 12:
                   o = _e();
-                  return (k[(o + 0) >> 1] = 2), 0;
+                  return ((k[(o + 0) >> 1] = 2), 0);
               }
               return -28;
             } catch (e) {
@@ -3106,26 +3128,26 @@ var PSPDFModuleInit = (() => {
                   i = ye.llseek(n, 0, 1),
                   s = Math.floor(i / o);
                 s < n.getdents.length && a + o <= t;
-
               ) {
                 var l,
                   u,
                   d = n.getdents[s];
-                if ('.' === d) (l = n.node.id), (u = 4);
+                if ('.' === d) ((l = n.node.id), (u = 4));
                 else if ('..' === d) {
-                  (l = ye.lookupPath(n.path, { parent: !0 }).node.id), (u = 4);
+                  ((l = ye.lookupPath(n.path, { parent: !0 }).node.id),
+                    (u = 4));
                 } else {
                   var c = ye.lookupNode(n.node, d);
-                  (l = c.id),
+                  ((l = c.id),
                     (u = ye.isChrdev(c.mode)
                       ? 2
                       : ye.isDir(c.mode)
                         ? 4
                         : ye.isLink(c.mode)
                           ? 10
-                          : 8);
+                          : 8));
                 }
-                (H = [
+                ((H = [
                   l >>> 0,
                   ((B = l),
                   +Math.abs(B) >= 1
@@ -3151,9 +3173,9 @@ var PSPDFModuleInit = (() => {
                   (_[r + a + 18] = u),
                   ke(d, r + a + 19, 256),
                   (a += o),
-                  (s += 1);
+                  (s += 1));
               }
-              return ye.llseek(n, s * o, 0), a;
+              return (ye.llseek(n, s * o, 0), a);
             } catch (e) {
               if (void 0 === ye || 'ErrnoError' !== e.name) throw e;
               return -e.errno;
@@ -3176,10 +3198,10 @@ var PSPDFModuleInit = (() => {
                   if (n.tty.ops.ioctl_tcgets) {
                     var o = n.tty.ops.ioctl_tcgets(n),
                       a = _e();
-                    ($[a >> 2] = o.c_iflag || 0),
+                    (($[a >> 2] = o.c_iflag || 0),
                       ($[(a + 4) >> 2] = o.c_oflag || 0),
                       ($[(a + 8) >> 2] = o.c_cflag || 0),
-                      ($[(a + 12) >> 2] = o.c_lflag || 0);
+                      ($[(a + 12) >> 2] = o.c_lflag || 0));
                     for (var i = 0; i < 32; i++) _[a + i + 17] = o.c_cc[i] || 0;
                     return 0;
                   }
@@ -3208,7 +3230,7 @@ var PSPDFModuleInit = (() => {
                 case 21519:
                   if (!n.tty) return -59;
                   a = _e();
-                  return ($[a >> 2] = 0), 0;
+                  return (($[a >> 2] = 0), 0);
                 case 21520:
                   return n.tty ? -28 : -59;
                 case 21531:
@@ -3219,7 +3241,7 @@ var PSPDFModuleInit = (() => {
                   if (n.tty.ops.ioctl_tiocgwinsz) {
                     var f = n.tty.ops.ioctl_tiocgwinsz(n.tty);
                     a = _e();
-                    (k[a >> 1] = f[0]), (k[(a + 2) >> 1] = f[1]);
+                    ((k[a >> 1] = f[0]), (k[(a + 2) >> 1] = f[1]));
                   }
                   return 0;
                 default:
@@ -3232,7 +3254,7 @@ var PSPDFModuleInit = (() => {
           },
           da: function (e, r) {
             try {
-              return (e = we.getStr(e)), we.doStat(ye.lstat, e, r);
+              return ((e = we.getStr(e)), we.doStat(ye.lstat, e, r));
             } catch (e) {
               if (void 0 === ye || 'ErrnoError' !== e.name) throw e;
               return -e.errno;
@@ -3271,7 +3293,7 @@ var PSPDFModuleInit = (() => {
           t: function (e, r, t, n) {
             we.varargs = n;
             try {
-              (r = we.getStr(r)), (r = we.calculateAt(e, r));
+              ((r = we.getStr(r)), (r = we.calculateAt(e, r)));
               var o = n ? Ee() : 0;
               return ye.open(r, t, o).fd;
             } catch (e) {
@@ -3296,7 +3318,7 @@ var PSPDFModuleInit = (() => {
           },
           w: function (e) {
             try {
-              return (e = we.getStr(e)), ye.rmdir(e), 0;
+              return ((e = we.getStr(e)), ye.rmdir(e), 0);
             } catch (e) {
               if (void 0 === ye || 'ErrnoError' !== e.name) throw e;
               return -e.errno;
@@ -3304,7 +3326,7 @@ var PSPDFModuleInit = (() => {
           },
           ea: function (e, r) {
             try {
-              return (e = we.getStr(e)), we.doStat(ye.stat, e, r);
+              return ((e = we.getStr(e)), we.doStat(ye.stat, e, r));
             } catch (e) {
               if (void 0 === ye || 'ErrnoError' !== e.name) throw e;
               return -e.errno;
@@ -3331,13 +3353,13 @@ var PSPDFModuleInit = (() => {
             L('');
           },
           wa: (e, r, t) => {
-            (e = ze(e)), (r = Ye(r, 'wrapper')), (t = Oe(t));
+            ((e = ze(e)), (r = Ye(r, 'wrapper')), (t = Oe(t)));
             var n = r.registeredClass,
               o = n.instancePrototype,
               a = n.baseClass.instancePrototype,
               i = n.baseClass.constructor,
               s = Fe(e, function (...e) {
-                n.baseClass.pureVirtualFunctions.forEach(
+                (n.baseClass.pureVirtualFunctions.forEach(
                   function (e) {
                     if (this[e] === a[e])
                       throw new $e(
@@ -3346,7 +3368,7 @@ var PSPDFModuleInit = (() => {
                   }.bind(this)
                 ),
                   Object.defineProperty(this, '__parent', { value: o }),
-                  this.__construct(...e);
+                  this.__construct(...e));
               });
             return (
               (o.__construct = function (...e) {
@@ -3357,7 +3379,7 @@ var PSPDFModuleInit = (() => {
                   a,
                   s,
                   l = r.$$;
-                r.notifyOnDestruction(),
+                (r.notifyOnDestruction(),
                   (l.preservePointerOnDelete = !0),
                   Object.defineProperties(this, { $$: { value: l } }),
                   tr(this),
@@ -3367,18 +3389,18 @@ var PSPDFModuleInit = (() => {
                   (a = He(t, a)),
                   Be.hasOwnProperty(a)
                     ? Ae(`Tried to register registered instance: ${a}`)
-                    : (Be[a] = s);
+                    : (Be[a] = s));
               }),
               (o.__destruct = function () {
                 var e, r;
-                this === o && Ae("Pass correct 'this' to __destruct"),
+                (this === o && Ae("Pass correct 'this' to __destruct"),
                   Ge(this),
                   (e = n),
                   (r = this.$$.ptr),
                   (r = He(e, r)),
                   Be.hasOwnProperty(r)
                     ? delete Be[r]
-                    : Ae(`Tried to unregister unregistered instance: ${r}`);
+                    : Ae(`Tried to unregister unregistered instance: ${r}`));
               }),
               (s.prototype = Object.create(o)),
               Object.assign(s.prototype, t),
@@ -3409,7 +3431,7 @@ var PSPDFModuleInit = (() => {
                     read: (e) => i.fromWireType(s(l, e)),
                     write: (e, r) => {
                       var t = [];
-                      d(c, e, u.toWireType(t, r)), or(t);
+                      (d(c, e, u.toWireType(t, r)), or(t));
                     },
                   };
                 }),
@@ -3419,7 +3441,7 @@ var PSPDFModuleInit = (() => {
                     fromWireType: (e) => {
                       var r = {};
                       for (var t in a) r[t] = a[t].read(e);
-                      return n(e), r;
+                      return (n(e), r);
                     },
                     toWireType: (e, r) => {
                       for (var o in a)
@@ -3427,7 +3449,7 @@ var PSPDFModuleInit = (() => {
                           throw new TypeError(`Missing field: "${o}"`);
                       var i = t();
                       for (o in a) a[o].write(i, r[o]);
-                      return null !== e && e.push(n, i), i;
+                      return (null !== e && e.push(n, i), i);
                     },
                     argPackAdvance: dr,
                     readValueFromPointer: ar,
@@ -3455,25 +3477,25 @@ var PSPDFModuleInit = (() => {
             });
           },
           i: (e, r, t, n, o, a, i, s, l, u, d, c, f) => {
-            (d = ze(d)),
+            ((d = ze(d)),
               (a = Pr(o, a)),
               (s &&= Pr(i, s)),
               (u &&= Pr(l, u)),
-              (f = Pr(c, f));
+              (f = Pr(c, f)));
             var h = ((e) => {
               if (void 0 === e) return '_unknown';
               var r = (e = e.replace(/[^a-zA-Z0-9_]/g, '$')).charCodeAt(0);
               return r >= 48 && r <= 57 ? `_${e}` : e;
             })(d);
-            pr(h, function () {
+            (pr(h, function () {
               Tr(`Cannot construct ${d} due to unbound types`, [n]);
             }),
               lr([e, r, t], n ? [n] : [], (r) => {
                 var t, o;
-                (r = r[0]),
+                ((r = r[0]),
                   (o = n
                     ? (t = r.registeredClass).instancePrototype
-                    : fr.prototype);
+                    : fr.prototype));
                 var i = Fe(d, function (...e) {
                     if (Object.getPrototypeOf(this) !== l)
                       throw new Ce("Use 'new' to construct " + d);
@@ -3500,11 +3522,11 @@ var PSPDFModuleInit = (() => {
                   kr(h, i),
                   [p, m, v]
                 );
-              });
+              }));
           },
           B: (e, r, t, n, o, a, i, s) => {
             var l = Mr(t, n);
-            (r = ze(r)),
+            ((r = ze(r)),
               (r = Ar(r)),
               (a = Pr(o, a)),
               lr([], [e], (e) => {
@@ -3534,11 +3556,11 @@ var PSPDFModuleInit = (() => {
                   }),
                   []
                 );
-              });
+              }));
           },
           E: (e, r, t, n, o, a) => {
             var i = Mr(r, t);
-            (o = Pr(n, o)),
+            ((o = Pr(n, o)),
               lr([], [e], (e) => {
                 var t = `constructor ${(e = e[0]).name}`;
                 if (
@@ -3570,11 +3592,11 @@ var PSPDFModuleInit = (() => {
                   ),
                   []
                 );
-              });
+              }));
           },
           c: (e, r, t, n, o, a, i, s, l) => {
             var u = Mr(t, n);
-            (r = ze(r)),
+            ((r = ze(r)),
               (r = Ar(r)),
               (a = Pr(o, a)),
               lr([], [e], (e) => {
@@ -3582,8 +3604,8 @@ var PSPDFModuleInit = (() => {
                 function o() {
                   Tr(`Cannot call ${n} due to unbound types`, u);
                 }
-                r.startsWith('@@') && (r = Symbol[r.substring(2)]),
-                  s && e.registeredClass.pureVirtualFunctions.push(r);
+                (r.startsWith('@@') && (r = Symbol[r.substring(2)]),
+                  s && e.registeredClass.pureVirtualFunctions.push(r));
                 var d = e.registeredClass.instancePrototype,
                   c = d[r];
                 return (
@@ -3604,10 +3626,10 @@ var PSPDFModuleInit = (() => {
                   }),
                   []
                 );
-              });
+              }));
           },
           r: (e, r, t, n, o, a, i, s, l, u) => {
-            (r = ze(r)),
+            ((r = ze(r)),
               (o = Pr(n, o)),
               lr([], [e], (e) => {
                 var n = `${(e = e[0]).name}.${r}`,
@@ -3643,7 +3665,7 @@ var PSPDFModuleInit = (() => {
                       d.set = function (r) {
                         var t = jr(this, e, n + ' setter'),
                           o = [];
-                        l(u, t, c.toWireType(o, r)), or(o);
+                        (l(u, t, c.toWireType(o, r)), or(o));
                       };
                     }
                     return (
@@ -3657,7 +3679,7 @@ var PSPDFModuleInit = (() => {
                   }),
                   []
                 );
-              });
+              }));
           },
           ya: Nr,
           F: (e, r, t) => {
@@ -3672,7 +3694,7 @@ var PSPDFModuleInit = (() => {
           },
           a: (e, r, t, n, o, a, i) => {
             var s = Mr(r, t);
-            (e = ze(e)),
+            ((e = ze(e)),
               (e = Ar(e)),
               (o = Pr(n, o)),
               pr(
@@ -3684,11 +3706,11 @@ var PSPDFModuleInit = (() => {
               ),
               lr([], s, (t) => {
                 var n = [t[0], null].concat(t.slice(1));
-                return kr(e, Sr(e, n, null, o, a, i), r - 1), [];
-              });
+                return (kr(e, Sr(e, n, null, o, a, i), r - 1), []);
+              }));
           },
           h: (e, r, t, n, o) => {
-            (r = ze(r)), -1 === o && (o = 4294967295);
+            ((r = ze(r)), -1 === o && (o = 4294967295));
             var a = (e) => e;
             if (0 === n) {
               var i = 32 - 8 * t;
@@ -3700,10 +3722,10 @@ var PSPDFModuleInit = (() => {
               fromWireType: a,
               toWireType: s
                 ? function (e, r) {
-                    return this.name, r >>> 0;
+                    return (this.name, r >>> 0);
                   }
                 : function (e, r) {
-                    return this.name, r;
+                    return (this.name, r);
                   },
               argPackAdvance: dr,
               readValueFromPointer: Ur(r, t, 0 !== n),
@@ -3741,7 +3763,7 @@ var PSPDFModuleInit = (() => {
             Nr(e);
           },
           aa: (e, r, t, n, o, a, i, s, l, u, d, c) => {
-            (t = ze(t)),
+            ((t = ze(t)),
               (a = Pr(o, a)),
               (s = Pr(i, s)),
               (u = Pr(l, u)),
@@ -3753,7 +3775,7 @@ var PSPDFModuleInit = (() => {
                   (e = e[0]),
                   [new Er(t, e.registeredClass, !1, !1, !0, e, n, a, s, u, c)]
                 )
-              );
+              ));
           },
           G: (e, r) => {
             var t = 'std::string' === (r = ze(r));
@@ -3768,10 +3790,10 @@ var PSPDFModuleInit = (() => {
                     var s = o + i;
                     if (i == n || 0 == b[s]) {
                       var l = ge(a, s - a);
-                      void 0 === r
+                      (void 0 === r
                         ? (r = l)
                         : ((r += String.fromCharCode(0)), (r += l)),
-                        (a = s + 1);
+                        (a = s + 1));
                     }
                   }
                 else {
@@ -3779,33 +3801,33 @@ var PSPDFModuleInit = (() => {
                   for (i = 0; i < n; ++i) u[i] = String.fromCharCode(b[o + i]);
                   r = u.join('');
                 }
-                return Pt(e), r;
+                return (Pt(e), r);
               },
               toWireType(e, r) {
                 var n;
                 r instanceof ArrayBuffer && (r = new Uint8Array(r));
                 var o = 'string' == typeof r;
-                o ||
+                (o ||
                   r instanceof Uint8Array ||
                   r instanceof Uint8ClampedArray ||
                   r instanceof Int8Array ||
                   Ae('Cannot pass non-string to std::string'),
-                  (n = t && o ? ie(r) : r.length);
+                  (n = t && o ? ie(r) : r.length));
                 var a = $t(4 + n + 1),
                   i = a + 4;
                 if (((P[a >> 2] = n), t && o)) ke(r, i, n + 1);
                 else if (o)
                   for (var s = 0; s < n; ++s) {
                     var l = r.charCodeAt(s);
-                    l > 255 &&
+                    (l > 255 &&
                       (Pt(i),
                       Ae(
                         'String has UTF-16 code units that do not fit in 8 bits'
                       )),
-                      (b[i + s] = l);
+                      (b[i + s] = l));
                   }
                 else for (s = 0; s < n; ++s) b[i + s] = r[s];
-                return null !== e && e.push(Pt, a), a;
+                return (null !== e && e.push(Pt, a), a);
               },
               argPackAdvance: dr,
               readValueFromPointer: ar,
@@ -3816,7 +3838,7 @@ var PSPDFModuleInit = (() => {
           },
           v: (e, r, t) => {
             var n, o, a, i;
-            (t = ze(t)),
+            ((t = ze(t)),
               2 === r
                 ? ((n = Lr), (o = Ir), (i = Br), (a = (e) => C[e >> 1]))
                 : 4 === r &&
@@ -3828,13 +3850,13 @@ var PSPDFModuleInit = (() => {
                     var l = e + 4 + s * r;
                     if (s == o || 0 == a(l)) {
                       var u = n(i, l - i);
-                      void 0 === t
+                      (void 0 === t
                         ? (t = u)
                         : ((t += String.fromCharCode(0)), (t += u)),
-                        (i = l + r);
+                        (i = l + r));
                     }
                   }
-                  return Pt(e), t;
+                  return (Pt(e), t);
                 },
                 toWireType: (e, n) => {
                   'string' != typeof n &&
@@ -3853,7 +3875,7 @@ var PSPDFModuleInit = (() => {
                 destructorFunction(e) {
                   Pt(e);
                 },
-              });
+              }));
           },
           xa: (e, r, t, n, o, a) => {
             nr[e] = {
@@ -3890,8 +3912,8 @@ var PSPDFModuleInit = (() => {
                 n = P[(e += 4) >> 2];
               e += 4;
               var o = ge(r);
-              ye.createPath('/', ee.dirname(o), !0, !0),
-                ye.createDataFile(o, null, _.subarray(n, n + t), !0, !0, !0);
+              (ye.createPath('/', ee.dirname(o), !0, !0),
+                ye.createDataFile(o, null, _.subarray(n, n + t), !0, !0, !0));
             } while (P[e >> 2]);
           },
           ka: () => 1,
@@ -3914,24 +3936,24 @@ var PSPDFModuleInit = (() => {
               s = [];
             0 === t && s.push('obj');
             for (var l = ['retType'], u = [o], d = 0; d < e; ++d)
-              s.push('arg' + d),
+              (s.push('arg' + d),
                 l.push('argType' + d),
                 u.push(n[d]),
                 (a += `  var arg${d} = argType${d}.readValueFromPointer(args${i ? '+' + i : ''});\n`),
-                (i += n[d].argPackAdvance);
-            (a += `  var rv = ${1 === t ? 'new func' : 'func.call'}(${s.join(', ')});\n`),
+                (i += n[d].argPackAdvance));
+            ((a += `  var rv = ${1 === t ? 'new func' : 'func.call'}(${s.join(', ')});\n`),
               o.isVoid ||
                 (l.push('emval_returnValue'),
                 u.push(Yr),
                 (a +=
                   '  return emval_returnValue(retType, destructorsRef, rv);\n')),
               (a += '};\n'),
-              l.push(a);
+              l.push(a));
             var c,
               f,
               h = Fr(Function, l)(...u),
               p = `methodCaller<(${n.map((e) => e.name).join(', ')}) => ${o.name}>`;
-            return (c = Fe(p, h)), (f = Gr.length), Gr.push(c), f;
+            return ((c = Fe(p, h)), (f = Gr.length), Gr.push(c), f);
           },
           ua: (e) => ((e = Jr(e)), Re(i[e])),
           p: (e, r) => ((e = Oe(e)), (r = Oe(r)), Re(e[r])),
@@ -3941,7 +3963,7 @@ var PSPDFModuleInit = (() => {
           o: (e) => Re(Jr(e)),
           e: (e) => {
             var r = Oe(e);
-            or(r), Or(e);
+            (or(r), Or(e));
           },
           k: (e, r) => {
             var t = (e = Ye(e, '_emval_take_value')).readValueFromPointer(r);
@@ -3951,13 +3973,13 @@ var PSPDFModuleInit = (() => {
           L: function (e, r, t) {
             var n = be(e, r),
               o = new Date(1e3 * n);
-            ($[t >> 2] = o.getUTCSeconds()),
+            (($[t >> 2] = o.getUTCSeconds()),
               ($[(t + 4) >> 2] = o.getUTCMinutes()),
               ($[(t + 8) >> 2] = o.getUTCHours()),
               ($[(t + 12) >> 2] = o.getUTCDate()),
               ($[(t + 16) >> 2] = o.getUTCMonth()),
               ($[(t + 20) >> 2] = o.getUTCFullYear() - 1900),
-              ($[(t + 24) >> 2] = o.getUTCDay());
+              ($[(t + 24) >> 2] = o.getUTCDay()));
             var a = Date.UTC(o.getUTCFullYear(), 0, 1, 0, 0, 0, 0),
               i = ((o.getTime() - a) / 864e5) | 0;
             $[(t + 28) >> 2] = i;
@@ -3965,16 +3987,16 @@ var PSPDFModuleInit = (() => {
           M: function (e, r, t) {
             var n = be(e, r),
               o = new Date(1e3 * n);
-            ($[t >> 2] = o.getSeconds()),
+            (($[t >> 2] = o.getSeconds()),
               ($[(t + 4) >> 2] = o.getMinutes()),
               ($[(t + 8) >> 2] = o.getHours()),
               ($[(t + 12) >> 2] = o.getDate()),
               ($[(t + 16) >> 2] = o.getMonth()),
               ($[(t + 20) >> 2] = o.getFullYear() - 1900),
-              ($[(t + 24) >> 2] = o.getDay());
+              ($[(t + 24) >> 2] = o.getDay()));
             var a = 0 | rt(o);
-            ($[(t + 28) >> 2] = a),
-              ($[(t + 36) >> 2] = -60 * o.getTimezoneOffset());
+            (($[(t + 28) >> 2] = a),
+              ($[(t + 36) >> 2] = -60 * o.getTimezoneOffset()));
             var i = new Date(o.getFullYear(), 0, 1),
               s = new Date(o.getFullYear(), 6, 1).getTimezoneOffset(),
               l = i.getTimezoneOffset(),
@@ -4006,13 +4028,13 @@ var PSPDFModuleInit = (() => {
               }
               $[(e + 24) >> 2] = r.getDay();
               var d = 0 | rt(r);
-              ($[(e + 28) >> 2] = d),
+              (($[(e + 28) >> 2] = d),
                 ($[e >> 2] = r.getSeconds()),
                 ($[(e + 4) >> 2] = r.getMinutes()),
                 ($[(e + 8) >> 2] = r.getHours()),
                 ($[(e + 12) >> 2] = r.getDate()),
                 ($[(e + 16) >> 2] = r.getMonth()),
-                ($[(e + 20) >> 2] = r.getYear());
+                ($[(e + 20) >> 2] = r.getYear()));
               var c = r.getTime();
               return isNaN(c) ? -1 : c / 1e3;
             })();
@@ -4035,7 +4057,7 @@ var PSPDFModuleInit = (() => {
               var u = we.getStreamFromFD(n),
                 d = ye.mmap(u, e, l, r, t),
                 c = d.ptr;
-              return ($[i >> 2] = d.allocated), (P[s >> 2] = c), 0;
+              return (($[i >> 2] = d.allocated), (P[s >> 2] = c), 0);
             } catch (e) {
               if (void 0 === ye || 'ErrnoError' !== e.name) throw e;
               return -e.errno;
@@ -4066,7 +4088,7 @@ var PSPDFModuleInit = (() => {
               $[(e + 24) >> 2] = t.getUTCDay();
               var n = Date.UTC(t.getUTCFullYear(), 0, 1, 0, 0, 0, 0),
                 o = ((t.getTime() - n) / 864e5) | 0;
-              return ($[(e + 28) >> 2] = o), t.getTime() / 1e3;
+              return (($[(e + 28) >> 2] = o), t.getTime() / 1e3);
             })();
             return (
               tt(
@@ -4130,12 +4152,12 @@ var PSPDFModuleInit = (() => {
             return (
               ft().forEach((n, o) => {
                 var a = r + t;
-                (P[(e + 4 * o) >> 2] = a),
+                ((P[(e + 4 * o) >> 2] = a),
                   ((e, r) => {
                     for (var t = 0; t < e.length; ++t) _[r++] = e.charCodeAt(t);
                     _[r] = 0;
                   })(n, a),
-                  (t += n.length + 1);
+                  (t += n.length + 1));
               }),
               0
             );
@@ -4144,12 +4166,12 @@ var PSPDFModuleInit = (() => {
             var t = ft();
             P[e >> 2] = t.length;
             var n = 0;
-            return t.forEach((e) => (n += e.length + 1)), (P[r >> 2] = n), 0;
+            return (t.forEach((e) => (n += e.length + 1)), (P[r >> 2] = n), 0);
           },
           m: function (e) {
             try {
               var r = we.getStreamFromFD(e);
-              return ye.close(r), 0;
+              return (ye.close(r), 0);
             } catch (e) {
               if (void 0 === ye || 'ErrnoError' !== e.name) throw e;
               return e.errno;
@@ -4211,7 +4233,7 @@ var PSPDFModuleInit = (() => {
                 }
                 return o;
               })(we.getStreamFromFD(e), r, t);
-              return (P[n >> 2] = o), 0;
+              return ((P[n >> 2] = o), 0);
             } catch (e) {
               if (void 0 === ye || 'ErrnoError' !== e.name) throw e;
               return e.errno;
@@ -4261,11 +4283,11 @@ var PSPDFModuleInit = (() => {
                   r += 8;
                   var l = ye.write(e, _, i, s, n);
                   if (l < 0) return -1;
-                  (o += l), void 0 !== n && (n += l);
+                  ((o += l), void 0 !== n && (n += l));
                 }
                 return o;
               })(we.getStreamFromFD(e), r, t);
-              return (P[n >> 2] = o), 0;
+              return ((P[n >> 2] = o), 0);
             } catch (e) {
               if (void 0 === ye || 'ErrnoError' !== e.name) throw e;
               return e.errno;
@@ -4273,7 +4295,7 @@ var PSPDFModuleInit = (() => {
           },
           S: (e, r) => (re(b.subarray(e, e + r)), 0),
           na: (e) => {
-            e, Q || (i.onExit?.(e), (F = !0)), h(e, new K(e));
+            (e, Q || (i.onExit?.(e), (F = !0)), h(e, new K(e)));
           },
           va: (e, r, t) => {
             for (
@@ -4363,14 +4385,14 @@ var PSPDFModuleInit = (() => {
                 h.hour = yt(f);
               else if ((f = p('I'))) {
                 var m = yt(f);
-                (f = p('p')) && (m += 'P' === f.toUpperCase()[0] ? 12 : 0),
-                  (h.hour = m);
+                ((f = p('p')) && (m += 'P' === f.toUpperCase()[0] ? 12 : 0),
+                  (h.hour = m));
               }
               if ((f = p('Y'))) h.year = yt(f);
               else if ((f = p('y'))) {
                 var v = yt(f);
-                (f = p('C')) ? (v += 100 * yt(f)) : (v += v < 69 ? 2e3 : 1900),
-                  (h.year = v);
+                ((f = p('C')) ? (v += 100 * yt(f)) : (v += v < 69 ? 2e3 : 1900),
+                  (h.year = v));
               }
               if (
                 ((f = p('m'))
@@ -4412,15 +4434,15 @@ var PSPDFModuleInit = (() => {
                       SAT: 6,
                     }[_],
                     k = yt(f);
-                  (P =
+                  ((P =
                     0 === (C = new Date(h.year, 0, 1)).getDay()
                       ? vt(C, b + 7 * (k - 1))
                       : vt(C, 7 - C.getDay() + b + 7 * (k - 1))),
                     (h.day = P.getDate()),
-                    (h.month = P.getMonth());
+                    (h.month = P.getMonth()));
                 } else if ((f = p('W'))) {
                   var C, P;
-                  (b = {
+                  ((b = {
                     MON: 0,
                     TUE: 1,
                     WED: 2,
@@ -4429,21 +4451,22 @@ var PSPDFModuleInit = (() => {
                     SAT: 5,
                     SUN: 6,
                   }[_]),
-                    (k = yt(f));
-                  (P =
+                    (k = yt(f)));
+                  ((P =
                     1 === (C = new Date(h.year, 0, 1)).getDay()
                       ? vt(C, b + 7 * (k - 1))
                       : vt(C, 7 - C.getDay() + 1 + b + 7 * (k - 1))),
                     (h.day = P.getDate()),
-                    (h.month = P.getMonth());
+                    (h.month = P.getMonth()));
                 }
               }
               if ((f = p('z')))
                 if ('z' === f.toLowerCase()) h.gmtoff = 0;
                 else {
                   var T = f.match(/^((?:\-|\+)\d\d):?(\d\d)?/);
-                  (h.gmtoff = 3600 * T[1]),
-                    T[2] && (h.gmtoff += h.gmtoff > 0 ? 60 * T[2] : 60 * -T[2]);
+                  ((h.gmtoff = 3600 * T[1]),
+                    T[2] &&
+                      (h.gmtoff += h.gmtoff > 0 ? 60 * T[2] : 60 * -T[2]));
                 }
               var D = new Date(h.year, h.month, h.day, h.hour, h.min, h.sec, 0);
               return (
@@ -4489,8 +4512,8 @@ var PSPDFModuleInit = (() => {
             try {
               return i.instantiateWasm(a, s);
             } catch (e) {
-              E(`Module.instantiateWasm callback failed with error: ${e}`),
-                n(e);
+              (E(`Module.instantiateWasm callback failed with error: ${e}`),
+                n(e));
             }
           return (
             I || (I = Y()),
@@ -4525,7 +4548,7 @@ var PSPDFModuleInit = (() => {
         Tt = (e, r) => (Tt = kt.Ha)(e, r),
         Dt = () => (Dt = kt.Ia)(),
         Ft = (e) => (Ft = kt.Ja)(e);
-      (i.dynCall_jiji = (e, r, t, n, o) =>
+      ((i.dynCall_jiji = (e, r, t, n, o) =>
         (i.dynCall_jiji = kt.Ka)(e, r, t, n, o)),
         (i.dynCall_ji = (e, r) => (i.dynCall_ji = kt.La)(e, r)),
         (i.dynCall_viij = (e, r, t, n, o) =>
@@ -4557,7 +4580,7 @@ var PSPDFModuleInit = (() => {
           (i.dynCall_iiiiijj = kt.$a)(e, r, t, n, o, a, s, l, u)),
         (i.dynCall_iiiiiijj = (e, r, t, n, o, a, s, l, u, d) =>
           (i.dynCall_iiiiiijj = kt.ab)(e, r, t, n, o, a, s, l, u, d)),
-        (i.___emscripten_embedded_file_data = 167460);
+        (i.___emscripten_embedded_file_data = 167460));
       function St() {
         function e() {
           _t ||
@@ -4576,9 +4599,8 @@ var PSPDFModuleInit = (() => {
                   for (
                     'function' == typeof i.postRun && (i.postRun = [i.postRun]);
                     i.postRun.length;
-
                   )
-                    (e = i.postRun.shift()), O.unshift(e);
+                    ((e = i.postRun.shift()), O.unshift(e));
                 var e;
                 Z(O);
               })()));
@@ -4589,9 +4611,8 @@ var PSPDFModuleInit = (() => {
               for (
                 'function' == typeof i.preRun && (i.preRun = [i.preRun]);
                 i.preRun.length;
-
               )
-                (e = i.preRun.shift()), A.unshift(e);
+                ((e = i.preRun.shift()), A.unshift(e));
             var e;
             Z(A);
           })(),
@@ -4599,10 +4620,10 @@ var PSPDFModuleInit = (() => {
             (i.setStatus
               ? (i.setStatus('Running...'),
                 setTimeout(function () {
-                  setTimeout(function () {
+                  (setTimeout(function () {
                     i.setStatus('');
                   }, 1),
-                    e();
+                    e());
                 }, 1))
               : e()));
       }
@@ -4617,17 +4638,16 @@ var PSPDFModuleInit = (() => {
         (i.FS_createDataFile = fe),
         (i.FS_createLazyFile = wt),
         (x = function e() {
-          _t || St(), _t || (x = e);
+          (_t || St(), _t || (x = e));
         }),
         i.preInit)
       )
         for (
           'function' == typeof i.preInit && (i.preInit = [i.preInit]);
           i.preInit.length > 0;
-
         )
           i.preInit.pop()();
-      return St(), s;
+      return (St(), s);
     }
   );
 })();

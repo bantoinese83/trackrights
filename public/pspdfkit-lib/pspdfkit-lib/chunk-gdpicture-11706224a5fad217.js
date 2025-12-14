@@ -15,13 +15,13 @@
   [1860],
   {
     60919: (e, t, s) => {
-      s.r(t),
+      (s.r(t),
         s.d(t, {
           Conformance: () => a,
           GdPicture: () => h,
           GdPictureWorker: () => w,
           getBrowserSpawner: () => g,
-        });
+        }));
       var r = s(85409),
         n = s(25030);
       let a = (function (e) {
@@ -70,7 +70,7 @@
       }
       class h {
         _mountCustomFonts(e, t) {
-          (0, r.V1)(f, 'WebAssembly module not loaded.'), f.FS.mkdir(t);
+          ((0, r.V1)(f, 'WebAssembly module not loaded.'), f.FS.mkdir(t));
           {
             const s = c ? f.FS.filesystems.WORKERFS : f.FS.filesystems.MEMFS;
             f.FS.mount(s, { blobs: e }, t);
@@ -95,13 +95,13 @@
             }
             throw new Error('GdPicture WASM loader not implemented');
           })(e, t);
-          (p = l.GdPictureWasm.API),
+          ((p = l.GdPictureWasm.API),
             (f = d),
             m(
               'gdpicture/setLicense',
               { origin: s },
               { licenseKey: r || 'DEMO_PSPDFKIT_WEB' }
-            );
+            ));
           const u = a ? '/fonts' : '';
           if (
             (a &&
@@ -173,7 +173,7 @@
             );
           } finally {
             try {
-              f.FS.unlink(d), f.FS.unlink(u);
+              (f.FS.unlink(d), f.FS.unlink(u));
             } catch (e) {
               console.log(e.message);
             }
@@ -194,7 +194,7 @@
             workerSpawner: d,
             wasmLoaderPath: u,
           } = e;
-          (0, _.A)(this, 'requests', new Map()),
+          ((0, _.A)(this, 'requests', new Map()),
             (0, _.A)(this, 'nextRequestId', 1),
             (0, _.A)(this, 'handleMessage', (e) => {
               const t = e.data,
@@ -203,7 +203,7 @@
               const { resolve: n, reject: a } = s;
               if ((this.requests.delete(t.id), t.error)) {
                 const e = new r.uE(t.error);
-                (e.callArgs = t.callArgs), a(e);
+                ((e.callArgs = t.callArgs), a(e));
               } else n(t.result);
             }),
             (this.workerSpawner = d),
@@ -216,7 +216,7 @@
               o,
               i,
               l,
-            ]));
+            ])));
         }
         toOffice(e, t) {
           return this.sendRequest('toOffice', [e, t]);
@@ -232,22 +232,25 @@
           return this.sendRequest('populateDocumentTemplate', [e, t]);
         }
         destroy() {
-          this.workerSpawner?.terminate(), (this.workerSpawner = null);
+          (this.workerSpawner?.terminate(), (this.workerSpawner = null));
         }
         async sendRequest(e, t) {
-          (0, r.V1)(this.workerSpawner, 'GdPictureClient has been destroyed'),
-            this.moduleLoadPromise && (await this.moduleLoadPromise);
+          ((0, r.V1)(this.workerSpawner, 'GdPictureClient has been destroyed'),
+            this.moduleLoadPromise && (await this.moduleLoadPromise));
           const s = this.workerSpawner;
           return new Promise((r, n) => {
             const a = this.assignId(),
               o = [...t].filter((e) => e instanceof ArrayBuffer);
-            s.postMessage({ id: a, action: e, args: t }, o),
-              (this.requests = this.requests.set(a, { resolve: r, reject: n }));
+            (s.postMessage({ id: a, action: e, args: t }, o),
+              (this.requests = this.requests.set(a, {
+                resolve: r,
+                reject: n,
+              })));
           });
         }
         assignId() {
           const e = this.nextRequestId;
-          return (this.nextRequestId = this.nextRequestId + 1), e;
+          return ((this.nextRequestId = this.nextRequestId + 1), e);
         }
       };
       const g = async function () {
@@ -260,13 +263,13 @@
         } else e = new Worker(new URL(s.p + s.u(387), s.b));
         return {
           setMessageHandler(t) {
-            (0, r.V1)(e, 'Worker is null'), (e.onmessage = t);
+            ((0, r.V1)(e, 'Worker is null'), (e.onmessage = t));
           },
           postMessage(t, s) {
             e?.postMessage(t, s);
           },
           terminate() {
-            e?.terminate(), (e = null);
+            (e?.terminate(), (e = null));
           },
         };
       };

@@ -92,7 +92,7 @@
                 return o.f(e, t, i(1, n));
               }
             : function (e, t, n) {
-                return (e[t] = n), e;
+                return ((e[t] = n), e);
               };
         },
         66843: (e) => {
@@ -196,13 +196,14 @@
             c = i.Deno,
             l = (s && s.versions) || (c && c.version),
             u = l && l.v8;
-          u && (o = (r = u.split('.'))[0] > 0 && r[0] < 4 ? 1 : +(r[0] + r[1])),
+          (u &&
+            (o = (r = u.split('.'))[0] > 0 && r[0] < 4 ? 1 : +(r[0] + r[1])),
             !o &&
               a &&
               (!(r = a.match(/Edge\/(\d+)/)) || r[1] >= 74) &&
               (r = a.match(/Chrome\/(\d+)/)) &&
               (o = +r[1]),
-            (e.exports = o);
+            (e.exports = o));
         },
         30290: (e) => {
           e.exports = [
@@ -242,7 +243,7 @@
                   if (typeof p == typeof d) continue;
                   c(p, d);
                 }
-                (e.sham || (d && d.sham)) && i(p, 'sham', !0), a(n, u, p, e);
+                ((e.sham || (d && d.sham)) && i(p, 'sham', !0), a(n, u, p, e));
               }
           };
         },
@@ -417,11 +418,11 @@
             o = n(78420),
             i = n(49310),
             a = r(Function.toString);
-          o(i.inspectSource) ||
+          (o(i.inspectSource) ||
             (i.inspectSource = function (e) {
               return a(e);
             }),
-            (e.exports = i.inspectSource);
+            (e.exports = i.inspectSource));
         },
         99206: (e, t, n) => {
           var r,
@@ -440,32 +441,32 @@
             h = s.WeakMap;
           if (a || d.state) {
             var y = d.state || (d.state = new h());
-            (y.get = y.get),
+            ((y.get = y.get),
               (y.has = y.has),
               (y.set = y.set),
               (r = function (e, t) {
                 if (y.has(e)) throw g(m);
-                return (t.facade = e), y.set(e, t), t;
+                return ((t.facade = e), y.set(e, t), t);
               }),
               (o = function (e) {
                 return y.get(e) || {};
               }),
               (i = function (e) {
                 return y.has(e);
-              });
+              }));
           } else {
             var b = p('state');
-            (f[b] = !0),
+            ((f[b] = !0),
               (r = function (e, t) {
                 if (u(e, b)) throw g(m);
-                return (t.facade = e), l(e, b, t), t;
+                return ((t.facade = e), l(e, b, t), t);
               }),
               (o = function (e) {
                 return u(e, b) ? e[b] : {};
               }),
               (i = function (e) {
                 return u(e, b);
-              });
+              }));
           }
           e.exports = {
             set: r,
@@ -570,7 +571,7 @@
               }),
             m = String(String).split('String'),
             g = (e.exports = function (e, t, n) {
-              'Symbol(' === String(t).slice(0, 7) &&
+              ('Symbol(' === String(t).slice(0, 7) &&
                 (t = '[' + String(t).replace(/^Symbol\(([^)]*)\)/, '$1') + ']'),
                 n && n.getter && (t = 'get ' + t),
                 n && n.setter && (t = 'set ' + t),
@@ -582,7 +583,7 @@
                   n &&
                   i(n, 'arity') &&
                   e.length !== n.arity &&
-                  p(e, 'length', { value: n.arity });
+                  p(e, 'length', { value: n.arity }));
               try {
                 n && i(n, 'constructor') && n.constructor
                   ? a && p(e, 'prototype', { writable: !1 })
@@ -654,7 +655,7 @@
                   } catch (e) {}
                 if ('get' in n || 'set' in n)
                   throw c('Accessors not supported');
-                return 'value' in n && (e[t] = n.value), e;
+                return ('value' in n && (e[t] = n.value), e);
               };
         },
         97632: (e, t, n) => {
@@ -868,7 +869,7 @@
           var j = function (e) {
               if (d(E, e)) {
                 var t = E[e];
-                delete E[e], t();
+                (delete E[e], t());
               }
             },
             D = function (e) {
@@ -882,7 +883,7 @@
             k = function (e) {
               s.postMessage(x(e), r.protocol + '//' + r.host);
             };
-          (w && v) ||
+          ((w && v) ||
             ((w = function (e) {
               h(arguments.length, 1);
               var t = u(e) ? e : F(e),
@@ -922,13 +923,13 @@
                           ? function (e) {
                               f.appendChild(g('script')).onreadystatechange =
                                 function () {
-                                  f.removeChild(this), j(e);
+                                  (f.removeChild(this), j(e));
                                 };
                             }
                           : function (e) {
                               setTimeout(D(e), 0);
                             })),
-            (e.exports = { set: w, clear: v });
+            (e.exports = { set: w, clear: v }));
         },
         6539: (e, t, n) => {
           var r = n(79328),
@@ -989,7 +990,7 @@
                 return n;
               throw l("Can't convert object to primitive value");
             }
-            return void 0 === t && (t = 'number'), s(e, t);
+            return (void 0 === t && (t = 'number'), s(e, t));
           };
         },
         86032: (e, t, n) => {
@@ -1085,7 +1086,7 @@
           );
         },
         75417: (e, t, n) => {
-          n(61857), n(19708);
+          (n(61857), n(19708));
         },
         19708: (e, t, n) => {
           var r = n(51605),
@@ -1116,11 +1117,11 @@
       var o = t[r];
       if (void 0 !== o) return o.exports;
       var i = (t[r] = { exports: {} });
-      return e[r](i, i.exports, n), i.exports;
+      return (e[r](i, i.exports, n), i.exports);
     }
-    (n.n = (e) => {
+    ((n.n = (e) => {
       var t = e && e.__esModule ? () => e.default : () => e;
-      return n.d(t, { a: t }), t;
+      return (n.d(t, { a: t }), t);
     }),
       (n.d = (e, t) => {
         for (var r in t)
@@ -1136,7 +1137,7 @@
           if ('object' == typeof window) return window;
         }
       })()),
-      (n.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t));
+      (n.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t)));
     return (
       (() => {
         'use strict';
@@ -1238,7 +1239,7 @@
             )),
           p = ((e) => {
             let t = {};
-            return e.forEach((e, n) => (t[e] = n)), t;
+            return (e.forEach((e, n) => (t[e] = n)), t);
           })(d),
           f =
             /^(?:[A-Za-z\d+\/]{4})*?(?:[A-Za-z\d+\/]{2}(?:==)?|[A-Za-z\d+\/]{3}=?)?$/,
@@ -1262,12 +1263,12 @@
                 (o = e.charCodeAt(a++)) > 255
               )
                 throw new TypeError('invalid character found');
-              (t = (n << 16) | (r << 8) | o),
+              ((t = (n << 16) | (r << 8) | o),
                 (i +=
                   d[(t >> 18) & 63] +
                   d[(t >> 12) & 63] +
                   d[(t >> 6) & 63] +
-                  d[63 & t]);
+                  d[63 & t]));
             }
             return a ? i.slice(0, a - 3) + '==='.substring(a) : i;
           },
@@ -1280,7 +1281,7 @@
               r,
               o = '';
             for (let i = 0; i < e.length; )
-              (t =
+              ((t =
                 (p[e.charAt(i++)] << 18) |
                 (p[e.charAt(i++)] << 12) |
                 ((n = p[e.charAt(i++)]) << 6) |
@@ -1290,7 +1291,7 @@
                     ? m((t >> 16) & 255)
                     : 64 === r
                       ? m((t >> 16) & 255, (t >> 8) & 255)
-                      : m((t >> 16) & 255, (t >> 8) & 255, 255 & t));
+                      : m((t >> 16) & 255, (t >> 8) & 255, 255 & t)));
             return o;
           },
           w =
@@ -1338,13 +1339,13 @@
                 return 'object' == typeof window
                   ? new Promise((t, n) => {
                       const o = document.createElement('script');
-                      (o.type = 'text/javascript'),
+                      ((o.type = 'text/javascript'),
                         (o.async = !0),
                         (o.onload = () => t(window.PSPDFModuleInit)),
                         (o.onerror = n),
-                        (o.src = e);
+                        (o.src = e));
                       const { documentElement: i } = document;
-                      r(i), i.appendChild(o);
+                      (r(i), i.appendChild(o));
                     })
                   : (self.importScripts(e),
                     Promise.resolve(self.PSPDFModuleInit));
@@ -1367,7 +1368,7 @@
           {
             const e = fetch(r.wasmBinaryFile, { credentials: 'same-origin' }),
               n = 13800063;
-            e
+            (e
               .then((e) => {
                 const t = e.headers.get('content-length');
                 return (
@@ -1419,12 +1420,12 @@
                         )
                         .catch((e) => {
                           if (/mime.*type/i.test(e.message))
-                            return a(e.message), null;
+                            return (a(e.message), null);
                           throw e;
                         })
                     : d();
                   let p = await c;
-                  null === p &&
+                  (null === p &&
                     (a(
                       'Streaming instantiation failed! Falling back to classic instantiation. This might result in slower initialization time therefore we highly recommend to follow the troubleshooting instructions in our guides to fix this error: https://pspdfkit.com/guides/web/current/troubleshooting/common-issues/#response-has-unsupported-mime-type-error.'
                     ),
@@ -1434,15 +1435,15 @@
                       o(
                         `Compilation and Instantiation complete, took: ${Date.now() - l}ms`
                       ),
-                    i(p.instance, p.module);
+                    i(p.instance, p.module));
                 })(),
                 {}
-              ));
+              )));
           }
           return r;
         }
         function $(e) {
-          (e.PSPDFLoggingServices = {
+          ((e.PSPDFLoggingServices = {
             error(e, t) {
               a(`[${e}] ${t}`);
             },
@@ -2301,22 +2302,22 @@
                   o = [];
                 let i = r.exec(e);
                 for (; null != i; )
-                  o.push([i.index, i[0].length]), (i = r.exec(e));
+                  (o.push([i.index, i[0].length]), (i = r.exec(e)));
                 return o;
               },
               exec: (e, t) => new RegExp(e).exec(t),
-            });
+            }));
         }
         function M(e) {
           const t = new FileReader();
           return new Promise((n, r) => {
-            (t.onerror = (e) => {
+            ((t.onerror = (e) => {
               r(new Error(e));
             }),
               (t.onload = (e) => {
                 n(new Uint8Array(e.target?.result));
               }),
-              t.readAsArrayBuffer(e);
+              t.readAsArrayBuffer(e));
           });
         }
         const J = 'text',
@@ -2447,11 +2448,12 @@
         let ie;
         'undefined' != typeof window &&
           (window.addEventListener('mousemove', function e() {
-            (ie = !1), window.removeEventListener('mousemove', e);
+            ((ie = !1), window.removeEventListener('mousemove', e));
           }),
           window.addEventListener('pointermove', function e(t) {
-            ('mouse' !== t.pointerType && 'pen' !== t.pointerType) || (ie = !1),
-              window.removeEventListener('pointermove', e);
+            (('mouse' !== t.pointerType && 'pen' !== t.pointerType) ||
+              (ie = !1),
+              window.removeEventListener('pointermove', e));
           }));
         /Mac/i.test(globalThis.navigator?.platform);
         function ae() {
@@ -2480,7 +2482,11 @@
         const Fe = new Set();
         let Se = !1;
         var xe = (function (e) {
-          return (e[(e.Daemon = 0)] = 'Daemon'), (e[(e.WASM = 1)] = 'WASM'), e;
+          return (
+            (e[(e.Daemon = 0)] = 'Daemon'),
+            (e[(e.WASM = 1)] = 'WASM'),
+            e
+          );
         })(xe || {});
         const Ie = [];
         function Ee(e) {
@@ -2507,8 +2513,8 @@
           };
         function De(e) {
           let t;
-          r(de, 'WebAssembly module not loaded.'),
-            Se && (t = performance.now());
+          (r(de, 'WebAssembly module not loaded.'),
+            Se && (t = performance.now()));
           for (
             var n = arguments.length, o = new Array(n > 1 ? n - 1 : 0), i = 1;
             i < n;
@@ -2534,8 +2540,8 @@
         }
         function Pe(e) {
           let t;
-          r(de, 'WebAssembly module not loaded.'),
-            Se && (t = performance.now());
+          (r(de, 'WebAssembly module not loaded.'),
+            Se && (t = performance.now()));
           for (
             var n = arguments.length, o = new Array(n > 1 ? n - 1 : 0), i = 1;
             i < n;
@@ -2612,8 +2618,8 @@
           }
           const s = [];
           for (let e = 0; e < a.getRepliesCount(); e++)
-            a.hasJSONReply(e) && s.push(JSON.parse(a.getJSONReply(e))),
-              a.hasBinaryReply(e) && s.push(a.getBinaryReply(e).slice(0));
+            (a.hasJSONReply(e) && s.push(JSON.parse(a.getJSONReply(e))),
+              a.hasBinaryReply(e) && s.push(a.getBinaryReply(e).slice(0)));
           return (
             Se &&
               Ie.push({
@@ -2657,15 +2663,15 @@
           return (
             o.forEach((e) => {
               !(function (e, t, n) {
-                r(de, ue),
+                (r(de, ue),
                   de.FS.analyzePath(e).exists || de.FS.mkdir(e),
-                  de.FS.writeFile(Ne(e, t), n);
+                  de.FS.writeFile(Ne(e, t), n));
               })(n, e.basename, e.buffer);
             }),
             function () {
               o.forEach((e) => {
                 !(function (e, t) {
-                  r(de, ue), de.FS.unlink(Ne(e, t));
+                  (r(de, ue), de.FS.unlink(Ne(e, t)));
                 })(n, e.basename);
               });
             }
@@ -2700,7 +2706,7 @@
           Le || ((Re = null), (Je = !1));
         }
         function ze(e) {
-          Le && !e && ((Le = !1), Re && Ve(Re)), (Le = e);
+          (Le && !e && ((Le = !1), Re && Ve(Re)), (Le = e));
         }
         function We() {
           return (
@@ -2716,17 +2722,17 @@
           if (Le) {
             if (null === e)
               throw (
-                ((Le = !1),
+                (Le = !1),
                 new Error(
                   'Error enqueuing form JSON objects: form fields JSON is null.'
-                ))
+                )
               );
-            return Re && !Je && (Je = !0), void (Re = e);
+            return (Re && !Je && (Je = !0), void (Re = e));
           }
           if (Je || !Le)
             try {
-              Ue(),
-                Te('apply_form_json_objects', { form_fields_with_widgets: e });
+              (Ue(),
+                Te('apply_form_json_objects', { form_fields_with_widgets: e }));
             } catch (e) {
               throw new Error(
                 'Error applying form JSON objects to /create.pdf: ' + e.message
@@ -2792,13 +2798,13 @@
         }
         const Ye = new (class {
             constructor() {
-              l(this, '_pdfObjectIdsForIds', {}),
+              (l(this, '_pdfObjectIdsForIds', {}),
                 l(this, 'comparisonDocuments', {}),
                 l(this, 'lastOpenedComparisonDocument', null),
                 l(this, 'persistedOpenDocument', null),
                 l(this, 'persistedOpenDocumentConfiguration', ge),
                 l(this, 'files', new Map()),
-                l(this, 'fileDescriptor', 0);
+                l(this, 'fileDescriptor', 0));
             }
             loadNativeModule(e, t) {
               let {
@@ -2818,11 +2824,11 @@
                         ? arguments[2]
                         : globalThis;
                   return new Promise(async (a) => {
-                    (n = B(e, t)),
+                    ((n = B(e, t)),
                       'string' == typeof e && (r = await k(`${e}${T}`)),
                       o('Using WASM method'),
                       $(i),
-                      a({ nativeModule: await r(n) });
+                      a({ nativeModule: await r(n) }));
                   });
                 })(e, n).then((e) => {
                   let { nativeModule: t } = e;
@@ -2840,20 +2846,20 @@
               let o = null,
                 i = null;
               try {
-                r.view.set(n),
+                (r.view.set(n),
                   (o = de.corePBProtoBridge(e, t, r)),
-                  (i = o.result);
+                  (i = o.result));
                 const a = { success: o.success, result: i.view.slice() };
                 return Promise.resolve(a);
               } finally {
-                r.delete(), o?.result?.delete(), o?.delete(), i?.delete();
+                (r.delete(), o?.result?.delete(), o?.delete(), i?.delete());
               }
             }
             async writeFile(e, t) {
-              r(de, ue), de.FS.writeFile(e, new Uint8Array(t));
+              (r(de, ue), de.FS.writeFile(e, new Uint8Array(t)));
             }
             async readFile(e) {
-              return r(de, ue), de.FS.readFile(e);
+              return (r(de, ue), de.FS.readFile(e));
             }
             async renderLinearized(e) {
               const t = de.allocateMemory(e.byteLength);
@@ -2865,7 +2871,7 @@
                   Promise.resolve(n.view.slice())
                 );
               } finally {
-                t.delete(), n?.delete();
+                (t.delete(), n?.delete());
               }
             }
             async load(e, t, n) {
@@ -2884,13 +2890,13 @@
                   s &&
                     !de.FS.analyzePath(Oe).exists &&
                     (function (e, t) {
-                      r(de, ue),
+                      (r(de, ue),
                         de.FS.analyzePath(t).exists || de.FS.mkdir(t),
                         de.FS.mount(
                           de.FS.filesystems.WORKERFS,
                           { blobs: e },
                           t
-                        );
+                        ));
                     })(s, Oe),
                   ae() &&
                     (r(
@@ -2908,12 +2914,12 @@
                   c)
                 ) {
                   const e = await X(c);
-                  Te(
+                  (Te(
                     'dynamic_font_loading/set_metadata_file',
                     void 0,
                     await e.arrayBuffer()
                   ),
-                    (we = c.split('/').slice(0, -1).join('/'));
+                    (we = c.split('/').slice(0, -1).join('/')));
                 }
               } catch (e) {
                 throw e;
@@ -3001,10 +3007,10 @@
               }
             }
             async openAndReturnDocumentInfo(e) {
-              (ye = e),
+              ((ye = e),
                 De('openDocument', se, JSON.stringify(e)),
                 fe && $e(),
-                De('automaticLinkExtraction', pe);
+                De('automaticLinkExtraction', pe));
               const t = De('getDocumentInfo').documentInfo;
               if (t.pageCount <= 0) return t;
               let n = [];
@@ -3020,7 +3026,7 @@
                   n.push(t);
                 }
               } else n = await this.getAllPageInfos(t.pageCount);
-              return (t.pages = n), t;
+              return ((t.pages = n), t);
             }
             async getPageInfo(e) {
               try {
@@ -3070,10 +3076,10 @@
                     })[0]);
               try {
                 let e = i();
-                e.preflight_result === Y &&
+                (e.preflight_result === Y &&
                   (await this.addDynamicFonts(e.required_fonts), (e = i())),
                   'number' == typeof t &&
-                    (e.preflight_result === H ? ve.add(t) : ve.delete(t));
+                    (e.preflight_result === H ? ve.add(t) : ve.delete(t)));
               } catch (n) {
                 a(
                   `There was an error testing rendering for annotation ${t} of this text: ${e}: ${n.message}`
@@ -3084,15 +3090,15 @@
               let t = [];
               try {
                 t = e.filter((e) => !Fe.has(e));
-                !(function (e) {
-                  r(de, ue),
+                (!(function (e) {
+                  (r(de, ue),
                     e.forEach((e) => {
                       de.FS.analyzePath(`/fonts/${e.name}`).exists ||
                         de.FS.writeFile(
                           `/fonts/${e.name}`,
                           new Uint8Array(e.data)
                         );
-                    });
+                    }));
                 })(
                   (
                     await Promise.all(
@@ -3104,12 +3110,12 @@
                 ),
                   t.forEach((e) => {
                     Fe.add(e);
-                  });
+                  }));
               } catch (e) {
-                t.forEach((e) => {
+                (t.forEach((e) => {
                   Fe.delete(e);
                 }),
-                  a(`There was an error loading a font: ${e}`);
+                  a(`There was an error loading a font: ${e}`));
               }
               await Te('dynamic_font_loading/notify_fonts_added', {
                 added_fonts: t.map((e) => ({
@@ -3252,18 +3258,18 @@
             }
             async applyOperations(e, t) {
               const n = await Be(e, t);
-              Me(e, se), n();
+              (Me(e, se), n());
             }
             async exportPDFWithOperations(e, t) {
               const n = await Be(e, t);
               let o;
               r(de, ue);
               try {
-                Me(e, ce), (o = de.FS.readFile(ce).buffer);
+                (Me(e, ce), (o = de.FS.readFile(ce).buffer));
               } catch (e) {
                 throw new Error('Error applying operations: ' + e.message);
               }
-              return n(), o;
+              return (n(), o);
             }
             async getSignaturesInfo() {
               try {
@@ -3295,8 +3301,8 @@
                   certificate_check_time: 'current_time',
                 })[0];
                 const e = 'not_signed' !== s.status;
-                De('saveDocument', ce, !1, e, false, false, 'pdf', !1),
-                  De('openDocument', ce, JSON.stringify(ye));
+                (De('saveDocument', ce, !1, e, false, false, 'pdf', !1),
+                  De('openDocument', ce, JSON.stringify(ye)));
               } catch (e) {
                 throw new Error(
                   `Error saving document backup for invisible signing: ${e}`
@@ -3304,8 +3310,9 @@
               }
               try {
                 const e = !n && 'not_signed' !== s.status;
-                De('saveDocument', se, n, e, false, false, 'pdf', !1),
-                  n && (De('openDocument', se, JSON.stringify(ye)), fe && $e());
+                (De('saveDocument', se, n, e, false, false, 'pdf', !1),
+                  n &&
+                    (De('openDocument', se, JSON.stringify(ye)), fe && $e()));
               } catch (e) {
                 throw new Error(
                   `Error saving document for invisible signing: ${e}`
@@ -3388,7 +3395,7 @@
                   certificate_check_time: 'current_time',
                   revocation_responses: e,
                 })[0];
-                return De('saveDocument', se, !1, !0, !1, !1, 'pdf', !1), t;
+                return (De('saveDocument', se, !1, !0, !1, !1, 'pdf', !1), t);
               } catch (e) {
                 throw new Error(`Error getting signatures info: ${e.message}`);
               }
@@ -3410,7 +3417,7 @@
                           );
                         }
                       })(d);
-                p ||
+                (p ||
                   (u = Te('create_signature', {
                     signatureType: r,
                     hash: n,
@@ -3427,7 +3434,7 @@
                     revocation_responses: c ?? [],
                   })),
                   De('openDocument', se, JSON.stringify(ye)),
-                  fe && $e();
+                  fe && $e());
               } catch (e) {
                 throw new Error(`Error signing document: ${e}`);
               }
@@ -3435,15 +3442,15 @@
             }
             async restoreToOriginalState() {
               try {
-                De('openDocument', ce, JSON.stringify(ye)), fe && $e();
+                (De('openDocument', ce, JSON.stringify(ye)), fe && $e());
                 const e =
                   'not_signed' !==
                   Te('get_signatures', {
                     certificate_check_time: 'current_time',
                   })[0].status;
-                De('saveDocument', se, !1, e, !1, !1, 'pdf', !1),
+                (De('saveDocument', se, !1, e, !1, !1, 'pdf', !1),
                   De('openDocument', se, JSON.stringify(ye)),
-                  fe && $e();
+                  fe && $e());
               } catch (e) {
                 throw new Error(`Could not restore backup document: ${e}`);
               }
@@ -3552,10 +3559,10 @@
               );
             }
             async renderDetachedAnnotation(e, t, n, o, i) {
-              r(de, ue),
+              (r(de, ue),
                 !we ||
                   ('pspdfkit/stamp' !== e.type && 'pspdfkit/text' !== e.type) ||
-                  (await this.preflightAnnotation(e, e.pdfObjectId));
+                  (await this.preflightAnnotation(e, e.pdfObjectId)));
               const a = t ? await M(t) : null,
                 s = t ? t.type : null;
               let c, l;
@@ -3586,7 +3593,7 @@
                 }
                 c = l.getBinaryReply(0).slice(0);
               } finally {
-                u && u.delete(), l && l.delete();
+                (u && u.delete(), l && l.delete());
               }
               return c;
             }
@@ -3600,8 +3607,8 @@
                 i = o?.includes(e);
               try {
                 if (i)
-                  Te('extract_embedded_file', { id: e, file_path: le }),
-                    (t = de.FS.readFile(le).buffer);
+                  (Te('extract_embedded_file', { id: e, file_path: le }),
+                    (t = de.FS.readFile(le).buffer));
                 else {
                   if (
                     ((n = Pe('getAnnotationAttachment', e)),
@@ -3613,12 +3620,12 @@
                       'Error fetching attachment: ' + t + ', ' + e
                     );
                   }
-                  (r = JSON.parse(n.getJSONReply(0)).encoding),
-                    (t = n.getBinaryReply(0).slice(0));
+                  ((r = JSON.parse(n.getJSONReply(0)).encoding),
+                    (t = n.getBinaryReply(0).slice(0)));
                 }
               } finally {
-                de.FS.analyzePath(le)?.exists && de.FS.unlink(le),
-                  n && n.delete();
+                (de.FS.analyzePath(le)?.exists && de.FS.unlink(le),
+                  n && n.delete());
               }
               return [t, r];
             }
@@ -3655,11 +3662,11 @@
               });
             }
             async createAnnotation(e, t) {
-              r(de, ue),
+              (r(de, ue),
                 r(
                   'number' == typeof e.pageIndex,
                   'Annotation must have a pageIndex'
-                );
+                ));
               const n = e.pdfObjectId,
                 o = t ? await M(t) : null;
               let i;
@@ -3724,11 +3731,11 @@
                   )
                 );
               } else
-                e &&
+                (e &&
                   this.canPreflightAnnotation(e) &&
                   we &&
                   (await this.preflightAnnotation(e, t.pdfObjectId)),
-                  De('updateAnnotation', JSON.stringify(t), 0, 0);
+                  De('updateAnnotation', JSON.stringify(t), 0, 0));
             }
             async updateButtonIcon(e, t, n) {
               Te(
@@ -3774,8 +3781,10 @@
                               : n.formField.annotationIds.indexOf(
                                   String(e.pdfObjectId)
                                 );
-                            (r = n.formField.options.filter((e, t) => t !== i)),
-                              r.some((e) => e.value === o) || (o = '');
+                            ((r = n.formField.options.filter(
+                              (e, t) => t !== i
+                            )),
+                              r.some((e) => e.value === o) || (o = ''));
                           }
                           const i = n.widgets.filter((e) => t !== e.id),
                             a = n.formField.annotationIds.filter(
@@ -3811,10 +3820,10 @@
                     `Removing annotation failed for annotation: ${JSON.stringify(e)}`
                   );
                 }
-              delete this._pdfObjectIdsForIds[
+              (delete this._pdfObjectIdsForIds[
                 e.id || e.pdfObjectId?.toString()
               ],
-                ve.delete(e.pdfObjectId);
+                ve.delete(e.pdfObjectId));
             }
             async createFormField(e, t) {
               const n = We().concat([
@@ -3825,7 +3834,7 @@
                   },
                 ]),
                 r = Le;
-              Le && ze(!1), Ve(n);
+              (Le && ze(!1), Ve(n));
               const o = We();
               r && ze(!0);
               const i = o.find((t) => t.formField.name === e.name);
@@ -3911,7 +3920,7 @@
                         ),
                         ...(void 0 !== r.value ? { value: r.value } : null),
                       };
-                      return e.flags || delete o.formField.flags, o;
+                      return (e.flags || delete o.formField.flags, o);
                     }
                     return r;
                   })
@@ -3922,12 +3931,12 @@
                 throw new Error(
                   `Error updating form field "${e.name}" in /create.pdf: updated form field not found. ${JSON.stringify({ type: 'pspdfkit/form-field-with-widgets', formField: e, widgets: t })}`
                 );
-              s.formField.pdfObjectId !== n.pdfObjectId &&
+              (s.formField.pdfObjectId !== n.pdfObjectId &&
                 (this._pdfObjectIdsForIds[n.id] = s.formField.pdfObjectId),
                 o?.widgets.forEach((e) => {
                   t.some((t) => t.id === e.id) ||
                     delete this._pdfObjectIdsForIds[e.id];
-                });
+                }));
             }
             async deleteFormField(e) {
               const t = We(),
@@ -3988,10 +3997,10 @@
             }
             async updateBookmark(e) {
               try {
-                Te('remove_bookmarks', {
+                (Te('remove_bookmarks', {
                   bookmarkIds: [e.id ?? e.pdfBookmarkId],
                 }),
-                  Te('append_bookmarks', { bookmarks: [e] });
+                  Te('append_bookmarks', { bookmarks: [e] }));
               } catch (e) {
                 throw new Error(
                   `Error updating bookmark in /create.pdf: ${e.message}`
@@ -4080,7 +4089,7 @@
             }
             async compareDocuments(e) {
               try {
-                r(
+                (r(
                   e.originalDocument.arrayBuffer,
                   'Original document arrayBuffer is missing'
                 ),
@@ -4095,7 +4104,7 @@
                   de.FS.writeFile(
                     'documentB.pdf',
                     new Uint8Array(e.changedDocument.arrayBuffer)
-                  );
+                  ));
                 const t = {
                   originalDocument: {
                     ...e.originalDocument,
@@ -4169,7 +4178,7 @@
                 u = { mimeType: 'application/pdf', extension: 'pdf' };
               try {
                 const r = !1;
-                (l = Te('save_document', {
+                ((l = Te('save_document', {
                   file_path: se,
                   format: o,
                   flatten_annotations: e,
@@ -4213,17 +4222,17 @@
                             document_permissions: Ze(s.documentPermissions),
                           }
                         : null),
-                    })));
+                    }))));
               } catch (e) {
                 throw new Error(`Error saving to /save.pdf: ${e.message}`);
               }
               const d = l[0];
-              d.format &&
+              (d.format &&
                 (u = {
                   mimeType: d.format.mime_type,
                   extension: d.format.extension,
                 }),
-                r(de, ue);
+                r(de, ue));
               const p = de.FS.readFile(c ? ce : se).buffer;
               return (
                 c &&
@@ -4233,7 +4242,7 @@
               );
             }
             async importXFDF(e, t, n) {
-              he.push({ source: e, keepCurrentAnnotations: t }),
+              (he.push({ source: e, keepCurrentAnnotations: t }),
                 t ||
                   (function () {
                     let e =
@@ -4244,14 +4253,14 @@
                         arguments.length > 1 && void 0 !== arguments[1]
                           ? arguments[1]
                           : [];
-                    e.push('pspdfkit/widget'),
+                    (e.push('pspdfkit/widget'),
                       De(
                         'removeAllAnnotations',
                         JSON.stringify(e),
                         JSON.stringify(t)
-                      );
+                      ));
                   })(),
-                De('importXFDF', e, n);
+                De('importXFDF', e, n));
             }
             async exportXFDF(e) {
               return De('exportXFDF', [], [], e).XFDF;
@@ -4266,7 +4275,7 @@
                 'exportInstantDocumentJSON',
                 'number' == typeof e ? e : -1
               );
-              return t && ze(!0), JSON.parse(n.InstantDocumentJSON);
+              return (t && ze(!0), JSON.parse(n.InstantDocumentJSON));
             }
             async getDocumentOutline() {
               const e = Te('get_outline');
@@ -4345,8 +4354,11 @@
               );
               const t = `${R}.pdf`,
                 n = `${L}.pdf`;
-              de.FS.writeFile(t, new Uint8Array(this.comparisonDocuments[R])),
-                de.FS.writeFile(n, new Uint8Array(this.comparisonDocuments[L]));
+              (de.FS.writeFile(t, new Uint8Array(this.comparisonDocuments[R])),
+                de.FS.writeFile(
+                  n,
+                  new Uint8Array(this.comparisonDocuments[L])
+                ));
               return (
                 Te('comparison', {
                   documentA: {
@@ -4445,10 +4457,10 @@
                   };
                 const r = { success: !0, values: [] };
                 for (let e = 0; e < n.getRepliesCount(); e++)
-                  n.hasJSONReply(e) &&
+                  (n.hasJSONReply(e) &&
                     r.values.push(JSON.parse(n.getJSONReply(e))),
                     n.hasBinaryReply(e) &&
-                      r.values.push(n.getBinaryReply(e).slice(0));
+                      r.values.push(n.getBinaryReply(e).slice(0)));
                 if (Se) {
                   const n = JSON.parse(e);
                   Ie.push({
@@ -4479,7 +4491,8 @@
             closeFile(e) {
               const t = this.files.get(e);
               return (
-                t && (de.FS.close(t), this.files.delete(e)), Promise.resolve()
+                t && (de.FS.close(t), this.files.delete(e)),
+                Promise.resolve()
               );
             }
             writeData(e, t, n) {
@@ -4497,7 +4510,7 @@
             destroy() {}
           })(),
           Xe = self;
-        (Xe.global = Xe),
+        ((Xe.global = Xe),
           (Xe.module = {}),
           (Xe.onmessage = async (e) => {
             let t,
@@ -4512,15 +4525,15 @@
               e instanceof ArrayBuffer && (n = [e]);
             } catch (e) {
               const o = [...r.args].filter((e) => e instanceof ArrayBuffer);
-              o.length > 0 && (n = o),
+              (o.length > 0 && (n = o),
                 (t = {
                   id: r.id,
                   error: e.message || e.toString(),
                   callArgs: r.args,
-                });
+                }));
             }
             Xe.postMessage(t, n);
-          });
+          }));
       })(),
       {}
     );

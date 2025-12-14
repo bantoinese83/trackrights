@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
-import { getApiKey, handleError } from '../utils';
-import type { Content, SimplifyRequest } from '@/lib/types/api';
+import {
+  getApiKey,
+  handleError,
+  corsHeaders,
+  cacheGet,
+  cacheSet,
+} from '../utils';
+import type { Content } from '@/lib/types/api';
 import { optimizeContractText } from '@/lib/utils/contract-optimizer';
-import { rateLimiter, calculateRetryDelay } from '@/lib/utils/rate-limiter';
+import { generateWithRetry } from '@/lib/ai-retry';
+import { validate, simplifyContractRequestSchema } from '@/lib/validation';
 
 // Set max duration for Vercel serverless function (60 seconds)
 export const maxDuration = 60;
@@ -110,120 +117,24 @@ Format your response using Markdown, following these guidelines:
 
 Remember to explain complex legal concepts in plain language that all music industry professionals can easily understand. Your analysis should be thorough yet accessible to professionals at all levels of experience.`;
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// Adjusted for free tier: 60 requests/minute
-const MAX_RETRIES = 5; // More retries with proper delays
-
-const cache = new Map<string, { value: string; timestamp: number }>();
-// Extended cache TTL to 24 hours for better performance and reduced API calls
-const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-
-function cacheGet(key: string): string | null {
-  const cached = cache.get(key);
-  if (cached) {
-    const isExpired = Date.now() - cached.timestamp > CACHE_TTL;
-    if (!isExpired) {
-      return cached.value;
-    }
-    cache.delete(key);
-  }
-  return null;
-}
-
-function cacheSet(key: string, value: string): void {
-  cache.set(key, { value, timestamp: Date.now() });
-}
-
-async function generateWithRetry(
-  content: Content[],
-  retryCount = 0
-): Promise<string> {
+// Helper function to generate content with caching
+async function generateContent(content: Content[]): Promise<string> {
   const cacheKey = JSON.stringify(content);
   const cachedResponse = cacheGet(cacheKey);
   if (cachedResponse) {
     return cachedResponse;
   }
 
-  try {
-    // Rate limit check before making request (minimal delay to avoid timeouts)
-    await rateLimiter.waitIfNeeded();
+  const contentArray = content.map((item) => item.text || '').filter(Boolean);
+  const response = await generateWithRetry(ai, contentArray);
 
-    const contents = content.map((item) => item.text).join('\n\n');
-    // Remove googleSearch tool to speed up processing and avoid timeouts
-    // Use streaming timeout: 50 seconds max for API call
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Request timeout after 50 seconds')), 50000);
-    });
-
-    const result = await Promise.race([
-      ai.models.generateContent({
-        model: 'gemini-2.5-pro',
-        contents,
-      }),
-      timeoutPromise,
-    ]);
-    const responseText = result.text ?? '';
-    if (!responseText) {
-      throw new Error('No response text received from API');
-    }
-    cacheSet(cacheKey, responseText);
-    return responseText;
-  } catch (error: unknown) {
-    const errorStatus = (error as { status?: number })?.status;
-    
-    // Check if it's a daily quota error (don't retry, quota won't reset until tomorrow)
-    if (errorStatus === 429) {
-      const errorString = JSON.stringify(error);
-      const isDailyQuota = 
-        errorString.includes('GenerateRequestsPerDayPerProjectPerModel') ||
-        errorString.includes('free_tier_requests') ||
-        errorString.includes('quotaValue');
-      
-      if (isDailyQuota) {
-        // Don't retry daily quota errors - they won't reset until tomorrow
-        throw error;
-      }
-    }
-    
-    if (
-      error instanceof Error &&
-      errorStatus &&
-      (errorStatus === 429 || errorStatus === 503) &&
-      retryCount < MAX_RETRIES
-    ) {
-      // Calculate retry delay based on rate limits
-      let waitTime: number;
-      try {
-        const errorDetails = error as {
-          error?: {
-            details?: Array<{
-              '@type'?: string;
-              retryDelay?: string;
-            }>;
-          };
-        };
-        const retryInfo = errorDetails?.error?.details?.find(
-          (detail) =>
-            detail['@type'] === 'type.googleapis.com/google.rpc.RetryInfo'
-        );
-        waitTime = calculateRetryDelay(
-          retryCount,
-          retryInfo?.retryDelay
-        );
-      } catch {
-        // Fall back to calculated delay
-        waitTime = calculateRetryDelay(retryCount);
-      }
-      console.log(
-        `Rate limit or service unavailable. Retrying in ${Math.ceil(waitTime / 1000)}s... (Attempt ${retryCount + 1}/${MAX_RETRIES})`
-      );
-      await delay(waitTime);
-      return generateWithRetry(content, retryCount + 1);
-    }
-    throw error;
-  }
+  cacheSet(cacheKey, response);
+  return response;
 }
+
+// File upload validation constants
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ALLOWED_MIME_TYPES = ['application/pdf', 'text/plain'];
 
 const handleMultipartFormData = async (req: NextRequest) => {
   const reqUrl = req.nextUrl;
@@ -231,7 +142,28 @@ const handleMultipartFormData = async (req: NextRequest) => {
   const file = formData.get('file') as File | null;
 
   if (!file) {
-    return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'No file uploaded' },
+      { status: 400, headers: corsHeaders(req) }
+    );
+  }
+
+  // Validate file size
+  if (file.size > MAX_FILE_SIZE) {
+    return NextResponse.json(
+      {
+        error: `File size exceeds ${MAX_FILE_SIZE / (1024 * 1024)}MB limit. Please upload a smaller file.`,
+      },
+      { status: 400, headers: corsHeaders(req) }
+    );
+  }
+
+  // Validate file type
+  if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+    return NextResponse.json(
+      { error: 'Invalid file type. Only PDF and TXT files are allowed.' },
+      { status: 400, headers: corsHeaders(req) }
+    );
   }
 
   try {
@@ -244,7 +176,7 @@ const handleMultipartFormData = async (req: NextRequest) => {
     } else {
       return NextResponse.json(
         { error: 'Unsupported file type. Please upload a PDF or TXT file.' },
-        { status: 400 }
+        { status: 400, headers: corsHeaders(req) }
       );
     }
 
@@ -259,22 +191,9 @@ const handleMultipartFormData = async (req: NextRequest) => {
       { text: optimizedContent },
     ];
 
-    const cacheKey = JSON.stringify(content);
-    const cachedResponse = cacheGet(cacheKey);
-    if (cachedResponse) {
-      return NextResponse.json(
-        {
-          simplifiedContract: cachedResponse,
-          message: 'Contract simplified successfully (from cache).',
-        },
-        { status: 200 }
-      );
-    }
-
     const startTime = Date.now();
-    const simplifiedContract = await generateWithRetry(content);
+    const simplifiedContract = await generateContent(content);
     const processingTimeMs = Date.now() - startTime;
-    cacheSet(cacheKey, simplifiedContract);
 
     // Track contract analysis (non-blocking)
     fetch(`${reqUrl.origin}/api/track-contract`, {
@@ -290,104 +209,79 @@ const handleMultipartFormData = async (req: NextRequest) => {
 
     return NextResponse.json(
       { simplifiedContract, message: 'Contract simplified successfully.' },
-      { status: 200 }
+      { status: 200, headers: corsHeaders(req) }
     );
   } catch (error) {
-    console.error('Error processing file:', error);
-    const { errorMessage, statusCode } = handleError(error);
-    return NextResponse.json(
-      {
-        error: errorMessage,
-        message:
-          'Failed to process contract. Please try again later or contact support.',
-      },
-      { status: statusCode }
-    );
+    return handleError(error, req);
   }
 };
 
 const handleJsonRequest = async (req: NextRequest) => {
   const reqUrl = req.nextUrl;
-  const { contractText }: SimplifyRequest = await req.json();
 
-  if (!contractText) {
-    return NextResponse.json(
-      { error: 'No contract text provided' },
-      { status: 400 }
-    );
-  }
+  try {
+    const body = await req.json();
+    const validated = await validate(simplifyContractRequestSchema, body);
+    const { contractText } = validated;
 
-  // Optimize contract text to reduce tokens while preserving important information
-  const optimizedContract = optimizeContractText(contractText, 12000);
+    // Optimize contract text to reduce tokens while preserving important information
+    const optimizedContract = optimizeContractText(contractText, 12000);
 
-  const content: Content[] = [
-    { text: optimizedContract },
-    { text: SYSTEM_MESSAGE },
-    {
-      text: 'Simplify this contract based on the instructions provided, and format the response using Markdown as specified.',
-    },
-  ];
+    const content: Content[] = [
+      { text: optimizedContract },
+      { text: SYSTEM_MESSAGE },
+      {
+        text: 'Simplify this contract based on the instructions provided, and format the response using Markdown as specified.',
+      },
+    ];
 
-  const cacheKey = JSON.stringify(content);
-  const cachedResponse = cacheGet(cacheKey);
-  if (cachedResponse) {
+    const startTime = Date.now();
+    const simplifiedContract = await generateContent(content);
+    const processingTimeMs = Date.now() - startTime;
+
+    // Track contract analysis (non-blocking)
+    fetch(`${reqUrl.origin}/api/track-contract`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contractText,
+        simplifiedText: simplifiedContract,
+        processingTimeMs,
+        contractType: 'simplify',
+      }),
+    }).catch(console.error);
+
     return NextResponse.json(
       {
         originalContract: contractText,
-        simplifiedContract: cachedResponse,
-        message: 'Contract simplified successfully (from cache).',
+        simplifiedContract,
+        message: 'Contract simplified successfully.',
       },
-      { status: 200 }
+      { status: 200, headers: corsHeaders(req) }
     );
+  } catch (error) {
+    return handleError(error, req);
   }
-
-  const startTime = Date.now();
-  const simplifiedContract = await generateWithRetry(content);
-  const processingTimeMs = Date.now() - startTime;
-  cacheSet(cacheKey, simplifiedContract);
-
-  // Track contract analysis (non-blocking)
-  fetch(`${reqUrl.origin}/api/track-contract`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contractText,
-      simplifiedText: simplifiedContract,
-      processingTimeMs,
-      contractType: 'simplify',
-    }),
-  }).catch(console.error);
-
-  return NextResponse.json(
-    {
-      originalContract: contractText,
-      simplifiedContract,
-      message: 'Contract simplified successfully.',
-    },
-    { status: 200 }
-  );
 };
 
 export async function POST(req: NextRequest) {
   try {
-    if (req.headers.get('content-type')?.includes('multipart/form-data')) {
+    const contentType = req.headers.get('content-type');
+
+    if (contentType?.includes('multipart/form-data')) {
       return await handleMultipartFormData(req);
-    } else if (req.headers.get('content-type') === 'application/json') {
+    } else if (contentType === 'application/json') {
       return await handleJsonRequest(req);
     } else {
       return NextResponse.json(
-        { error: 'Invalid content type' },
-        { status: 400 }
+        {
+          error:
+            'Invalid content type. Expected multipart/form-data or application/json.',
+        },
+        { status: 400, headers: corsHeaders(req) }
       );
     }
   } catch (error: unknown) {
-    const { errorMessage, statusCode } = handleError(error);
-    return NextResponse.json(
-      {
-        error: errorMessage,
-        message: 'Failed to process request. Please try again later.',
-      },
-      { status: statusCode }
-    );
+    return handleError(error, req);
   }
 }

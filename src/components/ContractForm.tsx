@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useContractForm } from '@/hooks/useContractForm';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { useEffect } from 'react';
 
 interface ContractFormProps {
   contractId: string;

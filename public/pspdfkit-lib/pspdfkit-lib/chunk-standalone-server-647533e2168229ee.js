@@ -28,7 +28,7 @@
         m = n(32784);
       class h {
         constructor(e) {
-          (0, a.A)(this, 'linearizedInstance', null), (this.ctx = e);
+          ((0, a.A)(this, 'linearizedInstance', null), (this.ctx = e));
         }
         initializeLinearizedInstance() {
           if (this.linearizedInstance && !this.linearizedInstance.isDestroyed())
@@ -48,7 +48,7 @@
           );
         }
         async normallyOpenLinearizedDocument(e, t) {
-          (0, o.V1)(this.ctx.wasmCtx, 'Wasm context is not available'),
+          ((0, o.V1)(this.ctx.wasmCtx, 'Wasm context is not available'),
             (0, o.V1)(
               this.linearizedInstance,
               'Linearized loader is not available'
@@ -60,7 +60,7 @@
             ),
             (0, c.removeLinearizedInstance)(this.ctx),
             (this.linearizedInstance = null),
-            await e.client.openCreateFilePathDocument(t);
+            await e.client.openCreateFilePathDocument(t));
         }
         destroy() {
           (0, c.removeLinearizedInstance)(this.ctx);
@@ -156,7 +156,7 @@
         l = n(67748);
       class d {
         constructor() {
-          (0, a.A)(this, 'attachmentsCache', (0, i.T5)()),
+          ((0, a.A)(this, 'attachmentsCache', (0, i.T5)()),
             (0, a.A)(this, 'cachedAPStreams', (0, i.T5)()),
             (0, a.A)(this, 'pageAPStreamsPromises', (0, i.T5)()),
             (0, a.A)(this, 'annotationAPStreamPromises', (0, i.T5)()),
@@ -171,15 +171,15 @@
                   : (this._objectURLs[n] = 1);
                 const a = e.release;
                 e.release = () => {
-                  this._objectURLs[n]--,
+                  (this._objectURLs[n]--,
                     this._objectURLs[n] <= 0 &&
                       (a?.(),
                       this._cachedRenderedAnnotation?.index === t &&
                         (this._cachedRenderedAnnotation = null),
-                      delete this._objectURLs[n]);
+                      delete this._objectURLs[n]));
                 };
               }
-            });
+            }));
         }
         getAnnotationFormFieldAndValue(e) {
           const t = this.provider;
@@ -242,9 +242,9 @@
                     n(t));
                 },
                 c = this.annotationAPStreamPromises.get(e.id);
-              (this.annotationAPStreamPromises =
+              ((this.annotationAPStreamPromises =
                 this.annotationAPStreamPromises.set(e.id, s)),
-                c && c(null);
+                c && c(null));
               try {
                 const o = this.pageAPStreamsPromises.get(e.pageIndex);
                 if (!o) {
@@ -272,7 +272,7 @@
                 if (u) r(null);
                 else if (((m = p), d.length > 1)) {
                   const t = await Promise.all(h.map((e) => e.promise));
-                  r(t[d.indexOf(i || 'normal')]),
+                  (r(t[d.indexOf(i || 'normal')]),
                     t.some(Boolean) &&
                       this.cacheAPStream(
                         d.reduce(
@@ -280,11 +280,11 @@
                           {}
                         ),
                         e
-                      );
+                      ));
                 } else {
                   const t = await h,
                     n = t ? this.getAPStream(t, i) : null;
-                  r(n), n && this.cacheAPStream(t, e);
+                  (r(n), n && this.cacheAPStream(t, e));
                 }
               } catch (e) {
                 o(e);
@@ -295,7 +295,7 @@
         }
         cacheAPStream(e, t) {
           let n = this.cachedAPStreams.get(t.pageIndex);
-          n ||
+          (n ||
             ((this.cachedAPStreams = this.cachedAPStreams.set(
               t.pageIndex,
               (0, i.T5)()
@@ -304,16 +304,17 @@
             (this.cachedAPStreams = this.cachedAPStreams.setIn(
               [t.pageIndex, t.id],
               e
-            ));
+            )));
         }
         clearAllPageAPStreams(e) {
           const t = this.cachedAPStreams.get(e);
-          t &&
+          (t &&
             (t.forEach((e) => {
               this.releaseAPStream(e);
             }),
             (this.cachedAPStreams = this.cachedAPStreams.delete(e))),
-            (this.pageAPStreamsPromises = this.pageAPStreamsPromises.delete(e));
+            (this.pageAPStreamsPromises =
+              this.pageAPStreamsPromises.delete(e)));
         }
         clearPageAPStreams(e, t) {
           const n = this.cachedAPStreams.get(e);
@@ -377,10 +378,10 @@
           return (
             this._cachedRenderedAnnotation.APStreamPromise.then((e) => {
               let t;
-              e &&
+              (e &&
                 ((t = new c.A(e.element.cloneNode(!0), e.release)),
                 this._makeEnqueuedRelease(t, i)),
-                n(t);
+                n(t));
             }).catch(a),
             { promise: t, cancel: () => {} }
           );
@@ -427,7 +428,7 @@
       };
       class C {
         constructor(e, t) {
-          (0, a.A)(this, '_state', new v()),
+          ((0, a.A)(this, '_state', new v()),
             (0, a.A)(this, '_formFieldsLoadedPromise', null),
             (0, a.A)(this, '_objectCreationPromises', (0, i.T5)()),
             (0, a.A)(this, '_loadBookmarksPromise', null),
@@ -439,7 +440,7 @@
             (this._json = t ? (0, o.$y)(t) : null),
             (this._setReadStateCallbacksPromise = new Promise((e) => {
               this._setReadStateCallbacksPromiseResolve = e;
-            }));
+            })));
         }
         async load() {
           if (
@@ -448,8 +449,8 @@
             !this._json)
           )
             return this;
-          await this._core.importInstantJSON({ ...k, ...this._json }),
-            (0, o.V1)(this._json);
+          (await this._core.importInstantJSON({ ...k, ...this._json }),
+            (0, o.V1)(this._json));
           const { annotations: e, attachments: t } = this._json;
           if (this._isDestroyed() || !t || 0 === Object.entries(t).length)
             return this;
@@ -461,34 +462,34 @@
                 const e = t ? t[i.imageAttachmentId] : null;
                 if (e)
                   try {
-                    (a = (0, w.lj)(atob(e.binary), e.contentType)),
+                    ((a = (0, w.lj)(atob(e.binary), e.contentType)),
                       (0, o.V1)(this._annotationCallbacks),
                       this._annotationCallbacks.createAttachment(
                         i.imageAttachmentId,
                         a
-                      );
+                      ));
                   } catch (e) {
-                    (0, o.pq)(
+                    ((0, o.pq)(
                       `Skipped attachment with id ${i.imageAttachmentId} from payload because an error occurred while converting the binary image to blob.`
                     ),
-                      (0, o.pq)(e);
+                      (0, o.pq)(e));
                   }
               }
             }
           return this;
         }
         destroy() {
-          (this._state = this._state.set('isDestroyed', !0)),
+          ((this._state = this._state.set('isDestroyed', !0)),
             (this._annotationCallbacks = null),
             (this._readStateCallbacks = null),
             (this._bookmarkCallbacks = null),
             (this._formFieldCallbacks = null),
             (this._formFieldValueCallbacks = null),
-            (this._commentCallbacks = null);
+            (this._commentCallbacks = null));
         }
         setReadStateCallbacks(e) {
-          (this._readStateCallbacks = e),
-            this._setReadStateCallbacksPromiseResolve?.();
+          ((this._readStateCallbacks = e),
+            this._setReadStateCallbacksPromiseResolve?.());
         }
         setAnnotationCallbacks(e) {
           this._annotationCallbacks = e;
@@ -535,7 +536,7 @@
                 );
               })
             );
-          await Promise.all(
+          (await Promise.all(
             t
               .map(
                 (e) =>
@@ -546,10 +547,10 @@
               .toArray()
           ),
             this._commentCallbacks?.createComments(t, _.n),
-            (this._commentsLoadedPromise = Promise.resolve());
+            (this._commentsLoadedPromise = Promise.resolve()));
         }
         async updateTabOrder(e) {
-          (this.pagesTabOrderToUpdate = this.pagesTabOrderToUpdate.add(e)),
+          ((this.pagesTabOrderToUpdate = this.pagesTabOrderToUpdate.add(e)),
             this.updateTabOrderTimeout &&
               clearTimeout(this.updateTabOrderTimeout),
             (this.updateTabOrderTimeout = setTimeout(async () => {
@@ -569,7 +570,7 @@
                     this._annotationCallbacks?.setPageTabOrder(e, t[n]);
                   });
                 }));
-            }, 1e3));
+            }, 1e3)));
         }
         async setTabOrder(e, t) {
           return this._core.setTabOrder(e, t);
@@ -589,7 +590,7 @@
               (0, A.eq)(e),
               n ? n.data : null
             );
-          'number' != typeof a ||
+          ('number' != typeof a ||
             'number' != typeof e.pdfObjectId ||
             e.pdfObjectId === a ||
             this._isDestroyed() ||
@@ -597,29 +598,30 @@
             this._annotationCallbacks.updateAnnotations(
               (0, i.B8)([e.set('pdfObjectId', a)])
             )),
-            await this.updateTabOrder(e.pageIndex);
+            await this.updateTabOrder(e.pageIndex));
         }
         async updateAnnotation(e) {
-          this._verifyLoaded(),
+          (this._verifyLoaded(),
             await this._core.updateAnnotation((0, A.eq)(e)),
-            await this.updateTabOrder(e.pageIndex);
+            await this.updateTabOrder(e.pageIndex));
         }
         deleteAnnotation(e) {
           return (
-            this._verifyLoaded(), this._core.deleteAnnotation((0, A.eq)(e))
+            this._verifyLoaded(),
+            this._core.deleteAnnotation((0, A.eq)(e))
           );
         }
         createBookmark(e) {
-          return this._verifyLoaded(), this._core.createBookmark((0, P.U)(e));
+          return (this._verifyLoaded(), this._core.createBookmark((0, P.U)(e)));
         }
         updateBookmark(e) {
-          return this._verifyLoaded(), this._core.updateBookmark((0, P.U)(e));
+          return (this._verifyLoaded(), this._core.updateBookmark((0, P.U)(e)));
         }
         deleteBookmark(e) {
-          return this._verifyLoaded(), this._core.deleteBookmark(e);
+          return (this._verifyLoaded(), this._core.deleteBookmark(e));
         }
         createFormField(e) {
-          this._verifyLoaded(), (0, o.V1)(this._readStateCallbacks);
+          (this._verifyLoaded(), (0, o.V1)(this._readStateCallbacks));
           const t = this._readStateCallbacks.getFormFieldWidgets(e);
           return this._core
             .createFormField((0, A.T7)(e), t.map((e) => (0, A.eq)(e)).toArray())
@@ -627,7 +629,7 @@
               (0, S.vA)(() => {
                 e.forEach((e, n) => {
                   const a = t.get(n);
-                  (0, o.V1)(a),
+                  ((0, o.V1)(a),
                     (0, o.V1)(this._annotationCallbacks),
                     'number' != typeof e ||
                       'number' != typeof a.pdfObjectId ||
@@ -635,13 +637,13 @@
                       this._isDestroyed() ||
                       this._annotationCallbacks.updateAnnotations(
                         (0, i.B8)([a.set('pdfObjectId', e)])
-                      );
+                      ));
                 });
               });
             });
         }
         updateFormField(e) {
-          this._verifyLoaded(), (0, o.V1)(this._readStateCallbacks);
+          (this._verifyLoaded(), (0, o.V1)(this._readStateCallbacks));
           const t = this._readStateCallbacks.getFormFieldWidgets(e);
           return this._core.updateFormField(
             (0, A.T7)(e),
@@ -649,7 +651,10 @@
           );
         }
         deleteFormField(e) {
-          return this._verifyLoaded(), this._core.deleteFormField((0, A.T7)(e));
+          return (
+            this._verifyLoaded(),
+            this._core.deleteFormField((0, A.T7)(e))
+          );
         }
         loadFormFields() {
           return (
@@ -670,29 +675,29 @@
                   let e;
                   e = a.pdfObjectId ? a.pdfObjectId.toString() : (0, f.K1)();
                   const r = (0, A.mh)(e, a);
-                  (0, o.V1)(this._readStateCallbacks),
+                  ((0, o.V1)(this._readStateCallbacks),
                     this._readStateCallbacks.isFormFieldInState(r.name) ||
                       n.push(r.set('value', s)),
                     i.forEach((e) => {
                       let n;
-                      (n = e.pdfObjectId
+                      ((n = e.pdfObjectId
                         ? e.id || e.pdfObjectId.toString()
                         : (0, f.K1)()),
                         (0, o.V1)(this._readStateCallbacks),
-                        (t = t.push((0, A.h8)(n, e)));
-                    });
+                        (t = t.push((0, A.h8)(n, e))));
+                    }));
                 } catch (e) {
-                  (0, o.pq)(
+                  ((0, o.pq)(
                     `Skipped creating form field #${a.pdfObjectId} from payload because an error occurred while deserializing.`
                   ),
-                    (0, o.pq)(e);
+                    (0, o.pq)(e));
                 }
               });
             });
           const a = {},
             s = {};
-          t.forEach((e) => {
-            s[e.id] || (s[e.id] = []), s[e.id].push(e.pdfObjectId);
+          (t.forEach((e) => {
+            (s[e.id] || (s[e.id] = []), s[e.id].push(e.pdfObjectId));
           }),
             (t = t.map((e) => {
               if (
@@ -735,14 +740,15 @@
               !this._isDestroyed() &&
               ((0, o.V1)(this._annotationCallbacks),
               this._annotationCallbacks.createAnnotations(t, (0, i.T5)(), _.n)),
-            (this._formFieldsLoadedPromise = Promise.resolve());
+            (this._formFieldsLoadedPromise = Promise.resolve()));
         }
         createFormFieldValue(e) {
-          return this._verifyLoaded(), this.setFormFieldValue(e);
+          return (this._verifyLoaded(), this.setFormFieldValue(e));
         }
         setFormFieldValue(e) {
           return (
-            this._verifyLoaded(), this._core.setFormFieldValue((0, A.cA)(e))
+            this._verifyLoaded(),
+            this._core.setFormFieldValue((0, A.cA)(e))
           );
         }
         deleteFormFieldValue(e) {
@@ -756,7 +762,8 @@
           if (t) return t;
           const n = this._loadAnnotationsForPageIndex(e);
           return (
-            (this._state = this._state.setIn(['alreadyLoadedPages', e], n)), n
+            (this._state = this._state.setIn(['alreadyLoadedPages', e], n)),
+            n
           );
         }
         async _loadAnnotationsForPageIndex(e) {
@@ -793,7 +800,7 @@
               t.pdfObjectId;
               try {
                 let n;
-                (n = (function (e) {
+                ((n = (function (e) {
                   return 'pspdfkit/link' === e.type && 0 === e.pdfObjectId;
                 })(t)
                   ? t.id || (0, f.K1)()
@@ -802,19 +809,19 @@
                     this._readStateCallbacks?.isAnnotationInState(n)) &&
                     ((n = (0, f.K1)()),
                     (t.id = n),
-                    this._core.updateAnnotation(t));
+                    this._core.updateAnnotation(t)));
                 const a = (0, A.h8)(n, t);
                 e.push(a);
               } catch (e) {
-                (0, o.pq)(
+                ((0, o.pq)(
                   `Skipped creating annotation #${t.pdfObjectId} from payload because an error occurred while deserializing.`
                 ),
-                  (0, o.pq)(e);
+                  (0, o.pq)(e));
               }
             });
           });
-          (0, S.vA)(() => {
-            (0, o.V1)(this._annotationCallbacks),
+          ((0, S.vA)(() => {
+            ((0, o.V1)(this._annotationCallbacks),
               c.size > 0 &&
                 this._annotationCallbacks.createAnnotations(
                   c,
@@ -825,12 +832,12 @@
               a.length > 0 &&
                 this._annotationCallbacks.addAnnotationVariants('rollover', a),
               s.length > 0 &&
-                this._annotationCallbacks.addAnnotationVariants('down', s);
+                this._annotationCallbacks.addAnnotationVariants('down', s));
           }),
             (this._state = this._state.setIn(
               ['alreadyLoadedPages', e],
               Promise.resolve()
-            ));
+            )));
         }
         async _loadFormFieldValues() {
           this._verifyLoaded();
@@ -841,10 +848,10 @@
               try {
                 t.push((0, A.R5)(e));
               } catch (t) {
-                (0, o.pq)(
+                ((0, o.pq)(
                   `Skipped creating form field value #${e.pdfObjectId} from payload because an error occurred while deserializing.`
                 ),
-                  (0, o.pq)(t);
+                  (0, o.pq)(t));
               }
             });
           });
@@ -864,10 +871,10 @@
               try {
                 t.push((0, P.r)(n, e));
               } catch (e) {
-                (0, o.pq)(
+                ((0, o.pq)(
                   `Skipped creating bookmark #${n} from payload because an error occurred while deserializing.`
                 ),
-                  (0, o.pq)(e);
+                  (0, o.pq)(e));
               }
             });
           });
@@ -903,7 +910,7 @@
       }
       class D {
         constructor(e, t) {
-          (this.identifier = e), (this.callback = t);
+          ((this.identifier = e), (this.callback = t));
         }
         request() {
           return this.callback();
@@ -990,7 +997,7 @@
         async signDocumentAndReload(e, t) {
           const n = e?.signingData,
             a = n?.certificates;
-          (0, o.V1)(
+          ((0, o.V1)(
             void 0 === t || 'function' == typeof t,
             'On a Standalone deployment, when `signaturePreparationData.signingData.privateKey` is not provided, `twoStepSignatureCallbackOrSigningServiceData` must be a function or `PSPDFKit.StandaloneSigningServiceData`.'
           ),
@@ -1027,11 +1034,11 @@
                   a.every((e) =>
                     Boolean(
                       (e instanceof ArrayBuffer && e.byteLength > 0) ||
-                        ('string' == typeof e && e.length > 0)
+                      ('string' == typeof e && e.length > 0)
                     )
                   )),
               'For signatures of type `PSPDFKit.SignatureType.CAdES` an `Array` of certificates must be provided in `signaturePreparationData.signingData.certificates`.'
-            );
+            ));
           const i = {
             signatureType:
               n?.signatureType ||
@@ -1119,7 +1126,7 @@
                     !0,
                     ['sign']
                   );
-                (h = await globalThis.crypto.subtle.sign(e, t, u)), (p = h);
+                ((h = await globalThis.crypto.subtle.sign(e, t, u)), (p = h));
               }
             }
             let f = '',
@@ -1131,12 +1138,12 @@
               f = l.o4.fromUint8Array(new Uint8Array(e.pkcs7)) || '';
             } else if (te(p)) {
               const e = p;
-              (f = l.o4.fromUint8Array(new Uint8Array(e.signedData)) || ''),
+              ((f = l.o4.fromUint8Array(new Uint8Array(e.signedData)) || ''),
                 (g = e.certificates.map((e) =>
                   e instanceof ArrayBuffer
                     ? l.o4.fromUint8Array(new Uint8Array(e))
                     : l.o4.encode(e)
-                ));
+                )));
             }
             let y = null,
               b = [];
@@ -1165,7 +1172,7 @@
               te(p))
             ) {
               const e = p;
-              (0, o.V1)(
+              ((0, o.V1)(
                 null == e.timestampResponse ||
                   e.timestampResponse instanceof ArrayBuffer,
                 'The `timestampResponse` property of `signatureData` must be an `ArrayBuffer`.'
@@ -1177,7 +1184,7 @@
                       new Uint8Array(e.timestampResponse)
                     ),
                     token: '1234',
-                  });
+                  }));
             }
             if (!y && n?.timestamp && p instanceof ArrayBuffer) {
               const e = l.o4.toUint8Array(f).buffer;
@@ -1221,11 +1228,11 @@
           super(e);
         }
         async signDocumentAndReload(e, t) {
-          (t = (0, ae.kJ)(t)),
+          ((t = (0, ae.kJ)(t)),
             (0, o.V1)(
               t,
               '`twoStepSignatureCallbackOrStandaloneSigningServiceData` must be a `PSPDFKit.StandaloneSigningServiceData` object when performing signing via a backend service.'
-            );
+            ));
           const { jwt: n, signingToken: a } = t,
             i = this.resolveServerUrl(t),
             s = await this.getCertificates(i, n, a),
@@ -1356,12 +1363,12 @@
       const oe = new s.iy(se);
       class re extends g.K {
         constructor(e) {
-          super(),
+          (super(),
             (0, a.A)(this, 'type', 'STANDALONE'),
             (0, a.A)(this, 'standaloneDocumentSigner', new ne(this)),
             (0, a.A)(this, 'signingServiceDocumentSigner', new ie(this)),
             (0, a.A)(this, '_XFDF', null),
-            le(e);
+            le(e));
           const {
             baseUrl: t,
             baseCoreUrl: n,
@@ -1382,7 +1389,7 @@
             formsConfiguration: P,
             allowLinearizedLoading: w,
           } = e;
-          'string' == typeof o &&
+          ('string' == typeof o &&
             (this._XFDF = {
               source: o,
               keepCurrentAnnotations: !0 === e.XFDFKeepCurrentAnnotations,
@@ -1395,7 +1402,7 @@
               )),
             (this._instantJSON = s),
             (this._formsConfiguration = P),
-            'function' == typeof u && (this._trustedCAsCallback = u);
+            'function' == typeof u && (this._trustedCAsCallback = u));
           const {
               disableWebAssemblyStreaming: F,
               customFonts: _,
@@ -1407,7 +1414,7 @@
             !!e.electronicSignatures &&
             Boolean(e.electronicSignatures.forceLegacySignaturesFeature);
           let D = g || null;
-          (!p && !f) || D || (D = p ? W.v.SharePoint : W.v.Salesforce),
+          ((!p && !f) || D || (D = p ? W.v.SharePoint : W.v.Salesforce),
             (this._state = new V(
               ce({
                 baseUrl: t,
@@ -1430,11 +1437,13 @@
                 allowLinearizedLoading: w,
               })
             )),
-            (this._requestQueue = new r.L(y.z3));
+            (this._requestQueue = new r.L(y.z3)));
           const { object: x, checkIn: T } = oe.checkOut();
-          (this.client = x),
+          ((this.client = x),
             (this.checkIn = T),
-            (this.corePDFBridge = new Y.D(d.MX.createWASMContext(this.client)));
+            (this.corePDFBridge = new Y.D(
+              d.MX.createWASMContext(this.client)
+            )));
           const O = s
             ? {
                 annotations: s.annotations || [],
@@ -1476,10 +1485,10 @@
         }
         async afterDocumentLoaded(e) {}
         destroy() {
-          this.corePDFBridge.destroy(),
+          (this.corePDFBridge.destroy(),
             this.provider && this.provider.destroy(),
             this._requestQueue && this._requestQueue.destroy(),
-            this.checkIn();
+            this.checkIn());
         }
         async documentInfo() {
           return this._state.documentResponse;
@@ -1662,7 +1671,7 @@
                       a._readStateCallbacks?.getFormFieldByName(e.name)
                     )
                     .filter(Boolean);
-                  e.forEach((e, t) => {
+                  (e.forEach((e, t) => {
                     const a = o.get(t);
                     if (a) {
                       const { formFieldValue: t } =
@@ -1696,7 +1705,7 @@
                       } else e && r && this.cacheAPStream(e, a);
                     }
                   }),
-                    t();
+                    t());
                 });
               })
               .catch(i);
@@ -1859,7 +1868,7 @@
                     await n.toPdf(t, e)
                   );
                 } finally {
-                  n?.destroy(), (0, X.Pm)(null);
+                  (n?.destroy(), (0, X.Pm)(null));
                 }
               }
               return t;
@@ -1871,12 +1880,13 @@
           try {
             const [e] = await this.client.exportFile(!1, !1, !1, 'pdf', !1, !0);
             return (
-              (t = await this._setupGdPictureClient()), await t.toOffice(e, n)
+              (t = await this._setupGdPictureClient()),
+              await t.toOffice(e, n)
             );
           } catch (e) {
             throw new o.uE(`Exporting to ${n} failed: ${e.message}.`);
           } finally {
-            t?.destroy(), (0, X.Pm)(null);
+            (t?.destroy(), (0, X.Pm)(null));
           }
         }
         async _setupGdPictureClient() {
@@ -1937,11 +1947,11 @@
               }).then((t) => {
                 if (i) return;
                 const n = new Blob([t], { type: t.mimeType });
-                (e = window.URL.createObjectURL(n)), s(e);
+                ((e = window.URL.createObjectURL(n)), s(e));
               });
             }),
             revoke: () => {
-              e && window.URL.revokeObjectURL(e), (i = !0);
+              (e && window.URL.revokeObjectURL(e), (i = !0));
             },
           };
         }
@@ -2007,9 +2017,9 @@
         }
         async reloadDocument() {
           try {
-            this.provider?.destroy(),
+            (this.provider?.destroy(),
               (this.provider = new C(this.client, null)),
-              (this._state = this._state.set('lazyLoadedPages', null));
+              (this._state = this._state.set('lazyLoadedPages', null)));
             const e = await this.client.reloadDocument();
             return (
               (this._state = this._state
@@ -2082,7 +2092,8 @@
               return this._state.signaturesInfoPromise;
             const e = this.client.getSignaturesInfo().then((e) => (0, A.N5)(e));
             return (
-              (this._state = this._state.set('signaturesInfoPromise', e)), e
+              (this._state = this._state.set('signaturesInfoPromise', e)),
+              e
             );
           } catch (e) {
             throw new o.uE(`Getting document signatures info: ${e}`);
@@ -2419,7 +2430,7 @@
               'dynamicFonts must be a valid URL to a JSON file containing the data for fonts to be dynamically loaded.'
             );
           }
-        (0, o.V1)(
+        ((0, o.V1)(
           void 0 === b || 'boolean' == typeof b,
           'inlineWorkers must be a boolean'
         ),
@@ -2428,7 +2439,7 @@
               void 0 === A.export?.disableComboBoxArrow ||
                 'boolean' == typeof A.export?.disableComboBoxArrow,
               'formsConfiguration.export.disableComboBoxArrow must be a boolean'
-            );
+            ));
       }
       async function de(e) {
         const t = new WeakMap(),
@@ -2531,7 +2542,7 @@
       }
       function l(e) {
         let t, n;
-        (0, a.V1)(
+        ((0, a.V1)(
           'pspdfkit/outline-element' === e.type,
           'invalid outline element type.'
         ),
@@ -2551,7 +2562,7 @@
           (0, a.V1)(
             null == e.isExpanded || 'boolean' == typeof e.isExpanded,
             'isExpanded must be a boolean.'
-          );
+          ));
         try {
           t = e.action && (0, s._8)(e.action);
         } catch (t) {

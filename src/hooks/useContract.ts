@@ -5,13 +5,13 @@
 
 import { useCallback } from 'react';
 import { useAppState } from '@/lib/contexts/StateContext';
-import { contractService } from '@/services/contract.service';
-import { useApi } from './useApi';
-import type {
-  SimplifyContractRequest,
-  ReviseContractRequest,
-  GenerateContractRequest,
+import {
+  contractService,
+  type SimplifyContractRequest,
+  type ReviseContractRequest,
+  type GenerateContractRequest,
 } from '@/services/contract.service';
+import { useApi } from './useApi';
 
 export function useContract() {
   const { state, dispatch } = useAppState();

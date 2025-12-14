@@ -36,7 +36,7 @@
       class m {
         constructor(a, t, e) {
           let { isFormsEnabled: o } = e;
-          (0, s.A)(this, 'canCreateBackendOrphanWidgets', !0),
+          ((0, s.A)(this, 'canCreateBackendOrphanWidgets', !0),
             (0, s.A)(this, 'setDocumentHandleConflictCallback', () => {}),
             (this.state = new d({
               serverURL: a,
@@ -45,7 +45,7 @@
             })),
             (this._setReadStateCallbacksPromise = new Promise((a) => {
               this._setReadStateCallbacksPromiseResolve = a;
-            }));
+            })));
         }
         async load() {
           return (
@@ -57,8 +57,8 @@
         }
         destroy() {}
         setReadStateCallbacks(a) {
-          (this._readStateCallbacks = a),
-            this._setReadStateCallbacksPromiseResolve?.();
+          ((this._readStateCallbacks = a),
+            this._setReadStateCallbacksPromiseResolve?.());
         }
         setAnnotationCallbacks(a) {
           this.annotationCallbacks = a;
@@ -104,11 +104,11 @@
           });
         }
         async deleteAnnotation(a) {
-          this._verifyLoaded(),
-            await this._request(`/annotations/${a.id}`, 'DELETE');
+          (this._verifyLoaded(),
+            await this._request(`/annotations/${a.id}`, 'DELETE'));
         }
         async createBookmark(a) {
-          this._verifyLoaded(), await this.loadBookmarks();
+          (this._verifyLoaded(), await this.loadBookmarks());
           const { id: t, ...e } = (0, r.U)(a);
           if (
             200 !==
@@ -120,14 +120,14 @@
             );
         }
         async updateBookmark(a) {
-          this._verifyLoaded(), await this.loadBookmarks();
+          (this._verifyLoaded(), await this.loadBookmarks());
           const { id: t, ...e } = (0, r.U)(a);
           await this._request(`/bookmarks/${t}`, 'PUT', { id: t, content: e });
         }
         async deleteBookmark(a) {
-          this._verifyLoaded(),
+          (this._verifyLoaded(),
             await this.loadBookmarks(),
-            await this._request(`/bookmarks/${a}`, 'DELETE');
+            await this._request(`/bookmarks/${a}`, 'DELETE'));
         }
         async setFormFieldValue(a) {
           this._verifyLoaded();
@@ -159,11 +159,11 @@
                   try {
                     a.push((0, n.h8)(t.id, t.content));
                   } catch (a) {
-                    (0, i.pq)(
+                    ((0, i.pq)(
                       `Skipped creating annotation #${t.id} from payload because an error occurred while deserializing.`,
                       t.content
                     ),
-                      (0, i.pq)(a);
+                      (0, i.pq)(a));
                   }
                 });
               });
@@ -191,24 +191,24 @@
                 });
               this.state = this.state.set('loadBookmarksPromise', a);
               const t = await a;
-              (this.state = this.state.set(
+              ((this.state = this.state.set(
                 'loadBookmarksPromise',
                 Promise.resolve()
               )),
                 (0, i.V1)(
                   Array.isArray(t.bookmarks),
                   'Unexpected reply from bookmarks endpoint.'
-                );
+                ));
               const e = (0, o.B8)().withMutations((a) => {
                 t.bookmarks.forEach((t) => {
                   try {
                     a.push((0, r.r)(t.id, t.content));
                   } catch (a) {
-                    (0, i.pq)(
+                    ((0, i.pq)(
                       `Skipped creating bookmark #${t.id} from payload because an error occurred while deserializing.`,
                       t
                     ),
-                      (0, i.pq)(a);
+                      (0, i.pq)(a));
                   }
                 });
               });
@@ -246,7 +246,7 @@
               })
               .filter(Boolean)
           );
-          (0, i.V1)(this.formFieldValueCallbacks),
+          ((0, i.V1)(this.formFieldValueCallbacks),
             this.state.ignoredFormFieldNames &&
             this.state.ignoredFormFieldNames.size
               ? this.formFieldValueCallbacks.setFormFieldValues(
@@ -254,7 +254,7 @@
                     (a) => !this.state.ignoredFormFieldNames?.includes(a.name)
                   )
                 )
-              : this.formFieldValueCallbacks.setFormFieldValues(e);
+              : this.formFieldValueCallbacks.setFormFieldValues(e));
         }
         _handleError(a, t) {
           (0, i.z3)(`Loading or updating ${t} failed:\n\n${a.message}`);

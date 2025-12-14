@@ -31,7 +31,7 @@ function n(e, t) {
   });
   n.promise = r;
   const s = r;
-  return (s[o] = n), { promise: s, promise_control: n };
+  return ((s[o] = n), { promise: s, promise_control: n });
 }
 function r(e) {
   return e[o];
@@ -96,7 +96,7 @@ function m(e, t, o) {
   const a = `${o}/console`
     .replace('https://', 'wss://')
     .replace('http://', 'ws://');
-  (f = new WebSocket(a)),
+  ((f = new WebSocket(a)),
     f.addEventListener('open', () => {
       n.log(`browser: [${e}] Console websocket connected.`);
     }),
@@ -105,7 +105,7 @@ function m(e, t, o) {
     }),
     f.addEventListener('close', (t) => {
       n.error(`[${e}] websocket closed: ${t}`, t);
-    });
+    }));
   const l = (e) => {
     f.readyState === WebSocket.OPEN ? f.send(e) : n.log(e);
   };
@@ -133,7 +133,7 @@ function v() {
     a = je.config.linkerEnabled
       ? ''
       : '\nThis application was built with linking (tree shaking) disabled. \nPublished applications will be significantly smaller if you install wasm-tools workload. \nSee also https://aka.ms/dotnet-wasm-features';
-  console.groupCollapsed(
+  (console.groupCollapsed(
     `${s}dotnet${s} Loaded ${j(r)} resources${s}${a}`,
     ...i
   ),
@@ -145,7 +145,7 @@ function v() {
       (console.groupCollapsed(`Loaded ${j(n)} resources from network`),
       console.table(p),
       console.groupEnd()),
-    console.groupEnd();
+    console.groupEnd());
 }
 async function _() {
   const e = b;
@@ -208,7 +208,7 @@ function S(e) {
     )
       return n;
   }
-  return (e.globalizationMode = 'invariant'), null;
+  return ((e.globalizationMode = 'invariant'), null);
 }
 const x = class {
   constructor(e) {
@@ -225,8 +225,8 @@ async function A(e, t) {
       const n = e.startsWith('file://');
       if (!n && o)
         return globalThis.fetch(e, t || { credentials: 'same-origin' });
-      w || ((y = xe.require('url')), (w = xe.require('fs'))),
-        n && (e = y.fileURLToPath(e));
+      (w || ((y = xe.require('url')), (w = xe.require('fs'))),
+        n && (e = y.fileURLToPath(e)));
       const r = await w.promises.readFile(e);
       return {
         ok: !0,
@@ -318,7 +318,7 @@ function J(e, t, o) {
   Ce(1 == n.length, `Expect to have one ${o} asset in resources`);
   const r = n[0],
     s = { name: r, hash: t[r], behavior: o };
-  return H(s), e.push(s), s;
+  return (H(s), e.push(s), s);
 }
 function H(e) {
   P[e.behavior] && L.set(e.behavior, e);
@@ -327,7 +327,7 @@ function Q(e) {
   const t = (function (e) {
     Ce(P[e], `Unknown single asset behavior ${e}`);
     const t = L.get(e);
-    return Ce(t, `Single asset for ${e} not found`), t;
+    return (Ce(t, `Single asset for ${e} not found`), t);
   })(e);
   if (((t.resolvedUrl = je.locateFile(t.name)), U[t.behavior])) {
     const e = se(t);
@@ -348,10 +348,10 @@ async function Z() {
   try {
     const e = [],
       t = (t) => {
-        !V[t.behavior] && q(t) && je.expected_instantiated_assets_count++,
+        (!V[t.behavior] && q(t) && je.expected_instantiated_assets_count++,
           !F[t.behavior] &&
             q(t) &&
-            (je.expected_downloaded_assets_count++, e.push(Y(t)));
+            (je.expected_downloaded_assets_count++, e.push(Y(t))));
       };
     for (const e of I) t(e);
     await je.memorySnapshotSkippedOrDone.promise;
@@ -368,8 +368,8 @@ async function Z() {
           je._loaded_files.push({ url: t, file: o });
         }
       } else t(e);
-    je.allDownloadsQueued.promise_control.resolve(),
-      await je.runtimeModuleLoaded.promise;
+    (je.allDownloadsQueued.promise_control.resolve(),
+      await je.runtimeModuleLoaded.promise);
     const o = [];
     for (const t of e)
       o.push(
@@ -377,19 +377,19 @@ async function Z() {
           const e = await t;
           if (e.buffer) {
             if (!V[e.behavior]) {
-              (e.buffer && 'object' == typeof e.buffer) ||
+              ((e.buffer && 'object' == typeof e.buffer) ||
                 Ce(
                   !1,
                   'asset buffer must be array-like or buffer-like or promise of these'
                 ),
                 'string' != typeof e.resolvedUrl &&
-                  Ce(!1, 'resolvedUrl must be string');
+                  Ce(!1, 'resolvedUrl must be string'));
               const t = e.resolvedUrl,
                 o = await e.buffer,
                 n = new Uint8Array(o);
-              ie(e),
+              (ie(e),
                 await Re.beforeOnRuntimeInitialized.promise,
-                Re.instantiate_asset(e, t, n);
+                Re.instantiate_asset(e, t, n));
             }
           } else
             W[e.behavior]
@@ -417,7 +417,7 @@ async function Z() {
 }
 async function G(e) {
   const t = await Y(e);
-  return await t.pendingDownloadInternal.response, t.buffer;
+  return (await t.pendingDownloadInternal.response, t.buffer);
 }
 async function Y(e) {
   try {
@@ -429,9 +429,9 @@ async function Y(e) {
       throw t;
     if (e.resolvedUrl && -1 != e.resolvedUrl.indexOf('file://')) throw t;
     if (t && 404 == t.status) throw t;
-    (e.pendingDownloadInternal = void 0), await je.allDownloadsQueued.promise;
+    ((e.pendingDownloadInternal = void 0), await je.allDownloadsQueued.promise);
     try {
-      return a(`Retrying download '${e.name}'`), await K(e);
+      return (a(`Retrying download '${e.name}'`), await K(e));
     } catch (t) {
       return (
         (e.pendingDownloadInternal = void 0),
@@ -445,9 +445,9 @@ async function Y(e) {
 async function K(e) {
   for (; k; ) await k.promise;
   try {
-    ++M,
+    (++M,
       M == je.maxParallelDownloads &&
-        (a('Throttling further parallel downloads'), (k = n()));
+        (a('Throttling further parallel downloads'), (k = n())));
     const t = await (async function (e) {
       if (
         (e.pendingDownload && (e.pendingDownloadInternal = e.pendingDownload),
@@ -480,7 +480,7 @@ async function K(e) {
           : [''];
       let o;
       for (let n of t) {
-        (n = n.trim()), './' === n && (n = '');
+        ((n = n.trim()), './' === n && (n = ''));
         const t = X(e, n);
         e.name === t
           ? a(`Attempting to download '${t}'`)
@@ -523,7 +523,7 @@ async function K(e) {
     if ((--M, k && M == je.maxParallelDownloads - 1)) {
       a('Resuming more parallel downloads');
       const e = k;
-      (k = void 0), e.promise_control.resolve();
+      ((k = void 0), e.promise_control.resolve());
     }
   }
 }
@@ -548,7 +548,7 @@ function X(e, t) {
   );
 }
 function ee(e, t) {
-  return je.modulesUniqueQuery && z[t] && (e += je.modulesUniqueQuery), e;
+  return (je.modulesUniqueQuery && z[t] && (e += je.modulesUniqueQuery), e);
 }
 let te = 0;
 const oe = new Set();
@@ -567,7 +567,7 @@ function ne(e) {
           } catch (e) {}
           if (!n) return;
           const r = parseInt(n.headers.get('content-length') || '0');
-          return (g[e.name] = { responseBytes: r }), n;
+          return ((g[e.name] = { responseBytes: r }), n);
         })(e);
         return (
           t ||
@@ -626,10 +626,10 @@ function ne(e) {
     return (
       oe.add(e.name),
       o.response.then(() => {
-        'assembly' == e.behavior && je.loadedAssemblies.push(e.name),
+        ('assembly' == e.behavior && je.loadedAssemblies.push(e.name),
           te++,
           je.onDownloadResourceProgress &&
-            je.onDownloadResourceProgress(te, oe.size);
+            je.onDownloadResourceProgress(te, oe.size));
       }),
       o
     );
@@ -675,14 +675,14 @@ function se(e) {
   }
 }
 function ie(e) {
-  (e.pendingDownloadInternal = null),
+  ((e.pendingDownloadInternal = null),
     (e.pendingDownload = null),
     (e.buffer = null),
-    (e.moduleExports = null);
+    (e.moduleExports = null));
 }
 function ae(e) {
   let t = e.lastIndexOf('/');
-  return t >= 0 && t++, e.substring(t);
+  return (t >= 0 && t++, e.substring(t));
 }
 async function le(e) {
   if (!e) return;
@@ -716,9 +716,9 @@ async function ue(e, t, o) {
     await o();
   } catch (o) {
     throw (
-      (u(`Failed to invoke '${t}' on library initializer '${e}': ${o}`),
+      u(`Failed to invoke '${t}' on library initializer '${e}': ${o}`),
       Me(1, o),
-      o)
+      o
     );
   }
 }
@@ -850,7 +850,7 @@ function ge() {
           n.pdb = o;
           break;
         case 'resource':
-          (n.satelliteResources = {}), (n.satelliteResources[t.culture] = o);
+          ((n.satelliteResources = {}), (n.satelliteResources[t.culture] = o));
           break;
         case 'icu':
           n.icu = o;
@@ -859,7 +859,7 @@ function ge() {
           n.wasmSymbols = o;
           break;
         case 'vfs':
-          (n.vfs = {}), (n.vfs[t.virtualPath] = o);
+          ((n.vfs = {}), (n.vfs[t.virtualPath] = o));
           break;
         case 'dotnetwasm':
           n.wasmNative = o;
@@ -883,7 +883,7 @@ function ge() {
       he(e.resources, n);
     }
   }
-  (je.assertAfterExit = e.assertAfterExit = e.assertAfterExit || !_e),
+  ((je.assertAfterExit = e.assertAfterExit = e.assertAfterExit || !_e),
     void 0 === e.debugLevel && 'Debug' === de && (e.debugLevel = -1),
     void 0 === e.cachedResourcesPurgeDelay &&
       (e.cachedResourcesPurgeDelay = 1e4),
@@ -908,7 +908,7 @@ function ge() {
     (je.enableDownloadRetry =
       void 0 !== e.enableDownloadRetry
         ? e.enableDownloadRetry
-        : je.enableDownloadRetry);
+        : je.enableDownloadRetry));
 }
 let be = !1;
 function we() {
@@ -948,10 +948,10 @@ function Oe() {
   return Re.runtimeReady && !Te();
 }
 function ke() {
-  Re.runtimeReady || Ce(!1, "mono runtime didn't start yet"),
+  (Re.runtimeReady || Ce(!1, "mono runtime didn't start yet"),
     je.assertAfterExit &&
       Te() &&
-      Ce(!1, `mono runtime already exited with ${je.exitCode}`);
+      Ce(!1, `mono runtime already exited with ${je.exitCode}`));
 }
 function Me(e, t) {
   var o;
@@ -970,10 +970,10 @@ function Me(e, t) {
     !Te())
   ) {
     try {
-      Re.runtimeReady ||
+      (Re.runtimeReady ||
         (a('abort_startup, reason: ' + t),
         (function (e) {
-          je.allDownloadsQueued.promise_control.reject(e),
+          (je.allDownloadsQueued.promise_control.reject(e),
             je.afterConfigLoaded.promise_control.reject(e),
             je.wasmDownloadPromise.promise_control.reject(e),
             je.runtimeModuleLoaded.promise_control.reject(e),
@@ -986,7 +986,7 @@ function Me(e, t) {
               Re.afterPreRun.promise_control.reject(e),
               Re.beforeOnRuntimeInitialized.promise_control.reject(e),
               Re.afterOnRuntimeInitialized.promise_control.reject(e),
-              Re.afterPostRun.promise_control.reject(e));
+              Re.afterPostRun.promise_control.reject(e)));
         })(t)),
         (function (e, t) {
           if (0 !== e && t) {
@@ -1012,10 +1012,10 @@ function Me(e, t) {
         (function (e) {
           if (_e && je.config && je.config.appendElementOnExit) {
             const t = document.createElement('label');
-            (t.id = 'tests_done'),
+            ((t.id = 'tests_done'),
               e && (t.style.background = 'red'),
               (t.innerHTML = e.toString()),
-              document.body.appendChild(t);
+              document.body.appendChild(t));
           }
         })(e),
         Re.jiterpreter_dump_stats && Re.jiterpreter_dump_stats(!1),
@@ -1023,7 +1023,7 @@ function Me(e, t) {
           (null === (o = je.config) || void 0 === o
             ? void 0
             : o.interopCleanupOnExit) &&
-          Re.forceDisposeProxies(!0, !0);
+          Re.forceDisposeProxies(!0, !0));
     } catch (e) {
       u('mono_exit failed', e);
     }
@@ -1031,17 +1031,17 @@ function Me(e, t) {
   }
   if (je.config && je.config.asyncFlushOnExit && 0 === e)
     throw (
-      ((async () => {
+      (async () => {
         try {
           await (async function () {
             try {
               const e = await import('process'),
                 t = (e) =>
                   new Promise((t, o) => {
-                    e.on('error', (e) => o(e)),
+                    (e.on('error', (e) => o(e)),
                       e.write('', function () {
                         t();
-                      });
+                      }));
                   }),
                 o = t(e.stderr),
                 n = t(e.stdout);
@@ -1054,7 +1054,7 @@ function Me(e, t) {
           $e(e, t);
         }
       })(),
-      t)
+      t
     );
   $e(e, t);
 }
@@ -1064,7 +1064,7 @@ function $e(e, t) {
 }
 !(function (o) {
   if (Ae) throw new Error('Loader module already loaded');
-  (Ae = !0),
+  ((Ae = !0),
     (Re = o.runtimeHelpers),
     (je = o.loaderHelpers),
     (Se = o.api),
@@ -1120,7 +1120,7 @@ function $e(e, t) {
       isDebuggingSupported: we,
       exceptions: e,
       simd: t,
-    });
+    }));
 })(De);
 const Ie = '__mono_message_please_dont_collide__';
 let Le = !1;
@@ -1130,7 +1130,7 @@ async function Pe(e) {
   if ('function' == typeof e) {
     const t = e(De.api);
     if (t.ready) throw new Error("Module.ready couldn't be redefined.");
-    Object.assign(Ue, t), me(Ue, t);
+    (Object.assign(Ue, t), me(Ue, t));
   } else {
     if ('object' != typeof e)
       throw new Error(
@@ -1181,24 +1181,24 @@ async function Pe(e) {
             ((je.isChromium = e.userAgent.includes('Chrome')),
             (je.isFirefox = e.userAgent.includes('Firefox')));
       }
-      (xe.require = ye
+      ((xe.require = ye
         ? await import('module').then((e) => e.createRequire(import.meta.url))
         : Promise.resolve(() => {
             throw new Error('require not supported');
           })),
-        void 0 === globalThis.URL && (globalThis.URL = x);
+        void 0 === globalThis.URL && (globalThis.URL = x));
     })(Ue),
     Ue.ENVIRONMENT_IS_PTHREAD
       ? (async function () {
-          (function () {
+          ((function () {
             const e = new MessageChannel(),
               t = e.port1,
               o = e.port2;
-            t.addEventListener(
+            (t.addEventListener(
               'message',
               (e) => {
                 var n;
-                (n = JSON.parse(e.data.config)),
+                ((n = JSON.parse(e.data.config)),
                   Le
                     ? a('mono config already received')
                     : (fe(je.config, n),
@@ -1215,26 +1215,26 @@ async function Pe(e) {
                           self.location.href
                         )),
                   t.close(),
-                  o.close();
+                  o.close());
               },
               { once: !0 }
             ),
               t.start(),
-              self.postMessage({ [Ie]: { monoCmd: 'preload', port: o } }, [o]);
+              self.postMessage({ [Ie]: { monoCmd: 'preload', port: o } }, [o]));
           })(),
             await je.afterConfigLoaded.promise,
             (function () {
               const e = je.config;
               e.assets || Ce(!1, 'config.assets must be defined');
               for (const t of e.assets) H(t);
-            })();
+            })());
           const e = ze(),
             t = await Promise.all(e);
-          return await Fe(t), Ue;
+          return (await Fe(t), Ue);
         })()
       : (async function () {
           var e;
-          Ue.configSrc ||
+          (Ue.configSrc ||
             (je.config &&
               0 !== Object.keys(je.config).length &&
               (je.config.assets || je.config.resources)) ||
@@ -1270,13 +1270,13 @@ async function Pe(e) {
                         const r = await (async function (e) {
                           const t = je.config,
                             o = await e.json();
-                          t.applicationEnvironment ||
+                          (t.applicationEnvironment ||
                             (o.applicationEnvironment =
                               e.headers.get('Blazor-Environment') ||
                               e.headers.get('DotNet-Environment') ||
                               'Production'),
                             o.environmentVariables ||
-                              (o.environmentVariables = {});
+                              (o.environmentVariables = {}));
                           const n = e.headers.get(
                             'DOTNET-MODIFIABLE-ASSEMBLIES'
                           );
@@ -1310,11 +1310,11 @@ async function Pe(e) {
                     e.onConfigLoaded)
                   )
                     try {
-                      await e.onConfigLoaded(je.config, Se), ge();
+                      (await e.onConfigLoaded(je.config, Se), ge());
                     } catch (e) {
                       throw (d('onConfigLoaded() failed', e), e);
                     }
-                  ge(),
+                  (ge(),
                     je.config.startupMemoryCache &&
                       e.instantiateWasm &&
                       Ce(
@@ -1323,18 +1323,18 @@ async function Pe(e) {
                       ),
                     je.afterConfigLoaded.promise_control.resolve(je.config),
                     je.config.startupMemoryCache ||
-                      je.memorySnapshotSkippedOrDone.promise_control.resolve();
+                      je.memorySnapshotSkippedOrDone.promise_control.resolve());
                 } catch (t) {
                   const n = `Failed to load config file ${o} ${t} ${null == t ? void 0 : t.stack}`;
                   throw (
-                    ((je.config = e.config =
+                    (je.config = e.config =
                       Object.assign(je.config, {
                         message: n,
                         error: t,
                         isError: !0,
                       })),
                     Me(1, new Error(n)),
-                    t)
+                    t
                   );
                 }
             })(Ue),
@@ -1343,7 +1343,7 @@ async function Pe(e) {
                 t = [];
               if (e.assets)
                 for (const t of e.assets)
-                  'object' != typeof t &&
+                  ('object' != typeof t &&
                     Ce(!1, `asset must be object, it was ${typeof t} : ${t}`),
                     'string' != typeof t.behavior &&
                       Ce(!1, 'asset behavior must be known string'),
@@ -1359,7 +1359,7 @@ async function Pe(e) {
                       'object' != typeof t.pendingDownload &&
                       Ce(!1, 'asset pendingDownload could be object'),
                     B[t.behavior] ? $.push(t) : I.push(t),
-                    H(t);
+                    H(t));
               else if (e.resources) {
                 const o = e.resources;
                 if (
@@ -1433,9 +1433,9 @@ async function Pe(e) {
                     });
                 }
               e.assets = [...$, ...I, ...t];
-            })();
+            })());
           const t = ze();
-          await (async function () {
+          (await (async function () {
             b = await (async function (e) {
               if (
                 !je.config.cacheBootResources ||
@@ -1460,7 +1460,7 @@ async function Pe(e) {
                 Me(1, e);
               }),
             setTimeout(() => {
-              !(function () {
+              (!(function () {
                 if (
                   ((je.preferredIcuAsset = S(je.config)),
                   (je.invariantMode =
@@ -1481,11 +1481,11 @@ async function Pe(e) {
                         'invariant globalization mode is inactive and no ICU data archives are available';
                       throw (d(`ERROR: ${e}`), new Error(e));
                     }
-                    a(
+                    (a(
                       'ICU data archive(s) not available, using invariant globalization mode'
                     ),
                       (je.invariantMode = !0),
-                      (je.preferredIcuAsset = null);
+                      (je.preferredIcuAsset = null));
                   }
                 const e = 'DOTNET_SYSTEM_GLOBALIZATION_INVARIANT',
                   t = 'DOTNET_SYSTEM_GLOBALIZATION_HYBRID',
@@ -1504,8 +1504,8 @@ async function Pe(e) {
                     l('failed to detect timezone, will fallback to UTC');
                   }
               })(),
-                Z();
-            }, 0);
+                Z());
+            }, 0));
           const o = await Promise.all(t);
           return (
             await Fe(o),
@@ -1548,7 +1548,7 @@ async function Fe(e) {
       passEmscriptenInternals: a,
     } = e[0],
     { default: l } = e[1];
-  i(De),
+  (i(De),
     t(De),
     await n(De.module),
     je.runtimeModuleLoaded.promise_control.resolve(),
@@ -1565,26 +1565,26 @@ async function Fe(e) {
         }),
         Ue
       )
-    );
+    ));
 }
 const We = new (class {
     withModuleConfig(e) {
       try {
-        return me(Ue, e), this;
+        return (me(Ue, e), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
     }
     withOnConfigLoaded(e) {
       try {
-        return me(Ue, { onConfigLoaded: e }), this;
+        return (me(Ue, { onConfigLoaded: e }), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
     }
     withConsoleForwarding() {
       try {
-        return fe(Ne, { forwardConsoleLogsToWS: !0 }), this;
+        return (fe(Ne, { forwardConsoleLogsToWS: !0 }), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
@@ -1611,56 +1611,56 @@ const We = new (class {
     }
     withAsyncFlushOnExit() {
       try {
-        return fe(Ne, { asyncFlushOnExit: !0 }), this;
+        return (fe(Ne, { asyncFlushOnExit: !0 }), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
     }
     withExitCodeLogging() {
       try {
-        return fe(Ne, { logExitCode: !0 }), this;
+        return (fe(Ne, { logExitCode: !0 }), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
     }
     withElementOnExit() {
       try {
-        return fe(Ne, { appendElementOnExit: !0 }), this;
+        return (fe(Ne, { appendElementOnExit: !0 }), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
     }
     withInteropCleanupOnExit() {
       try {
-        return fe(Ne, { interopCleanupOnExit: !0 }), this;
+        return (fe(Ne, { interopCleanupOnExit: !0 }), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
     }
     withAssertAfterExit() {
       try {
-        return fe(Ne, { assertAfterExit: !0 }), this;
+        return (fe(Ne, { assertAfterExit: !0 }), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
     }
     withWaitingForDebugger(e) {
       try {
-        return fe(Ne, { waitForDebugger: e }), this;
+        return (fe(Ne, { waitForDebugger: e }), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
     }
     withStartupMemoryCache(e) {
       try {
-        return fe(Ne, { startupMemoryCache: e }), this;
+        return (fe(Ne, { startupMemoryCache: e }), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
     }
     withConfig(e) {
       try {
-        return fe(Ne, e), this;
+        return (fe(Ne, e), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
@@ -1690,7 +1690,7 @@ const We = new (class {
     withEnvironmentVariable(e, t) {
       try {
         const o = {};
-        return (o[e] = t), fe(Ne, { environmentVariables: o }), this;
+        return ((o[e] = t), fe(Ne, { environmentVariables: o }), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
@@ -1752,7 +1752,7 @@ const We = new (class {
     }
     withMainAssembly(e) {
       try {
-        return fe(Ne, { mainAssemblyName: e }), this;
+        return (fe(Ne, { mainAssemblyName: e }), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
@@ -1771,21 +1771,21 @@ const We = new (class {
     }
     withApplicationEnvironment(e) {
       try {
-        return fe(Ne, { applicationEnvironment: e }), this;
+        return (fe(Ne, { applicationEnvironment: e }), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
     }
     withApplicationCulture(e) {
       try {
-        return fe(Ne, { applicationCulture: e }), this;
+        return (fe(Ne, { applicationCulture: e }), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
     }
     withResourceLoader(e) {
       try {
-        return (je.loadBootResource = e), this;
+        return ((je.loadBootResource = e), this);
       } catch (e) {
         throw (Me(1, e), e);
       }
@@ -1806,12 +1806,12 @@ const We = new (class {
         ) {
           const e = this.instance.Module.FS,
             t = e.stat(this.virtualWorkingDirectory);
-          (t && e.isDir(t.mode)) ||
+          ((t && e.isDir(t.mode)) ||
             Ce(
               !1,
               `Could not find working directory ${this.virtualWorkingDirectory}`
             ),
-            e.chdir(this.virtualWorkingDirectory);
+            e.chdir(this.virtualWorkingDirectory));
         }
         return this.instance;
       } catch (e) {
@@ -1842,7 +1842,7 @@ const We = new (class {
   })(),
   Be = Me,
   Ve = Pe;
-Ee ||
+(Ee ||
   'function' == typeof globalThis.URL ||
   Ce(
     !1,
@@ -1852,6 +1852,6 @@ Ee ||
     Ce(
       !1,
       "This browser/engine doesn't support BigInt64Array API. Please use a modern version. See also https://aka.ms/dotnet-wasm-features"
-    );
+    ));
 export { Ve as default, We as dotnet, Be as exit };
 //# sourceMappingURL=dotnet.js.map

@@ -5,7 +5,16 @@ import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { GoogleGenAI, Modality } from '@google/genai';
 import { Button } from '@/components/ui/button';
-import { Mic, MicOff, Phone, PhoneOff, X, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  Mic,
+  MicOff,
+  Phone,
+  PhoneOff,
+  X,
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import { useAppState } from '@/lib/contexts/StateContext';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -77,31 +86,38 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
   const { state } = useAppState();
   const { simplifiedContract } = state;
   const { toast } = useToast();
-  
+
   const [isOpen, setIsOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<'idle' | 'connecting' | 'connected' | 'reconnecting' | 'error'>('idle');
-  
+  const [connectionStatus, setConnectionStatus] = useState<
+    'idle' | 'connecting' | 'connected' | 'reconnecting' | 'error'
+  >('idle');
+
   // Transcript state
-  const [transcripts, setTranscripts] = useState<Array<{
-    id: string;
-    type: 'user' | 'ai';
-    text: string;
-    timestamp: Date;
-    isComplete: boolean;
-  }>>([]);
+  const [transcripts, setTranscripts] = useState<
+    Array<{
+      id: string;
+      type: 'user' | 'ai';
+      text: string;
+      timestamp: Date;
+      isComplete: boolean;
+    }>
+  >([]);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
-  
+
   const sessionRef = useRef<{
     _playbackCleanup?: () => void;
     _audioProcessor?: AudioWorkletNode | ScriptProcessorNode | null;
     _inputAudioContext?: AudioContext | null;
     close: () => void;
-    sendClientContent?: (content: { turns: string; turnComplete: boolean }) => void;
+    sendClientContent?: (content: {
+      turns: string;
+      turnComplete: boolean;
+    }) => void;
     sendRealtimeInput?: (input: {
       audio?: {
         data: string;
@@ -126,16 +142,22 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
 
   // Initialize audio context with error handling
   const initAudioContext = useCallback(() => {
-    if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
+    if (
+      !audioContextRef.current ||
+      audioContextRef.current.state === 'closed'
+    ) {
       try {
-      const AudioContextClass = window.AudioContext || (window as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!AudioContextClass) {
+        const AudioContextClass =
+          window.AudioContext ||
+          (window as { webkitAudioContext?: typeof AudioContext })
+            .webkitAudioContext;
+        if (!AudioContextClass) {
           throw new Error('AudioContext not supported in this browser');
-      }
-      // Use browser's default sample rate for better compatibility
-      // We'll handle resampling in the playback function if needed
-      audioContextRef.current = new AudioContextClass();
-        
+        }
+        // Use browser's default sample rate for better compatibility
+        // We'll handle resampling in the playback function if needed
+        audioContextRef.current = new AudioContextClass();
+
         // Resume audio context if suspended (required by some browsers)
         if (audioContextRef.current.state === 'suspended') {
           audioContextRef.current.resume().catch((err) => {
@@ -144,236 +166,297 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
         }
       } catch (err) {
         console.error('Error initializing audio context:', err);
-        throw new Error('Audio playback not supported. Please use a modern browser.');
+        throw new Error(
+          'Audio playback not supported. Please use a modern browser.'
+        );
       }
     }
     return audioContextRef.current;
   }, []);
 
   // Get ephemeral token from server with retry logic
-  const getEphemeralToken = useCallback(async (retryCount = 0): Promise<string> => {
-    try {
-      const response = await fetch('/api/live-lawyer/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+  const getEphemeralToken = useCallback(
+    async (retryCount = 0): Promise<string> => {
+      try {
+        const response = await fetch('/api/live-lawyer/token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}: Failed to get authentication token`);
-      }
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.error ||
+              `HTTP ${response.status}: Failed to get authentication token`
+          );
+        }
 
-      const data = await response.json();
-      if (!data.token) {
-        throw new Error('Invalid token response from server');
+        const data = await response.json();
+        if (!data.token) {
+          throw new Error('Invalid token response from server');
+        }
+
+        // Reset retry count on success
+        retryCountRef.current = 0;
+        return data.token;
+      } catch (err) {
+        console.error('Error getting ephemeral token:', err);
+
+        // Retry logic
+        if (retryCount < 2) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, 1000 * (retryCount + 1))
+          );
+          return getEphemeralToken(retryCount + 1);
+        }
+
+        throw new Error(
+          err instanceof Error
+            ? err.message
+            : 'Failed to authenticate. Please try again.'
+        );
       }
-      
-      // Reset retry count on success
-      retryCountRef.current = 0;
-      return data.token;
-    } catch (err) {
-      console.error('Error getting ephemeral token:', err);
-      
-      // Retry logic
-      if (retryCount < 2) {
-        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
-        return getEphemeralToken(retryCount + 1);
-      }
-      
-      throw new Error(err instanceof Error ? err.message : 'Failed to authenticate. Please try again.');
-    }
+    },
+    []
+  );
+
+  // Check if text is internal processing (should not be shown in transcript)
+  const isInternalProcessing = useCallback((text: string): boolean => {
+    const lowerText = text.toLowerCase();
+    const internalPhrases = [
+      "i'm currently",
+      "i'm aiming to",
+      "i'm considering",
+      "i'm crafting",
+      "formulating a response",
+      "thinking about",
+      "preparing to",
+    ];
+    return internalPhrases.some((phrase) => lowerText.includes(phrase));
   }, []);
 
   // Add AI transcript entry
-  const addAITranscript = useCallback((text: string, isComplete: boolean = false) => {
-    setTranscripts((prev) => {
-      const lastTranscript = prev[prev.length - 1];
-      // If last transcript is incomplete AI message, update it
-      if (lastTranscript && lastTranscript.type === 'ai' && !lastTranscript.isComplete) {
+  const addAITranscript = useCallback(
+    (text: string, isComplete: boolean = false) => {
+      // Skip internal processing text - don't show it in transcript
+      if (isInternalProcessing(text)) {
+        return;
+      }
+
+      setTranscripts((prev) => {
+        const lastTranscript = prev[prev.length - 1];
+        // If last transcript is incomplete AI message, update it
+        if (
+          lastTranscript &&
+          lastTranscript.type === 'ai' &&
+          !lastTranscript.isComplete
+        ) {
+          return [
+            ...prev.slice(0, -1),
+            {
+              ...lastTranscript,
+              text: lastTranscript.text + text,
+              isComplete,
+            },
+          ];
+        }
+        // Otherwise, add new transcript
         return [
-          ...prev.slice(0, -1),
+          ...prev,
           {
-            ...lastTranscript,
-            text: lastTranscript.text + text,
+            id: `ai-${Date.now()}-${Math.random()}`,
+            type: 'ai' as const,
+            text,
+            timestamp: new Date(),
             isComplete,
           },
         ];
-      }
-      // Otherwise, add new transcript
-      return [
-        ...prev,
-        {
-          id: `ai-${Date.now()}-${Math.random()}`,
-          type: 'ai' as const,
-          text,
-          timestamp: new Date(),
-          isComplete,
-        },
-      ];
-    });
-  }, []);
+      });
+    },
+    [isInternalProcessing]
+  );
 
   // Add user transcript entry
-  const addUserTranscript = useCallback((text: string, isComplete: boolean = false) => {
-    setTranscripts((prev) => {
-      const lastTranscript = prev[prev.length - 1];
-      // If last transcript is incomplete user message, update it
-      if (lastTranscript && lastTranscript.type === 'user' && !lastTranscript.isComplete) {
+  const addUserTranscript = useCallback(
+    (text: string, isComplete: boolean = false) => {
+      setTranscripts((prev) => {
+        const lastTranscript = prev[prev.length - 1];
+        // If last transcript is incomplete user message, update it
+        if (
+          lastTranscript &&
+          lastTranscript.type === 'user' &&
+          !lastTranscript.isComplete
+        ) {
+          return [
+            ...prev.slice(0, -1),
+            {
+              ...lastTranscript,
+              text: lastTranscript.text + text,
+              isComplete,
+            },
+          ];
+        }
+        // Otherwise, add new transcript
         return [
-          ...prev.slice(0, -1),
+          ...prev,
           {
-            ...lastTranscript,
-            text: lastTranscript.text + text,
+            id: `user-${Date.now()}-${Math.random()}`,
+            type: 'user' as const,
+            text,
+            timestamp: new Date(),
             isComplete,
           },
         ];
-      }
-      // Otherwise, add new transcript
-      return [
-        ...prev,
-        {
-          id: `user-${Date.now()}-${Math.random()}`,
-          type: 'user' as const,
-          text,
-          timestamp: new Date(),
-          isComplete,
-        },
-      ];
-    });
-  }, []);
+      });
+    },
+    []
+  );
 
   // Handle incoming messages with comprehensive error handling
-  const handleMessage = useCallback((message: {
-    serverContent?: {
-      modelTurn?: {
-        parts?: Array<{
-          inlineData?: {
-            data?: string;
-          };
-          text?: string;
-        }>;
+  const handleMessage = useCallback(
+    (message: {
+      serverContent?: {
+        modelTurn?: {
+          parts?: Array<{
+            inlineData?: {
+              data?: string;
+            };
+            text?: string;
+          }>;
+        };
+        interrupted?: boolean;
+        turnComplete?: boolean;
+        generationComplete?: boolean;
       };
-      interrupted?: boolean;
-      turnComplete?: boolean;
-      generationComplete?: boolean;
-    };
-    sessionResumptionUpdate?: SessionResumptionUpdate;
-    goAway?: GoAwayMessage;
-    usageMetadata?: {
-      totalTokenCount?: number;
-    };
-  }): void => {
-    try {
-      // Handle audio data and text transcripts
-    if (message.serverContent?.modelTurn?.parts) {
-      for (const part of message.serverContent.modelTurn.parts) {
-        // Handle text transcripts if available
-        if (part.text) {
-          addAITranscript(part.text, false);
-        }
-        
-        if (part.inlineData?.data) {
-            try {
-          // Decode base64 audio data more efficiently
-          const binaryString = atob(part.inlineData.data);
-          const audioData = new Uint8Array(binaryString.length);
-          for (let i = 0; i < binaryString.length; i++) {
-            audioData[i] = binaryString.charCodeAt(i);
-          }
-          // Only add non-empty chunks to prevent issues
-          if (audioData.length > 0) {
-            audioQueueRef.current.push(audioData);
-          }
-            } catch (err) {
-              console.error('Error decoding audio data:', err);
+      sessionResumptionUpdate?: SessionResumptionUpdate;
+      goAway?: GoAwayMessage;
+      usageMetadata?: {
+        totalTokenCount?: number;
+      };
+    }): void => {
+      try {
+        // Handle audio data and text transcripts
+        if (message.serverContent?.modelTurn?.parts) {
+          for (const part of message.serverContent.modelTurn.parts) {
+            // Handle text transcripts if available
+            if (part.text) {
+              addAITranscript(part.text, false);
             }
-        }
-      }
-    }
 
-      // Handle interruptions - clear queue and stop playback
-    if (message.serverContent?.interrupted) {
-      audioQueueRef.current = [];
-        if (currentSourceRef.current) {
-          try {
-            currentSourceRef.current.stop();
-          } catch {
-            // Ignore errors when stopping (may already be stopped)
+            if (part.inlineData?.data) {
+              try {
+                // Decode base64 audio data more efficiently
+                const binaryString = atob(part.inlineData.data);
+                const audioData = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                  audioData[i] = binaryString.charCodeAt(i);
+                }
+                // Only add non-empty chunks to prevent issues
+                if (audioData.length > 0) {
+                  audioQueueRef.current.push(audioData);
+                }
+              } catch (err) {
+                console.error('Error decoding audio data:', err);
+              }
+            }
           }
-          currentSourceRef.current = null;
         }
-        isPlayingRef.current = false;
-      }
 
-      // Handle session resumption updates
-      if (message.sessionResumptionUpdate) {
-        const update = message.sessionResumptionUpdate;
-        if (update.resumable && update.newHandle) {
-          sessionHandleRef.current = update.newHandle;
-          console.log('Session resumption handle updated:', update.newHandle);
+        // Handle interruptions - clear queue and stop playback
+        if (message.serverContent?.interrupted) {
+          audioQueueRef.current = [];
+          if (currentSourceRef.current) {
+            try {
+              currentSourceRef.current.stop();
+            } catch {
+              // Ignore errors when stopping (may already be stopped)
+            }
+            currentSourceRef.current = null;
+          }
+          isPlayingRef.current = false;
         }
-      }
 
-      // Handle GoAway message (connection will close soon)
-      if (message.goAway) {
-        const timeLeft = message.goAway.timeLeft;
-        console.warn('GoAway received, time left:', timeLeft);
-        toast({
-          title: 'Connection Warning',
-          description: 'Connection will close soon. Reconnecting...',
-          variant: 'default',
-        });
-        // Set flag for reconnection (handled in onclose callback)
-        setConnectionStatus('reconnecting');
-      }
-
-      // Handle turn complete - mark current AI transcript as complete
-      if (message.serverContent?.turnComplete) {
-        setTranscripts((prev) => {
-          const last = prev[prev.length - 1];
-          if (prev.length > 0 && last && last.type === 'ai' && !last.isComplete) {
-            return [
-              ...prev.slice(0, -1),
-              {
-                id: last.id,
-                type: last.type,
-                text: last.text,
-                timestamp: last.timestamp,
-                isComplete: true,
-              },
-            ];
+        // Handle session resumption updates
+        if (message.sessionResumptionUpdate) {
+          const update = message.sessionResumptionUpdate;
+          if (update.resumable && update.newHandle) {
+            sessionHandleRef.current = update.newHandle;
+            console.log('Session resumption handle updated:', update.newHandle);
           }
-          return prev;
-        });
-      }
+        }
 
-      // Handle generation complete
-      if (message.serverContent?.generationComplete) {
-        console.log('Generation complete');
-        // Mark any incomplete AI transcript as complete
-        setTranscripts((prev) => {
-          const last = prev[prev.length - 1];
-          if (prev.length > 0 && last && last.type === 'ai' && !last.isComplete) {
-            return [
-              ...prev.slice(0, -1),
-              {
-                id: last.id,
-                type: last.type,
-                text: last.text,
-                timestamp: last.timestamp,
-                isComplete: true,
-              },
-            ];
-          }
-          return prev;
-        });
+        // Handle GoAway message (connection will close soon)
+        if (message.goAway) {
+          const timeLeft = message.goAway.timeLeft;
+          console.warn('GoAway received, time left:', timeLeft);
+          toast({
+            title: 'Connection Warning',
+            description: 'Connection will close soon. Reconnecting...',
+            variant: 'default',
+          });
+          // Set flag for reconnection (handled in onclose callback)
+          setConnectionStatus('reconnecting');
+        }
+
+        // Handle turn complete - mark current AI transcript as complete
+        if (message.serverContent?.turnComplete) {
+          setTranscripts((prev) => {
+            const last = prev[prev.length - 1];
+            if (
+              prev.length > 0 &&
+              last &&
+              last.type === 'ai' &&
+              !last.isComplete
+            ) {
+              return [
+                ...prev.slice(0, -1),
+                {
+                  id: last.id,
+                  type: last.type,
+                  text: last.text,
+                  timestamp: last.timestamp,
+                  isComplete: true,
+                },
+              ];
+            }
+            return prev;
+          });
+        }
+
+        // Handle generation complete
+        if (message.serverContent?.generationComplete) {
+          console.log('Generation complete');
+          // Mark any incomplete AI transcript as complete
+          setTranscripts((prev) => {
+            const last = prev[prev.length - 1];
+            if (
+              prev.length > 0 &&
+              last &&
+              last.type === 'ai' &&
+              !last.isComplete
+            ) {
+              return [
+                ...prev.slice(0, -1),
+                {
+                  id: last.id,
+                  type: last.type,
+                  text: last.text,
+                  timestamp: last.timestamp,
+                  isComplete: true,
+                },
+              ];
+            }
+            return prev;
+          });
+        }
+      } catch (err) {
+        console.error('Error handling message:', err);
       }
-    } catch (err) {
-      console.error('Error handling message:', err);
-    }
-  }, [toast, addAITranscript]);
+    },
+    [toast, addAITranscript]
+  );
 
   // Cleanup audio processor
   const cleanupAudioProcessor = useCallback(() => {
@@ -399,15 +482,16 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
       } catch (err) {
         console.warn('Error closing input audio context:', err);
       }
-      sessionRef.current._inputAudioContext = undefined;
+      sessionRef.current._inputAudioContext = null;
     }
   }, []);
 
   // Initialize speech recognition for user transcripts
   const initSpeechRecognition = useCallback(() => {
     if (typeof window === 'undefined') return;
-    
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       console.log('Speech recognition not supported');
       return;
@@ -426,7 +510,7 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
         const result = event.results[i];
         const alternative = result?.[0];
         if (!alternative) continue;
-        
+
         const transcript = alternative.transcript;
         if (result.isFinal) {
           finalTranscript += transcript + ' ';
@@ -446,10 +530,7 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
         setTranscripts((prev) => {
           const last = prev[prev.length - 1];
           if (last && last.type === 'user' && !last.isComplete) {
-            return [
-              ...prev.slice(0, -1),
-              { ...last, text: interimTranscript },
-            ];
+            return [...prev.slice(0, -1), { ...last, text: interimTranscript }];
           }
           return prev;
         });
@@ -476,7 +557,7 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
     };
 
     recognitionRef.current = recognition;
-    
+
     if (isConnected && !isMuted) {
       try {
         recognition.start();
@@ -487,87 +568,156 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
   }, [isConnected, isMuted, addUserTranscript]);
 
   // Start microphone capture with comprehensive error handling
-  const startMicrophone = useCallback(async (session: {
-    sendRealtimeInput: (input: {
-      audio?: {
-        data: string;
-        mimeType: string;
-      };
-      audioStreamEnd?: boolean;
-    }) => void;
-  }) => {
-    try {
-      // Request microphone access
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          sampleRate: 16000,
-          channelCount: 1,
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-        },
-      });
-
-      mediaStreamRef.current = stream;
-
-      // Handle stream end events
-      stream.getAudioTracks().forEach(track => {
-        track.onended = () => {
-          console.log('Microphone track ended');
-          if (session && isConnected) {
-            try {
-              session.sendRealtimeInput({ audioStreamEnd: true });
-            } catch {
-              console.error('Error sending audio stream end');
-            }
-          }
+  const startMicrophone = useCallback(
+    async (session: {
+      sendRealtimeInput: (input: {
+        audio?: {
+          data: string;
+          mimeType: string;
         };
-      });
-
-      const AudioContextClass = window.AudioContext || (window as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!AudioContextClass) {
-        throw new Error('AudioContext not supported');
-      }
-      
-      const audioContext = new AudioContextClass({
-        sampleRate: 16000,
-      });
-      
-      // Store for cleanup
-      if (sessionRef.current) {
-        sessionRef.current._inputAudioContext = audioContext;
-      }
-
-      const source = audioContext.createMediaStreamSource(stream);
-      
-      // Use AudioWorkletNode for audio processing (replaces deprecated ScriptProcessorNode)
+        audioStreamEnd?: boolean;
+      }) => void;
+    }) => {
       try {
-        // Load the AudioWorklet processor
-        await audioContext.audioWorklet.addModule('/audio-processor.js');
-        
-        // Create AudioWorkletNode
-        const processor = new AudioWorkletNode(audioContext, 'audio-processor', {
-          numberOfInputs: 1,
-          numberOfOutputs: 1,
-          channelCount: 1,
+        // Request microphone access
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            sampleRate: 16000,
+            channelCount: 1,
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+          },
         });
-        
-        // Store for cleanup
-        if (sessionRef.current) {
-          sessionRef.current._audioProcessor = processor;
+
+        mediaStreamRef.current = stream;
+
+        // Handle stream end events
+        stream.getAudioTracks().forEach((track) => {
+          track.onended = () => {
+            console.log('Microphone track ended');
+            if (session && isConnected) {
+              try {
+                session.sendRealtimeInput({ audioStreamEnd: true });
+              } catch {
+                console.error('Error sending audio stream end');
+              }
+            }
+          };
+        });
+
+        const AudioContextClass =
+          window.AudioContext ||
+          (window as { webkitAudioContext?: typeof AudioContext })
+            .webkitAudioContext;
+        if (!AudioContextClass) {
+          throw new Error('AudioContext not supported');
         }
 
-        // Handle messages from the worklet processor
-        processor.port.onmessage = (e) => {
-          if (!isMuted && session && isConnected && audioContext.state === 'running') {
-            if (e.data.type === 'audioData') {
+        const audioContext = new AudioContextClass({
+          sampleRate: 16000,
+        });
+
+        // Store for cleanup
+        if (sessionRef.current) {
+          sessionRef.current._inputAudioContext = audioContext;
+        }
+
+        const source = audioContext.createMediaStreamSource(stream);
+
+        // Use AudioWorkletNode for audio processing (replaces deprecated ScriptProcessorNode)
+        try {
+          // Load the AudioWorklet processor
+          await audioContext.audioWorklet.addModule('/audio-processor.js');
+
+          // Create AudioWorkletNode
+          const processor = new AudioWorkletNode(
+            audioContext,
+            'audio-processor',
+            {
+              numberOfInputs: 1,
+              numberOfOutputs: 1,
+              channelCount: 1,
+            }
+          );
+
+          // Store for cleanup
+          if (sessionRef.current) {
+            sessionRef.current._audioProcessor = processor;
+          }
+
+          // Handle messages from the worklet processor
+          processor.port.onmessage = (e) => {
+            if (
+              !isMuted &&
+              session &&
+              isConnected &&
+              audioContext.state === 'running'
+            ) {
+              if (e.data.type === 'audioData') {
+                try {
+                  // Convert ArrayBuffer to base64 (worklet sends raw PCM data)
+                  const uint8Array = new Uint8Array(e.data.data);
+                  const base64 = btoa(
+                    String.fromCharCode.apply(null, Array.from(uint8Array))
+                  );
+
+                  session.sendRealtimeInput({
+                    audio: {
+                      data: base64,
+                      mimeType: 'audio/pcm;rate=16000',
+                    },
+                  });
+                } catch (err) {
+                  console.error('Error sending audio data:', err);
+                }
+              }
+            }
+          };
+
+          source.connect(processor);
+          // Don't connect processor to destination - we only need to capture input, not play it back
+        } catch (workletError) {
+          // Fallback to ScriptProcessorNode if AudioWorklet is not supported
+          console.warn(
+            'AudioWorklet not supported, falling back to ScriptProcessorNode:',
+            workletError
+          );
+
+          // Use larger buffer size (8192) for better performance and less choppy audio
+          const processor = audioContext.createScriptProcessor(8192, 1, 1);
+
+          // Store for cleanup
+          if (sessionRef.current) {
+            sessionRef.current._audioProcessor = processor;
+          }
+
+          processor.onaudioprocess = (e) => {
+            if (
+              !isMuted &&
+              session &&
+              isConnected &&
+              audioContext.state === 'running'
+            ) {
               try {
-                // Convert ArrayBuffer to base64 (worklet sends raw PCM data)
-                const uint8Array = new Uint8Array(e.data.data);
+                const inputData = e.inputBuffer.getChannelData(0);
+
+                // Convert Float32Array to Int16Array (16-bit PCM)
+                const pcmData = new Int16Array(inputData.length);
+                for (let i = 0; i < inputData.length; i++) {
+                  const sample = inputData[i];
+                  if (sample !== undefined) {
+                    const s = Math.max(-1, Math.min(1, sample));
+                    pcmData[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+                  }
+                }
+
+                // Convert to base64 efficiently
+                const uint8Array = new Uint8Array(pcmData.buffer);
                 const base64 = btoa(
                   String.fromCharCode.apply(null, Array.from(uint8Array))
                 );
-                
+
                 session.sendRealtimeInput({
                   audio: {
                     data: base64,
@@ -575,81 +725,37 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
                   },
                 });
               } catch (err) {
-                console.error('Error sending audio data:', err);
+                console.error('Error processing audio:', err);
               }
             }
-          }
-        };
+          };
 
-        source.connect(processor);
-        // Don't connect processor to destination - we only need to capture input, not play it back
-      } catch (workletError) {
-        // Fallback to ScriptProcessorNode if AudioWorklet is not supported
-        console.warn('AudioWorklet not supported, falling back to ScriptProcessorNode:', workletError);
-        
-      // Use larger buffer size (8192) for better performance and less choppy audio
-      const processor = audioContext.createScriptProcessor(8192, 1, 1);
-        
-        // Store for cleanup
-        if (sessionRef.current) {
-          sessionRef.current._audioProcessor = processor;
+          source.connect(processor);
+          // Don't connect processor to destination - we only need to capture input, not play it back
         }
+      } catch (err) {
+        console.error('Error accessing microphone:', err);
+        const errorMessage =
+          err instanceof Error
+            ? err.message.includes('Permission denied') ||
+              err.message.includes('NotAllowedError')
+              ? 'Microphone access denied. Please enable microphone permissions in your browser settings.'
+              : err.message.includes('NotFoundError')
+                ? 'No microphone found. Please connect a microphone and try again.'
+                : err.message
+            : 'Failed to access microphone';
 
-      processor.onaudioprocess = (e) => {
-          if (!isMuted && session && isConnected && audioContext.state === 'running') {
-            try {
-          const inputData = e.inputBuffer.getChannelData(0);
-              
-          // Convert Float32Array to Int16Array (16-bit PCM)
-          const pcmData = new Int16Array(inputData.length);
-          for (let i = 0; i < inputData.length; i++) {
-            const sample = inputData[i];
-            if (sample !== undefined) {
-              const s = Math.max(-1, Math.min(1, sample));
-              pcmData[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
-            }
-          }
-
-              // Convert to base64 efficiently
-              const uint8Array = new Uint8Array(pcmData.buffer);
-          const base64 = btoa(
-                String.fromCharCode.apply(null, Array.from(uint8Array))
-          );
-
-          session.sendRealtimeInput({
-            audio: {
-              data: base64,
-              mimeType: 'audio/pcm;rate=16000',
-            },
-          });
-            } catch (err) {
-              console.error('Error processing audio:', err);
-            }
-        }
-      };
-
-      source.connect(processor);
-      // Don't connect processor to destination - we only need to capture input, not play it back
+        setError(errorMessage);
+        toast({
+          title: 'Microphone Error',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+        throw err;
       }
-    } catch (err) {
-      console.error('Error accessing microphone:', err);
-      const errorMessage = err instanceof Error 
-        ? err.message.includes('Permission denied') || err.message.includes('NotAllowedError')
-          ? 'Microphone access denied. Please enable microphone permissions in your browser settings.'
-          : err.message.includes('NotFoundError')
-          ? 'No microphone found. Please connect a microphone and try again.'
-          : err.message
-        : 'Failed to access microphone';
-      
-      setError(errorMessage);
-      toast({
-        title: 'Microphone Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
-      throw err;
-    }
-  }, [isMuted, isConnected, toast]);
+    },
+    [isMuted, isConnected, toast]
+  );
 
   // Start audio playback with robust error handling
   const startAudioPlayback = useCallback(() => {
@@ -660,23 +766,26 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
     // Combine multiple small chunks into larger buffers for smoother playback
     const combineChunks = (): Uint8Array | null => {
       if (audioQueueRef.current.length === 0) return null;
-      
+
       // Collect chunks until we have at least 4800 samples (200ms at 24kHz)
       // or use all available chunks if queue is getting large
       const minSamples = 4800;
       const chunks: Uint8Array[] = [];
       let totalLength = 0;
-      
-      while (audioQueueRef.current.length > 0 && (totalLength < minSamples * 2 || chunks.length < 3)) {
+
+      while (
+        audioQueueRef.current.length > 0 &&
+        (totalLength < minSamples * 2 || chunks.length < 3)
+      ) {
         const chunk = audioQueueRef.current.shift();
         if (chunk) {
           chunks.push(chunk);
           totalLength += chunk.length;
         }
       }
-      
+
       if (chunks.length === 0) return null;
-      
+
       // Combine chunks into single buffer
       const combined = new Uint8Array(totalLength);
       let offset = 0;
@@ -684,7 +793,7 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
         combined.set(chunk, offset);
         offset += chunk.length;
       }
-      
+
       return combined;
     };
 
@@ -710,7 +819,7 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
         // Convert PCM data to AudioBuffer
         // Live API returns 24kHz, 16-bit PCM, mono
         const length = audioData.length / 2; // 16-bit = 2 bytes per sample
-        
+
         if (length === 0) {
           isPlayingRef.current = false;
           playAudio(); // Try next chunk
@@ -718,11 +827,19 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
         }
 
         // Create buffer at input sample rate first
-        const inputBuffer = audioContext.createBuffer(1, length, inputSampleRate);
+        const inputBuffer = audioContext.createBuffer(
+          1,
+          length,
+          inputSampleRate
+        );
         const channelData = inputBuffer.getChannelData(0);
 
         // Convert Int16 PCM to Float32 (-1 to 1)
-        const int16Array = new Int16Array(audioData.buffer, audioData.byteOffset, length);
+        const int16Array = new Int16Array(
+          audioData.buffer,
+          audioData.byteOffset,
+          length
+        );
         for (let i = 0; i < length; i++) {
           const sample = int16Array[i];
           if (sample !== undefined) {
@@ -735,23 +852,29 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
         let audioBuffer = inputBuffer;
         if (inputSampleRate !== outputSampleRate) {
           // Create output buffer with resampled length
-          const outputLength = Math.round(length * outputSampleRate / inputSampleRate);
-          const outputBuffer = audioContext.createBuffer(1, outputLength, outputSampleRate);
+          const outputLength = Math.round(
+            (length * outputSampleRate) / inputSampleRate
+          );
+          const outputBuffer = audioContext.createBuffer(
+            1,
+            outputLength,
+            outputSampleRate
+          );
           const outputData = outputBuffer.getChannelData(0);
-          
+
           // Simple linear resampling
           for (let i = 0; i < outputLength; i++) {
             const srcIndex = (i * inputSampleRate) / outputSampleRate;
             const srcIndexFloor = Math.floor(srcIndex);
             const srcIndexCeil = Math.min(srcIndexFloor + 1, length - 1);
             const fraction = srcIndex - srcIndexFloor;
-            
+
             // Ensure indices are within bounds
             const floorIndex = Math.max(0, Math.min(srcIndexFloor, length - 1));
             const ceilIndex = Math.max(0, Math.min(srcIndexCeil, length - 1));
             const floorValue = channelData[floorIndex] ?? 0;
             const ceilValue = channelData[ceilIndex] ?? 0;
-            
+
             outputData[i] = floorValue * (1 - fraction) + ceilValue * fraction;
           }
           audioBuffer = outputBuffer;
@@ -807,268 +930,317 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
   }, [initAudioContext]);
 
   // Reconnect function ref (will be set after connect is defined)
-  const reconnectWithResumptionRef = useRef<((useResumption: boolean) => Promise<void>) | null>(null);
+  const reconnectWithResumptionRef = useRef<
+    ((useResumption: boolean) => Promise<void>) | null
+  >(null);
 
   // Connect to Live API with comprehensive error handling
-  const connect = useCallback(async (useResumption = false) => {
-    if (isConnecting) {
-      return; // Prevent multiple simultaneous connection attempts
-    }
-
-    try {
-      setIsConnecting(true);
-      setError(null);
-      setConnectionStatus('connecting');
-      
-      // Get ephemeral token from server
-      const ephemeralToken = await getEphemeralToken();
-      // IMPORTANT: Must use v1alpha API version for ephemeral tokens
-      const ai = new GoogleGenAI({ 
-        apiKey: ephemeralToken,
-        httpOptions: { apiVersion: 'v1alpha' }
-      });
-      aiRef.current = ai;
-
-      // Build system instruction with contract context
-      let systemInstruction = 'You are a helpful legal AI assistant specializing in music industry contracts. Your role is to help users understand their contracts by answering questions, explaining terms, and providing recommendations. ';
-      if (simplifiedContract) {
-        // Truncate contract if too long (keep it reasonable for context)
-        const contractPreview = simplifiedContract.length > 5000 
-          ? simplifiedContract.substring(0, 5000) + '...'
-          : simplifiedContract;
-        systemInstruction += `The user has a contract that has been analyzed. Here is the simplified version: ${contractPreview} `;
+  const connect = useCallback(
+    async (useResumption = false) => {
+      if (isConnecting) {
+        return; // Prevent multiple simultaneous connection attempts
       }
-      systemInstruction += 'When the conversation starts, introduce yourself as their Live Lawyer AI assistant and let them know you are ready to help answer questions about their contract. Provide clear, concise answers about contract terms, rights, obligations, and recommendations. Always remember: you are the AI assistant, and the user is the person asking questions.';
 
-      const model = 'gemini-2.5-flash-native-audio-preview-12-2025';
-      const config = {
-        responseModalities: [Modality.AUDIO],
-        systemInstruction,
-        speechConfig: {
-          voiceConfig: {
-            prebuiltVoiceConfig: {
-              voiceName: 'Kore', // Professional voice
+      try {
+        setIsConnecting(true);
+        setError(null);
+        setConnectionStatus('connecting');
+
+        // Get ephemeral token from server
+        const ephemeralToken = await getEphemeralToken();
+        // IMPORTANT: Must use v1alpha API version for ephemeral tokens
+        const ai = new GoogleGenAI({
+          apiKey: ephemeralToken,
+          httpOptions: { apiVersion: 'v1alpha' },
+        });
+        aiRef.current = ai;
+
+        // Build system instruction with contract context
+        let systemInstruction =
+          'You are a helpful legal AI assistant specializing in music industry contracts. Your role is to help users understand their contracts by answering questions, explaining terms, and providing recommendations. ';
+        if (simplifiedContract) {
+          // Truncate contract if too long (keep it reasonable for context)
+          const contractPreview =
+            simplifiedContract.length > 5000
+              ? simplifiedContract.substring(0, 5000) + '...'
+              : simplifiedContract;
+          systemInstruction += `The user has a contract that has been analyzed. Here is the simplified version: ${contractPreview} `;
+        }
+        systemInstruction +=
+          'When the conversation starts, introduce yourself as their Live Lawyer AI assistant and let them know you are ready to help answer questions about their contract. Provide clear, concise answers about contract terms, rights, obligations, and recommendations. Always remember: you are the AI assistant, and the user is the person asking questions.';
+
+        const model = 'gemini-2.5-flash-native-audio-preview-12-2025';
+        const config = {
+          responseModalities: [Modality.AUDIO],
+          systemInstruction,
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: {
+                voiceName: 'Kore', // Professional voice
+              },
             },
           },
-        },
-        // Enable context window compression for longer sessions
-        contextWindowCompression: {
-          slidingWindow: {},
-        },
-        // Enable session resumption for reconnection
-        sessionResumption: useResumption && sessionHandleRef.current
-          ? { handle: sessionHandleRef.current }
-          : {},
-      };
-
-      const session = await ai.live.connect({
-        model,
-        config,
-        callbacks: {
-          onopen: () => {
-            console.log('Live API connected');
-            setIsConnected(true);
-            setIsListening(true);
-            setConnectionStatus('connected');
-            retryCountRef.current = 0; // Reset retry count on successful connection
+          // Enable context window compression for longer sessions
+          contextWindowCompression: {
+            slidingWindow: {},
           },
-          onmessage: handleMessage,
-          onerror: (e: { message?: string; reason?: string; code?: number }) => {
-            console.error('Live API error:', e);
-            const errorMsg = e.message || e.reason || 'Connection error';
-            setError(errorMsg);
-            setIsConnected(false);
-            setIsListening(false);
-            setConnectionStatus('error');
-            
-            // Attempt reconnection for certain errors
-            if (e.code !== 400 && e.code !== 401 && e.code !== 403) {
-              if (retryCountRef.current < maxRetries && reconnectWithResumptionRef.current) {
-                setTimeout(() => reconnectWithResumptionRef.current?.(true), 2000);
+          // Enable session resumption for reconnection
+          sessionResumption:
+            useResumption && sessionHandleRef.current
+              ? { handle: sessionHandleRef.current }
+              : {},
+        };
+
+        const session = await ai.live.connect({
+          model,
+          config,
+          callbacks: {
+            onopen: () => {
+              console.log('Live API connected');
+              setIsConnected(true);
+              setIsListening(true);
+              setConnectionStatus('connected');
+              retryCountRef.current = 0; // Reset retry count on successful connection
+            },
+            onmessage: handleMessage,
+            onerror: (e: {
+              message?: string;
+              reason?: string;
+              code?: number;
+            }) => {
+              console.error('Live API error:', e);
+              const errorMsg = e.message || e.reason || 'Connection error';
+              setError(errorMsg);
+              setIsConnected(false);
+              setIsListening(false);
+              setConnectionStatus('error');
+
+              // Attempt reconnection for certain errors
+              if (e.code !== 400 && e.code !== 401 && e.code !== 403) {
+                if (
+                  retryCountRef.current < maxRetries &&
+                  reconnectWithResumptionRef.current
+                ) {
+                  setTimeout(
+                    () => reconnectWithResumptionRef.current?.(true),
+                    2000
+                  );
+                }
               }
-            }
-            
-            toast({
-              title: 'Connection Error',
-              description: errorMsg,
-              variant: 'destructive',
-            });
-          },
-          onclose: (e: { reason?: string; code?: number }) => {
-            console.log('Live API closed:', e.reason, e.code);
-            setIsConnected(false);
-            setIsListening(false);
-            
-            // Attempt reconnection if not a normal close
-            if (e.code !== 1000 && retryCountRef.current < maxRetries && reconnectWithResumptionRef.current) {
-              setConnectionStatus('reconnecting');
-              setTimeout(() => reconnectWithResumptionRef.current?.(true), 1000);
-            } else {
-              setConnectionStatus('idle');
-            }
-          },
-        },
-      });
 
-      sessionRef.current = session;
+              toast({
+                title: 'Connection Error',
+                description: errorMsg,
+                variant: 'destructive',
+              });
+            },
+            onclose: (e: { reason?: string; code?: number }) => {
+              console.log('Live API closed:', e.reason, e.code);
+              setIsConnected(false);
+              setIsListening(false);
 
-      // Send initial greeting to start the conversation
-      // Send a simple "Hello" from the user, and the AI will respond with its introduction
-      try {
-        addUserTranscript("Hello", true);
-        session.sendClientContent({
-          turns: "Hello",
-          turnComplete: true,
+              // Attempt reconnection if not a normal close
+              if (
+                e.code !== 1000 &&
+                retryCountRef.current < maxRetries &&
+                reconnectWithResumptionRef.current
+              ) {
+                setConnectionStatus('reconnecting');
+                setTimeout(
+                  () => reconnectWithResumptionRef.current?.(true),
+                  1000
+                );
+              } else {
+                setConnectionStatus('idle');
+              }
+            },
+          },
         });
+
+        sessionRef.current = session;
+
+        // Send initial greeting to start the conversation
+        // Send a simple "Hello" to the AI (but don't show it in transcript)
+        // The AI will respond with its introduction
+        try {
+          session.sendClientContent({
+            turns: 'Hello',
+            turnComplete: true,
+          });
+        } catch (err) {
+          console.warn('Error sending initial greeting:', err);
+          // Non-critical error, continue anyway
+        }
+
+        // Start microphone capture
+        await startMicrophone(session);
+
+        // Initialize speech recognition for transcripts
+        initSpeechRecognition();
+
+        // Start audio playback loop
+        const playbackCleanup = startAudioPlayback();
+
+        // Store cleanup function
+        const sessionWithCleanup = session as { _playbackCleanup?: () => void };
+        sessionWithCleanup._playbackCleanup = playbackCleanup;
       } catch (err) {
-        console.warn('Error sending initial greeting:', err);
-        // Non-critical error, continue anyway
+        console.error('Error connecting to Live API:', err);
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to connect';
+        setError(errorMessage);
+        setConnectionStatus('error');
+        setIsConnected(false);
+        setIsListening(false);
+
+        toast({
+          title: 'Connection Error',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      } finally {
+        setIsConnecting(false);
       }
-
-      // Start microphone capture
-      await startMicrophone(session);
-
-      // Initialize speech recognition for transcripts
-      initSpeechRecognition();
-
-      // Start audio playback loop
-      const playbackCleanup = startAudioPlayback();
-      
-      // Store cleanup function
-      const sessionWithCleanup = session as { _playbackCleanup?: () => void };
-      sessionWithCleanup._playbackCleanup = playbackCleanup;
-    } catch (err) {
-      console.error('Error connecting to Live API:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Failed to connect';
-      setError(errorMessage);
-      setConnectionStatus('error');
-      setIsConnected(false);
-      setIsListening(false);
-      
-      toast({
-        title: 'Connection Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
-    } finally {
-      setIsConnecting(false);
-    }
-  }, [simplifiedContract, getEphemeralToken, toast, handleMessage, startMicrophone, startAudioPlayback, isConnecting, addUserTranscript, initSpeechRecognition]);
+    },
+    [
+      simplifiedContract,
+      getEphemeralToken,
+      toast,
+      handleMessage,
+      startMicrophone,
+      startAudioPlayback,
+      isConnecting,
+      addUserTranscript,
+      initSpeechRecognition,
+    ]
+  );
 
   // Disconnect with comprehensive cleanup (defined before reconnect to avoid dependency issues)
-  const disconnect = useCallback((clearSessionHandle = true) => {
-    // Clear reconnection timeout
-    if (reconnectTimeoutRef.current) {
-      clearTimeout(reconnectTimeoutRef.current);
-      reconnectTimeoutRef.current = null;
-    }
-
-    // Cleanup session
-    if (sessionRef.current) {
-      try {
-        // Cleanup playback
-      const session = sessionRef.current as { _playbackCleanup?: () => void; close: () => void };
-      if (session._playbackCleanup) {
-        session._playbackCleanup();
+  const disconnect = useCallback(
+    (clearSessionHandle = true) => {
+      // Clear reconnection timeout
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
       }
-        
-        // Close session
+
+      // Cleanup session
+      if (sessionRef.current) {
         try {
-      session.close();
+          // Cleanup playback
+          const session = sessionRef.current as {
+            _playbackCleanup?: () => void;
+            close: () => void;
+          };
+          if (session._playbackCleanup) {
+            session._playbackCleanup();
+          }
+
+          // Close session
+          try {
+            session.close();
+          } catch (err) {
+            console.warn('Error closing session:', err);
+          }
         } catch (err) {
-          console.warn('Error closing session:', err);
+          console.warn('Error during session cleanup:', err);
         }
-      } catch (err) {
-        console.warn('Error during session cleanup:', err);
+        sessionRef.current = null;
       }
-      sessionRef.current = null;
-    }
 
-    // Cleanup audio processor
-    cleanupAudioProcessor();
+      // Cleanup audio processor
+      cleanupAudioProcessor();
 
-    // Stop speech recognition
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch (err) {
-        console.warn('Error stopping speech recognition:', err);
+      // Stop speech recognition
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (err) {
+          console.warn('Error stopping speech recognition:', err);
+        }
+        recognitionRef.current = null;
       }
-      recognitionRef.current = null;
-    }
-    isUserSpeakingRef.current = false;
+      isUserSpeakingRef.current = false;
 
-    // Cleanup media stream
-    if (mediaStreamRef.current) {
-      try {
-        mediaStreamRef.current.getTracks().forEach((track) => {
-          track.stop();
-          track.onended = null; // Clear event handlers
-        });
-      } catch (err) {
-        console.warn('Error stopping media stream:', err);
+      // Cleanup media stream
+      if (mediaStreamRef.current) {
+        try {
+          mediaStreamRef.current.getTracks().forEach((track) => {
+            track.stop();
+            track.onended = null; // Clear event handlers
+          });
+        } catch (err) {
+          console.warn('Error stopping media stream:', err);
+        }
+        mediaStreamRef.current = null;
       }
-      mediaStreamRef.current = null;
-    }
 
-    // Cleanup audio contexts
-    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-      try {
-      audioContextRef.current.close();
-      } catch (err) {
-        console.warn('Error closing audio context:', err);
+      // Cleanup audio contexts
+      if (
+        audioContextRef.current &&
+        audioContextRef.current.state !== 'closed'
+      ) {
+        try {
+          audioContextRef.current.close();
+        } catch (err) {
+          console.warn('Error closing audio context:', err);
+        }
+        audioContextRef.current = null;
       }
-      audioContextRef.current = null;
-    }
 
-    // Clear playback interval
-    if (playbackIntervalRef.current) {
-      clearInterval(playbackIntervalRef.current);
-      playbackIntervalRef.current = null;
-    }
+      // Clear playback interval
+      if (playbackIntervalRef.current) {
+        clearInterval(playbackIntervalRef.current);
+        playbackIntervalRef.current = null;
+      }
 
-    // Clear audio queue
-    audioQueueRef.current = [];
-    isPlayingRef.current = false;
-    currentSourceRef.current = null;
+      // Clear audio queue
+      audioQueueRef.current = [];
+      isPlayingRef.current = false;
+      currentSourceRef.current = null;
 
-    // Clear session handle if requested
-    if (clearSessionHandle) {
-      sessionHandleRef.current = null;
-    }
+      // Clear session handle if requested
+      if (clearSessionHandle) {
+        sessionHandleRef.current = null;
+      }
 
-    setIsConnected(false);
-    setIsListening(false);
-    setConnectionStatus('idle');
-  }, [cleanupAudioProcessor]);
+      setIsConnected(false);
+      setIsListening(false);
+      setConnectionStatus('idle');
+    },
+    [cleanupAudioProcessor]
+  );
 
   // Reconnect with session resumption (defined after connect and disconnect)
-  const reconnectWithResumption = useCallback(async (useResumption = true): Promise<void> => {
-    if (retryCountRef.current >= maxRetries) {
-      setError('Max reconnection attempts reached. Please refresh the page.');
-      setConnectionStatus('error');
-      return;
-    }
-
-    retryCountRef.current++;
-    setConnectionStatus('reconnecting');
-    
-    try {
-      disconnect(false); // Disconnect without clearing session handle
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      await connect(useResumption); // Connect with resumption
-    } catch (err) {
-      console.error('Reconnection failed:', err);
-      if (retryCountRef.current < maxRetries) {
-        reconnectTimeoutRef.current = setTimeout(() => {
-          reconnectWithResumption(useResumption);
-        }, 2000 * retryCountRef.current);
-      } else {
-        setError('Failed to reconnect. Please try starting a new call.');
+  const reconnectWithResumption = useCallback(
+    async (useResumption = true): Promise<void> => {
+      if (retryCountRef.current >= maxRetries) {
+        setError('Max reconnection attempts reached. Please refresh the page.');
         setConnectionStatus('error');
+        return;
       }
-    }
-  }, [connect, disconnect]);
+
+      retryCountRef.current++;
+      setConnectionStatus('reconnecting');
+
+      try {
+        disconnect(false); // Disconnect without clearing session handle
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await connect(useResumption); // Connect with resumption
+      } catch (err) {
+        console.error('Reconnection failed:', err);
+        if (retryCountRef.current < maxRetries) {
+          reconnectTimeoutRef.current = setTimeout(() => {
+            reconnectWithResumption(useResumption);
+          }, 2000 * retryCountRef.current);
+        } else {
+          setError('Failed to reconnect. Please try starting a new call.');
+          setConnectionStatus('error');
+        }
+      }
+    },
+    [connect, disconnect]
+  );
 
   // Store reconnect function in ref
   useEffect(() => {
@@ -1177,12 +1349,16 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
           {isOpen ? (
             <>
               <ChevronRight className="w-5 h-5" />
-              <span className="text-[10px] font-medium hidden sm:inline">Close</span>
+              <span className="text-[10px] font-medium hidden sm:inline">
+                Close
+              </span>
             </>
           ) : (
             <>
               <ChevronLeft className="w-5 h-5" />
-              <span className="text-[10px] font-medium hidden sm:inline">Live Lawyer</span>
+              <span className="text-[10px] font-medium hidden sm:inline">
+                Live Lawyer
+              </span>
             </>
           )}
         </div>
@@ -1214,9 +1390,7 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <h3 className="font-semibold text-lg">Live Lawyer</h3>
-              <p className="text-sm text-purple-100">
-                {getStatusText()}
-              </p>
+              <p className="text-sm text-purple-100">{getStatusText()}</p>
             </div>
             <Button
               variant="ghost"
@@ -1301,9 +1475,14 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
           {!isConnected && !isConnecting && (
             <div className="text-center text-sm text-gray-600 space-y-2">
               <p className="font-medium">Get Instant Legal Help</p>
-              <p>Click &quot;Start Call&quot; to begin a real-time conversation with an AI lawyer about your contract.</p>
+              <p>
+                Click &quot;Start Call&quot; to begin a real-time conversation
+                with an AI lawyer about your contract.
+              </p>
               <div className="mt-4 p-3 bg-purple-50 rounded-lg text-left">
-                <p className="text-xs font-semibold text-purple-900 mb-1">What you can ask:</p>
+                <p className="text-xs font-semibold text-purple-900 mb-1">
+                  What you can ask:
+                </p>
                 <ul className="text-xs text-purple-700 space-y-1 list-disc list-inside">
                   <li>Explain specific contract terms</li>
                   <li>Understand your rights and obligations</li>
@@ -1324,7 +1503,9 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
           {/* Live Transcripts Section */}
           {isConnected && (
             <div className="mt-6 border-t border-gray-200 pt-4">
-              <h4 className="text-sm font-semibold text-gray-700 mb-3">Live Transcript</h4>
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                Live Transcript
+              </h4>
               <div className="bg-gray-50 rounded-lg p-4 max-h-[300px] overflow-y-auto space-y-3">
                 {transcripts.length === 0 ? (
                   <p className="text-sm text-gray-500 text-center py-4">
@@ -1348,14 +1529,20 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
                         )}
                       >
                         <p className="whitespace-pre-wrap break-words">
-                          {transcript.text || (transcript.type === 'user' ? 'Speaking...' : 'Responding...')}
+                          {transcript.text ||
+                            (transcript.type === 'user'
+                              ? 'Speaking...'
+                              : 'Responding...')}
                         </p>
                         {!transcript.isComplete && (
                           <span className="inline-block w-2 h-2 bg-current rounded-full animate-pulse ml-1" />
                         )}
                       </div>
                       <span className="text-xs text-gray-400 px-1">
-                        {transcript.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {transcript.timestamp.toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
                       </span>
                     </div>
                   ))

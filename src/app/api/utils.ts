@@ -1,82 +1,69 @@
-const cache = new Map<string, { value: string; timestamp: number }>();
-// Extended cache TTL to 24 hours for better performance and reduced API calls
-const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+import { type NextRequest, NextResponse } from 'next/server';
+import { AppError, toErrorResponse, logError, isAppError } from '@/lib/errors';
+import { cacheGet, cacheSet } from '@/lib/cache';
 
-export function corsHeaders() {
+export function corsHeaders(req?: NextRequest): Record<string, string> {
+  // Get allowed origins from environment or use defaults
+  const allowedOrigins = process.env['ALLOWED_ORIGINS']?.split(',') || [
+    'https://trackrights.com',
+    'https://www.trackrights.com',
+  ];
+
+  // In development, allow localhost
+  if (process.env.NODE_ENV === 'development') {
+    allowedOrigins.push('http://localhost:3000');
+  }
+
+  // Get the origin from the request
+  const origin = req?.headers.get('origin');
+
+  // Determine which origin to allow
+  const allowedOrigin =
+    origin && allowedOrigins.includes(origin)
+      ? origin
+      : allowedOrigins[0] || '*';
+
   return {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Max-Age': '86400', // 24 hours
   };
 }
 
 export function getApiKey(): string {
   const envApiKey = process.env['GEMINI_API_KEY'];
-  if (envApiKey) {
-    return envApiKey;
+  if (!envApiKey || envApiKey.trim() === '') {
+    throw new AppError(
+      'GEMINI_API_KEY is not configured. Please set it in environment variables.',
+      500,
+      'MISSING_API_KEY'
+    );
   }
-  console.warn(
-    'GEMINI_API_KEY not found in environment variables. Using fallback key.'
-  );
-  return '';
+  return envApiKey;
 }
 
-export function handleError(error: unknown): {
-  errorMessage: string;
-  statusCode: number;
-} {
-  console.error('Error:', error);
-  let errorMessage = 'An unknown error occurred';
-  let statusCode = 500;
+/**
+ * Standardized error handler for API routes
+ * Converts errors to standardized error responses
+ */
+export function handleError(error: unknown, req?: NextRequest): NextResponse {
+  logError(error, {
+    path: req?.nextUrl?.pathname,
+    method: req?.method,
+  });
 
-  if (error instanceof Error) {
-    const errorStatus = (error as { status?: number })?.status;
-    const errorMsgLower = error.message.toLowerCase();
-    
-    // Handle timeout errors
-    if (errorMsgLower.includes('timeout') || errorStatus === 504) {
-      errorMessage = 'Request timed out. The contract is too large or the service is busy. Please try again or use a shorter contract.';
-      statusCode = 504;
-    } else if (errorStatus === 429) {
-      // Check if it's a daily quota limit or rate limit
-      const errorString = JSON.stringify(error);
-      const isDailyQuota = 
-        errorString.includes('GenerateRequestsPerDayPerProjectPerModel') ||
-        errorString.includes('free_tier_requests') ||
-        errorString.includes('quotaValue');
-      
-      if (isDailyQuota) {
-        errorMessage = 'Daily API quota exceeded (20 requests/day on free tier). The quota resets daily. Please try again tomorrow or upgrade your plan.';
-      } else {
-        errorMessage = 'API rate limit exceeded. Please wait a moment and try again.';
-      }
-      statusCode = 429;
-    } else if (errorStatus === 403) {
-      errorMessage = 'API access forbidden. Please check your API key.';
-      statusCode = 403;
-    } else if (errorStatus === 503) {
-      errorMessage = 'Service unavailable. Please try again later.';
-      statusCode = 503;
-    } else {
-      errorMessage = error.message;
-    }
-  }
+  const errorResponse = toErrorResponse(error);
+  const statusCode = isAppError(error) ? error.statusCode : 500;
 
-  return { errorMessage, statusCode };
+  return NextResponse.json(errorResponse, {
+    status: statusCode,
+    headers: corsHeaders(req),
+  });
 }
 
-export function cacheGet(key: string): string | null {
-  const cached = cache.get(key);
-  if (cached) {
-    const isExpired = Date.now() - cached.timestamp > CACHE_TTL;
-    if (!isExpired) {
-      return cached.value;
-    }
-    cache.delete(key);
-  }
-  return null;
-}
-
-export function cacheSet(key: string, value: string): void {
-  cache.set(key, { value, timestamp: Date.now() });
-}
+/**
+ * Re-export cache functions for backward compatibility
+ */
+export { cacheGet, cacheSet };

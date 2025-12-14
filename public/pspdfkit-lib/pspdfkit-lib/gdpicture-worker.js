@@ -120,7 +120,7 @@
     }
     const y = new (class {
         _mountCustomFonts(t, e) {
-          n(d, 'WebAssembly module not loaded.'), d.FS.mkdir(e);
+          (n(d, 'WebAssembly module not loaded.'), d.FS.mkdir(e));
           {
             const n = l ? d.FS.filesystems.WORKERFS : d.FS.filesystems.MEMFS;
             d.FS.mount(n, { blobs: t }, e);
@@ -145,13 +145,13 @@
             }
             throw new Error('GdPicture WASM loader not implemented');
           })(t, e);
-          (u = f.GdPictureWasm.API),
+          ((u = f.GdPictureWasm.API),
             (d = c),
             p(
               'gdpicture/setLicense',
               { origin: n },
               { licenseKey: r || 'DEMO_PSPDFKIT_WEB' }
-            );
+            ));
           const l = a ? '/fonts' : '';
           if (
             (a &&
@@ -223,7 +223,7 @@
             );
           } finally {
             try {
-              d.FS.unlink(f), d.FS.unlink(c);
+              (d.FS.unlink(f), d.FS.unlink(c));
             } catch (t) {
               console.log(t.message);
             }
@@ -247,12 +247,12 @@
           t instanceof ArrayBuffer && (n = [t]);
         } catch (t) {
           const r = [...o.args].filter((t) => t instanceof ArrayBuffer);
-          r.length > 0 && (n = r),
+          (r.length > 0 && (n = r),
             (e = {
               id: o.id,
               error: t.message || t.toString(),
               callArgs: o.args,
-            });
+            }));
         }
         _.postMessage(e, n);
       }),

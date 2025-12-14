@@ -113,7 +113,9 @@ export function ContractList() {
         if (!acc[category]) {
           acc[category] = [];
         }
-        acc[category]!.push(contract);
+        if (acc[category]) {
+          acc[category].push(contract);
+        }
         return acc;
       },
       {} as Record<string, Contract[]>

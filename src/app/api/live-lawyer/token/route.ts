@@ -19,10 +19,12 @@ export async function POST() {
 
     // Create GoogleGenAI client with API key (server-side only)
     const client = new GoogleGenAI({ apiKey });
-    
+
     // Calculate expiration times
     const expireTime = new Date(Date.now() + 30 * 60 * 1000).toISOString(); // 30 minutes
-    const newSessionExpireTime = new Date(Date.now() + 1 * 60 * 1000).toISOString(); // 1 minute
+    const newSessionExpireTime = new Date(
+      Date.now() + 1 * 60 * 1000
+    ).toISOString(); // 1 minute
 
     // Generate ephemeral token with constraints for security
     const token = await client.authTokens.create({

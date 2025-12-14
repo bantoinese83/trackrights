@@ -121,7 +121,10 @@ export function optimizeContractText(
     optimizedLength += line.length + 1;
   }
 
-  return optimizedLines.join('\n') + '\n\n[... Additional contract content truncated for optimization ...]';
+  return (
+    optimizedLines.join('\n') +
+    '\n\n[... Additional contract content truncated for optimization ...]'
+  );
 }
 
 /**

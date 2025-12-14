@@ -15,7 +15,7 @@
   {
     1033: (e, t, r) => {
       'use strict';
-      r.r(t), r.d(t, { default: () => z });
+      (r.r(t), r.d(t, { default: () => z }));
       var n = r(67136),
         s = r(49568),
         i = r(85409),
@@ -72,11 +72,11 @@
             payload: s,
             doNotRequestWebP: i = !1,
           } = e;
-          (this.identifier = t),
+          ((this.identifier = t),
             (this.url = r),
             (this.token = n),
             (this.payload = s),
-            (this.doNotRequestWebP = i);
+            (this.doNotRequestWebP = i));
         }
         abort() {
           this.httpRequest?.abort();
@@ -84,7 +84,7 @@
         request() {
           return new Promise((e, t) => {
             const r = new XMLHttpRequest();
-            (this.httpRequest = r),
+            ((this.httpRequest = r),
               r.open(this.payload ? 'POST' : 'GET', this.url, !0),
               r.setRequestHeader('X-PSPDFKit-Image-Token', this.token),
               r.setRequestHeader('PSPDFKit-Platform', 'web'),
@@ -123,7 +123,7 @@
                 const n = r.response,
                   s = URL.createObjectURL(n),
                   o = new Image();
-                (o.onerror = () => t(new i.uE(P))), (o.src = s);
+                ((o.onerror = () => t(new i.uE(P))), (o.src = s));
                 const a = o.decode();
                 try {
                   await a;
@@ -136,7 +136,7 @@
                 }
                 e(new $.A(o, () => URL.revokeObjectURL(s)));
               }).bind(this)),
-              r.send(this.payload);
+              r.send(this.payload));
           });
         }
       }
@@ -233,12 +233,12 @@
                     ? arguments[0]
                     : [];
                 const a = new FormData();
-                a.append('render', u),
+                (a.append('render', u),
                   r.length > 0 &&
                     'imageAttachmentId' in e &&
                     e.imageAttachmentId &&
                     n &&
-                    a.append(e.imageAttachmentId, n);
+                    a.append(e.imageAttachmentId, n));
                 const l = new I({
                     identifier: c,
                     url: h,
@@ -247,7 +247,7 @@
                     doNotRequestWebP: s > A.HI || o > A.HI,
                   }),
                   m = t._requestQueue.enqueue(l, !1);
-                m.promise
+                (m.promise
                   .then((r) => {
                     d ||
                       (r?.attachmentsNotFound
@@ -261,17 +261,17 @@
                   .catch((e) => {
                     d || f.reject(e);
                   }),
-                  p.push(m);
+                  p.push(m));
               };
               return (
                 g(),
                 {
                   promise: f.promise,
                   cancel: () => {
-                    (d = !0),
+                    ((d = !0),
                       p.forEach((e) => {
                         e.cancel();
-                      });
+                      }));
                   },
                 }
               );
@@ -291,7 +291,7 @@
                 l,
                 h = !1;
               const c = new Promise((e, t) => {
-                (a = e), (l = t);
+                ((a = e), (l = t));
               });
               return (
                 this._fetch(i, {
@@ -320,9 +320,9 @@
               );
             }),
             (0, n.A)(this, 'handleDocumentHandleConflict', () => {
-              (this._state = this._state.set('isDocumentHandleOutdated', !0)),
+              ((this._state = this._state.set('isDocumentHandleOutdated', !0)),
                 this.cancelRequests(),
-                this._destroyProvider();
+                this._destroyProvider());
             }),
             'object' != typeof e.authPayload)
           )
@@ -334,9 +334,9 @@
             h = null,
             c = null;
           if (s)
-            (c = e.hostedBaseUrl || 'https://api.pspdfkit.com/'),
+            ((c = e.hostedBaseUrl || 'https://api.pspdfkit.com/'),
               (0, v.Me)(c),
-              (0, f.P1)(s);
+              (0, f.P1)(s));
           else {
             if (
               ((l = (function (e) {
@@ -408,7 +408,7 @@
               Boolean(e.electronicSignatures.forceLegacySignaturesFeature),
             p = e.baseUrl || (0, S.$_)(window.document),
             g = e.baseCoreUrl || p;
-          (this._state = new w({
+          ((this._state = new w({
             serverUrl: l,
             hostedBaseUrl: c,
             documentId: e.documentId,
@@ -424,7 +424,7 @@
             e.trustedCAsCallback &&
               (0, i.R8)(
                 'PSPDFKit.Configuration#trustedCAsCallback is only used on Standalone deployments. On a Server-Backed deployment, please follow the instructions at https://pspdfkit.com/guides/web'
-              );
+              ));
         }
         isUsingInstantProvider() {
           return null != this._state.instantSettings;
@@ -559,8 +559,8 @@
             );
           return (
             (this._state = this._state.withMutations((e) => {
-              (e.defaultGroup = w),
-                (e.hasCollaborationPermissions = Boolean(v));
+              ((e.defaultGroup = w),
+                (e.hasCollaborationPermissions = Boolean(v)));
             })),
             this.provider && this.provider.destroy(),
             (this.provider = await this._initProvider()),
@@ -638,8 +638,8 @@
           }
         }
         destroy() {
-          this._destroyProvider(),
-            this._requestQueue && this._requestQueue.destroy();
+          (this._destroyProvider(),
+            this._requestQueue && this._requestQueue.destroy());
         }
         documentInfo() {
           return this._fetch(`${this._state.documentURL}/document.json`)
@@ -750,21 +750,21 @@
               );
             a.then((e) => {
               const r = e.map((e) => e && (0, U.BJ)(e));
-              r.forEach(async (e, t) => {
+              (r.forEach(async (e, t) => {
                 const r = await e,
                   n = s.get(t);
                 if (n) {
                   const e = this.annotationAPStreamPromises.get(n.id);
-                  e &&
+                  (e &&
                     ((this.annotationAPStreamPromises =
                       this.annotationAPStreamPromises.delete(n.id)),
                     e(r)),
-                    r && this.cacheAPStream(r, n);
+                    r && this.cacheAPStream(r, n));
                 }
               }),
-                Promise.all(r).then(() => t());
+                Promise.all(r).then(() => t()));
             }).catch((e) => {
-              l(), n(e);
+              (l(), n(e));
             });
           });
           return (
@@ -994,11 +994,11 @@
               }).then((t) => {
                 if (n) return;
                 const r = new Blob([t], { type: 'application/pdf' });
-                (e = window.URL.createObjectURL(r)), s(e);
+                ((e = window.URL.createObjectURL(r)), s(e));
               });
             }),
             revoke: () => {
-              e && window.URL.revokeObjectURL(e), (n = !0);
+              (e && window.URL.revokeObjectURL(e), (n = !0));
             },
           };
         }
@@ -1109,12 +1109,12 @@
         async applyOperationsAndReload(e) {
           try {
             const t = await J(e);
-            this._destroyProvider(),
+            (this._destroyProvider(),
               await this._fetch(`${this._state.documentURL}/apply-operations`, {
                 method: 'post',
                 body: t,
                 credentials: 'include',
-              });
+              }));
           } catch (e) {
             throw new i.uE(`Applying operations failed: ${e}`);
           }
@@ -1132,8 +1132,8 @@
             );
           } catch (e) {
             throw (
-              (this.provider.load(),
-              new i.uE(`Applying redactions failed: ${e}`))
+              this.provider.load(),
+              new i.uE(`Applying redactions failed: ${e}`)
             );
           }
         }
@@ -1176,17 +1176,17 @@
                   .then((e) => e.json())
                   .then((t) => {
                     let { data: r } = t;
-                    (this._state = this._state.set(
+                    ((this._state = this._state.set(
                       'digitalSignatures',
                       (0, m.N5)(r)
                     )),
                       (this._refreshSignaturesInfoPromise = null),
-                      e();
+                      e());
                   })
                   .catch((e) => {
-                    (this._state = this._state.set('digitalSignatures', null)),
+                    ((this._state = this._state.set('digitalSignatures', null)),
                       (this._refreshSignaturesInfoPromise = null),
-                      t(e);
+                      t(e));
                   });
               })),
             this._refreshSignaturesInfoPromise
@@ -1251,8 +1251,8 @@
               return e.formFieldName;
           } catch (e) {
             throw (
-              (this.provider.load(),
-              new i.uE(`Adding digital signature failed: ${e.message || e}`))
+              this.provider.load(),
+              new i.uE(`Adding digital signature failed: ${e.message || e}`)
             );
           }
         }
@@ -1330,7 +1330,7 @@
         }
         async lazyLoadPages() {}
         async contentEditorReload() {
-          return this._destroyProvider(), this.reloadDocument();
+          return (this._destroyProvider(), this.reloadDocument());
         }
         getOCGs() {
           throw new Error('not implemented');
@@ -1410,7 +1410,7 @@
             if (e.loose === !!t.loose) return e;
             e = e.value;
           }
-          (e = e.trim().split(/\s+/).join(' ')),
+          ((e = e.trim().split(/\s+/).join(' ')),
             h('comparator', e, t),
             (this.options = t),
             (this.loose = !!t.loose),
@@ -1418,17 +1418,17 @@
             this.semver === n
               ? (this.value = '')
               : (this.value = this.operator + this.semver.version),
-            h('comp', this);
+            h('comp', this));
         }
         parse(e) {
           const t = this.options.loose ? o[a.COMPARATORLOOSE] : o[a.COMPARATOR],
             r = e.match(t);
           if (!r) throw new TypeError(`Invalid comparator: ${e}`);
-          (this.operator = void 0 !== r[1] ? r[1] : ''),
+          ((this.operator = void 0 !== r[1] ? r[1] : ''),
             '=' === this.operator && (this.operator = ''),
             r[2]
               ? (this.semver = new c(r[2], this.options.loose))
-              : (this.semver = n);
+              : (this.semver = n));
         }
         toString() {
           return this.value;
@@ -1503,7 +1503,10 @@
               : new n(e.raw, t);
           if (e instanceof o)
             return (
-              (this.raw = e.value), (this.set = [[e]]), this.format(), this
+              (this.raw = e.value),
+              (this.set = [[e]]),
+              this.format(),
+              this
             );
           if (
             ((this.options = t),
@@ -1555,28 +1558,28 @@
           if (r) return r;
           const n = this.options.loose,
             i = n ? h[c.HYPHENRANGELOOSE] : h[c.HYPHENRANGE];
-          (e = e.replace(i, N(this.options.includePrerelease))),
+          ((e = e.replace(i, N(this.options.includePrerelease))),
             a('hyphen replace', e),
             (e = e.replace(h[c.COMPARATORTRIM], u)),
             a('comparator trim', e),
             (e = e.replace(h[c.TILDETRIM], d)),
             a('tilde trim', e),
             (e = e.replace(h[c.CARETTRIM], p)),
-            a('caret trim', e);
+            a('caret trim', e));
           let l = e
             .split(' ')
             .map((e) => v(e, this.options))
             .join(' ')
             .split(/\s+/)
             .map((e) => _(e, this.options));
-          n &&
+          (n &&
             (l = l.filter(
               (e) => (
                 a('loose invalid filter', e, this.options),
                 !!e.match(h[c.COMPARATORLOOSE])
               )
             )),
-            a('range list', l);
+            a('range list', l));
           const E = new Map(),
             w = l.map((e) => new o(e, this.options));
           for (const e of w) {
@@ -1585,7 +1588,7 @@
           }
           E.size > 1 && E.has('') && E.delete('');
           const y = [...E.values()];
-          return s.set(t, y), y;
+          return (s.set(t, y), y);
         }
         intersects(e, t) {
           if (!(e instanceof n)) throw new TypeError('a Range is required');
@@ -1632,7 +1635,7 @@
           const n = e.slice();
           let s = n.pop();
           for (; r && n.length; )
-            (r = n.every((e) => s.intersects(e, t))), (s = n.pop());
+            ((r = n.every((e) => s.intersects(e, t))), (s = n.pop()));
           return r;
         },
         v = (e, t) => (
@@ -1760,7 +1763,8 @@
           });
         },
         b = (e, t) => (
-          a('replaceStars', e, t), e.trim().replace(h[c.STAR], '')
+          a('replaceStars', e, t),
+          e.trim().replace(h[c.STAR], '')
         ),
         _ = (e, t) => (
           a('replaceGTE0', e, t),
@@ -1810,10 +1814,10 @@
             );
           if (e.length > s)
             throw new TypeError(`version is longer than ${s} characters`);
-          n('SemVer', e, t),
+          (n('SemVer', e, t),
             (this.options = t),
             (this.loose = !!t.loose),
-            (this.includePrerelease = !!t.includePrerelease);
+            (this.includePrerelease = !!t.includePrerelease));
           const r = e.trim().match(t.loose ? o[a.LOOSE] : o[a.FULL]);
           if (!r) throw new TypeError(`Invalid Version: ${e}`);
           if (
@@ -1828,7 +1832,7 @@
             throw new TypeError('Invalid minor version');
           if (this.patch > i || this.patch < 0)
             throw new TypeError('Invalid patch version');
-          r[4]
+          (r[4]
             ? (this.prerelease = r[4].split('.').map((e) => {
                 if (/^[0-9]+$/.test(e)) {
                   const t = +e;
@@ -1838,7 +1842,7 @@
               }))
             : (this.prerelease = []),
             (this.build = r[5] ? r[5].split('.') : []),
-            this.format();
+            this.format());
         }
         format() {
           return (
@@ -1910,45 +1914,45 @@
         inc(e, t, r) {
           switch (e) {
             case 'premajor':
-              (this.prerelease.length = 0),
+              ((this.prerelease.length = 0),
                 (this.patch = 0),
                 (this.minor = 0),
                 this.major++,
-                this.inc('pre', t, r);
+                this.inc('pre', t, r));
               break;
             case 'preminor':
-              (this.prerelease.length = 0),
+              ((this.prerelease.length = 0),
                 (this.patch = 0),
                 this.minor++,
-                this.inc('pre', t, r);
+                this.inc('pre', t, r));
               break;
             case 'prepatch':
-              (this.prerelease.length = 0),
+              ((this.prerelease.length = 0),
                 this.inc('patch', t, r),
-                this.inc('pre', t, r);
+                this.inc('pre', t, r));
               break;
             case 'prerelease':
-              0 === this.prerelease.length && this.inc('patch', t, r),
-                this.inc('pre', t, r);
+              (0 === this.prerelease.length && this.inc('patch', t, r),
+                this.inc('pre', t, r));
               break;
             case 'major':
-              (0 === this.minor &&
+              ((0 === this.minor &&
                 0 === this.patch &&
                 0 !== this.prerelease.length) ||
                 this.major++,
                 (this.minor = 0),
                 (this.patch = 0),
-                (this.prerelease = []);
+                (this.prerelease = []));
               break;
             case 'minor':
-              (0 === this.patch && 0 !== this.prerelease.length) ||
+              ((0 === this.patch && 0 !== this.prerelease.length) ||
                 this.minor++,
                 (this.patch = 0),
-                (this.prerelease = []);
+                (this.prerelease = []));
               break;
             case 'patch':
-              0 === this.prerelease.length && this.patch++,
-                (this.prerelease = []);
+              (0 === this.prerelease.length && this.patch++,
+                (this.prerelease = []));
               break;
             case 'pre': {
               const e = Number(r) ? 1 : 0;
@@ -1972,10 +1976,10 @@
               }
               if (t) {
                 let n = [t, e];
-                !1 === r && (n = [t]),
+                (!1 === r && (n = [t]),
                   0 === h(this.prerelease[0], t)
                     ? isNaN(this.prerelease[1]) && (this.prerelease = n)
-                    : (this.prerelease = n);
+                    : (this.prerelease = n));
               }
               break;
             }
@@ -2053,10 +2057,9 @@
             ;
             (t = i[o.COERCERTL].exec(e)) &&
             (!r || r.index + r[0].length !== e.length);
-
           )
-            (r && t.index + t[0].length === r.index + r[0].length) || (r = t),
-              (i[o.COERCERTL].lastIndex = t.index + t[1].length + t[2].length);
+            ((r && t.index + t[0].length === r.index + r[0].length) || (r = t),
+              (i[o.COERCERTL].lastIndex = t.index + t[1].length + t[2].length));
           i[o.COERCERTL].lastIndex = -1;
         } else r = e.match(i[o.COERCE]);
         return null === r
@@ -2375,13 +2378,13 @@
               return e;
             })(t),
             s = u++;
-          o(e, s, t),
+          (o(e, s, t),
             (c[e] = s),
             (h[s] = t),
             (a[s] = new RegExp(t, r ? 'g' : void 0)),
-            (l[s] = new RegExp(n, r ? 'g' : void 0));
+            (l[s] = new RegExp(n, r ? 'g' : void 0)));
         };
-      m('NUMERICIDENTIFIER', '0|[1-9]\\d*'),
+      (m('NUMERICIDENTIFIER', '0|[1-9]\\d*'),
         m('NUMERICIDENTIFIERLOOSE', '\\d+'),
         m('NONNUMERICIDENTIFIER', '\\d*[a-zA-Z-][a-zA-Z0-9-]*'),
         m(
@@ -2469,7 +2472,7 @@
         ),
         m('STAR', '(<|>)?=?\\s*\\*'),
         m('GTE0', '^\\s*>=\\s*0\\.0\\.0\\s*$'),
-        m('GTE0PRE', '^\\s*>=\\s*0\\.0\\.0-0\\s*$');
+        m('GTE0PRE', '^\\s*>=\\s*0\\.0\\.0-0\\s*$'));
     },
     38357: (e, t, r) => {
       'use strict';
@@ -2505,31 +2508,31 @@
           if (e[i] > e[s])
             for (let t = e[u].tail; e[i] > e[s] && null !== t; ) {
               const r = t.prev;
-              w(e, t), (t = r);
+              (w(e, t), (t = r));
             }
         },
         w = (e, t) => {
           if (t) {
             const r = t.value;
-            e[h] && e[h](r.key, r.value),
+            (e[h] && e[h](r.key, r.value),
               (e[i] -= r.length),
               e[d].delete(r.key),
-              e[u].removeNode(t);
+              e[u].removeNode(t));
           }
         };
       class v {
         constructor(e, t, r, n, s) {
-          (this.key = e),
+          ((this.key = e),
             (this.value = t),
             (this.length = r),
             (this.now = n),
-            (this.maxAge = s || 0);
+            (this.maxAge = s || 0));
         }
       }
       const y = (e, t, r, n) => {
         let s = r.value;
-        g(e, s) && (w(e, r), e[a] || (s = void 0)),
-          s && t.call(n, s.value, s.key, e);
+        (g(e, s) && (w(e, r), e[a] || (s = void 0)),
+          s && t.call(n, s.value, s.key, e));
       };
       e.exports = class {
         constructor(e) {
@@ -2547,16 +2550,16 @@
             e.maxAge && 'number' != typeof e.maxAge)
           )
             throw new TypeError('maxAge must be a number');
-          (this[l] = e.maxAge || 0),
+          ((this[l] = e.maxAge || 0),
             (this[h] = e.dispose),
             (this[c] = e.noDisposeOnSet || !1),
             (this[p] = e.updateAgeOnGet || !1),
-            this.reset();
+            this.reset());
         }
         set max(e) {
           if ('number' != typeof e || e < 0)
             throw new TypeError('max must be a non-negative number');
-          (this[s] = e || 1 / 0), E(this);
+          ((this[s] = e || 1 / 0), E(this));
         }
         get max() {
           return this[s];
@@ -2570,20 +2573,20 @@
         set maxAge(e) {
           if ('number' != typeof e)
             throw new TypeError('maxAge must be a non-negative number');
-          (this[l] = e), E(this);
+          ((this[l] = e), E(this));
         }
         get maxAge() {
           return this[l];
         }
         set lengthCalculator(e) {
-          'function' != typeof e && (e = m),
+          ('function' != typeof e && (e = m),
             e !== this[o] &&
               ((this[o] = e),
               (this[i] = 0),
               this[u].forEach((e) => {
-                (e.length = this[o](e.value, e.key)), (this[i] += e.length);
+                ((e.length = this[o](e.value, e.key)), (this[i] += e.length));
               })),
-            E(this);
+            E(this));
         }
         get lengthCalculator() {
           return this[o];
@@ -2598,14 +2601,14 @@
           t = t || this;
           for (let r = this[u].tail; null !== r; ) {
             const n = r.prev;
-            y(this, e, r, t), (r = n);
+            (y(this, e, r, t), (r = n));
           }
         }
         forEach(e, t) {
           t = t || this;
           for (let r = this[u].head; null !== r; ) {
             const n = r.next;
-            y(this, e, r, t), (r = n);
+            (y(this, e, r, t), (r = n));
           }
         }
         keys() {
@@ -2615,13 +2618,13 @@
           return this[u].toArray().map((e) => e.value);
         }
         reset() {
-          this[h] &&
+          (this[h] &&
             this[u] &&
             this[u].length &&
             this[u].forEach((e) => this[h](e.key, e.value)),
             (this[d] = new Map()),
             (this[u] = new n()),
-            (this[i] = 0);
+            (this[i] = 0));
         }
         dump() {
           return this[u]
@@ -2645,7 +2648,7 @@
           const n = r ? Date.now() : 0,
             a = this[o](t, e);
           if (this[d].has(e)) {
-            if (a > this[s]) return w(this, this[d].get(e)), !1;
+            if (a > this[s]) return (w(this, this[d].get(e)), !1);
             const o = this[d].get(e).value;
             return (
               this[h] && (this[c] || this[h](e, o.value)),
@@ -2711,7 +2714,9 @@
     76780: (e, t, r) => {
       const n = r(78311);
       e.exports = (e, t, r) => (
-        (e = new n(e, r)), (t = new n(t, r)), e.intersects(t, r)
+        (e = new n(e, r)),
+        (t = new n(t, r)),
+        e.intersects(t, r)
       );
     },
     5342: (e, t, r) => {
@@ -2773,12 +2778,12 @@
         for (let t = 0; t < e.set.length; ++t) {
           const s = e.set[t];
           let o = null;
-          s.forEach((e) => {
+          (s.forEach((e) => {
             const t = new n(e.semver.version);
             switch (e.operator) {
               case '>':
-                0 === t.prerelease.length ? t.patch++ : t.prerelease.push(0),
-                  (t.raw = t.format());
+                (0 === t.prerelease.length ? t.patch++ : t.prerelease.push(0),
+                  (t.raw = t.format()));
               case '':
               case '>=':
                 (o && !i(t, o)) || (o = t);
@@ -2790,7 +2795,7 @@
                 throw new Error(`Unexpected operation: ${e.operator}`);
             }
           }),
-            !o || (r && !i(r, o)) || (r = o);
+            !o || (r && !i(r, o)) || (r = o));
         }
         return r && e.test(r) ? r : null;
       };
@@ -2809,10 +2814,10 @@
         let p, m, f, g, E;
         switch (((e = new n(e, d)), (t = new o(t, d)), r)) {
           case '>':
-            (p = l), (m = c), (f = h), (g = '>'), (E = '>=');
+            ((p = l), (m = c), (f = h), (g = '>'), (E = '>='));
             break;
           case '<':
-            (p = h), (m = u), (f = l), (g = '<'), (E = '<=');
+            ((p = h), (m = u), (f = l), (g = '<'), (E = '<='));
             break;
           default:
             throw new TypeError('Must provide a hilo val of "<" or ">"');
@@ -2824,12 +2829,12 @@
             a = null;
           if (
             (n.forEach((e) => {
-              e.semver === i && (e = new s('>=0.0.0')),
+              (e.semver === i && (e = new s('>=0.0.0')),
                 (o = o || e),
                 (a = a || e),
                 p(e.semver, o.semver, d)
                   ? (o = e)
-                  : f(e.semver, a.semver, d) && (a = e);
+                  : f(e.semver, a.semver, d) && (a = e));
             }),
             o.operator === g || o.operator === E)
           )
@@ -2978,7 +2983,7 @@
         };
       e.exports = (e, t, r = {}) => {
         if (e === t) return !0;
-        (e = new n(e, r)), (t = new n(t, r));
+        ((e = new n(e, r)), (t = new n(t, r)));
         let s = !1;
         e: for (const n of e.set) {
           for (const e of t.set) {
@@ -3048,23 +3053,23 @@
         );
       }
       function i(e, t) {
-        (e.tail = new a(t, e.tail, null, e)),
+        ((e.tail = new a(t, e.tail, null, e)),
           e.head || (e.head = e.tail),
-          e.length++;
+          e.length++);
       }
       function o(e, t) {
-        (e.head = new a(t, null, e.head, e)),
+        ((e.head = new a(t, null, e.head, e)),
           e.tail || (e.tail = e.head),
-          e.length++;
+          e.length++);
       }
       function a(e, t, r, n) {
         if (!(this instanceof a)) return new a(e, t, r, n);
-        (this.list = n),
+        ((this.list = n),
           (this.value = e),
           t ? ((t.next = this), (this.prev = t)) : (this.prev = null),
-          r ? ((r.prev = this), (this.next = r)) : (this.next = null);
+          r ? ((r.prev = this), (this.next = r)) : (this.next = null));
       }
-      (e.exports = n),
+      ((e.exports = n),
         (n.Node = a),
         (n.create = n),
         (n.prototype.removeNode = function (e) {
@@ -3088,24 +3093,24 @@
           if (e !== this.head) {
             e.list && e.list.removeNode(e);
             var t = this.head;
-            (e.list = this),
+            ((e.list = this),
               (e.next = t),
               t && (t.prev = e),
               (this.head = e),
               this.tail || (this.tail = e),
-              this.length++;
+              this.length++);
           }
         }),
         (n.prototype.pushNode = function (e) {
           if (e !== this.tail) {
             e.list && e.list.removeNode(e);
             var t = this.tail;
-            (e.list = this),
+            ((e.list = this),
               (e.prev = t),
               t && (t.next = e),
               (this.tail = e),
               this.head || (this.head = e),
-              this.length++;
+              this.length++);
           }
         }),
         (n.prototype.push = function () {
@@ -3143,12 +3148,12 @@
         (n.prototype.forEach = function (e, t) {
           t = t || this;
           for (var r = this.head, n = 0; null !== r; n++)
-            e.call(t, r.value, n, this), (r = r.next);
+            (e.call(t, r.value, n, this), (r = r.next));
         }),
         (n.prototype.forEachReverse = function (e, t) {
           t = t || this;
           for (var r = this.tail, n = this.length - 1; null !== r; n--)
-            e.call(t, r.value, n, this), (r = r.prev);
+            (e.call(t, r.value, n, this), (r = r.prev));
         }),
         (n.prototype.get = function (e) {
           for (var t = 0, r = this.head; null !== r && t < e; t++) r = r.next;
@@ -3161,13 +3166,13 @@
         (n.prototype.map = function (e, t) {
           t = t || this;
           for (var r = new n(), s = this.head; null !== s; )
-            r.push(e.call(t, s.value, this)), (s = s.next);
+            (r.push(e.call(t, s.value, this)), (s = s.next));
           return r;
         }),
         (n.prototype.mapReverse = function (e, t) {
           t = t || this;
           for (var r = new n(), s = this.tail; null !== s; )
-            r.push(e.call(t, s.value, this)), (s = s.prev);
+            (r.push(e.call(t, s.value, this)), (s = s.prev));
           return r;
         }),
         (n.prototype.reduce = function (e, t) {
@@ -3177,9 +3182,10 @@
           else {
             if (!this.head)
               throw new TypeError('Reduce of empty list with no initial value');
-            (n = this.head.next), (r = this.head.value);
+            ((n = this.head.next), (r = this.head.value));
           }
-          for (var s = 0; null !== n; s++) (r = e(r, n.value, s)), (n = n.next);
+          for (var s = 0; null !== n; s++)
+            ((r = e(r, n.value, s)), (n = n.next));
           return r;
         }),
         (n.prototype.reduceReverse = function (e, t) {
@@ -3189,10 +3195,10 @@
           else {
             if (!this.tail)
               throw new TypeError('Reduce of empty list with no initial value');
-            (n = this.tail.prev), (r = this.tail.value);
+            ((n = this.tail.prev), (r = this.tail.value));
           }
           for (var s = this.length - 1; null !== n; s--)
-            (r = e(r, n.value, s)), (n = n.prev);
+            ((r = e(r, n.value, s)), (n = n.prev));
           return r;
         }),
         (n.prototype.toArray = function () {
@@ -3201,7 +3207,7 @@
             null !== r;
             t++
           )
-            (e[t] = r.value), (r = r.next);
+            ((e[t] = r.value), (r = r.next));
           return e;
         }),
         (n.prototype.toArrayReverse = function () {
@@ -3210,39 +3216,39 @@
             null !== r;
             t++
           )
-            (e[t] = r.value), (r = r.prev);
+            ((e[t] = r.value), (r = r.prev));
           return e;
         }),
         (n.prototype.slice = function (e, t) {
-          (t = t || this.length) < 0 && (t += this.length),
-            (e = e || 0) < 0 && (e += this.length);
+          ((t = t || this.length) < 0 && (t += this.length),
+            (e = e || 0) < 0 && (e += this.length));
           var r = new n();
           if (t < e || t < 0) return r;
-          e < 0 && (e = 0), t > this.length && (t = this.length);
+          (e < 0 && (e = 0), t > this.length && (t = this.length));
           for (var s = 0, i = this.head; null !== i && s < e; s++) i = i.next;
           for (; null !== i && s < t; s++, i = i.next) r.push(i.value);
           return r;
         }),
         (n.prototype.sliceReverse = function (e, t) {
-          (t = t || this.length) < 0 && (t += this.length),
-            (e = e || 0) < 0 && (e += this.length);
+          ((t = t || this.length) < 0 && (t += this.length),
+            (e = e || 0) < 0 && (e += this.length));
           var r = new n();
           if (t < e || t < 0) return r;
-          e < 0 && (e = 0), t > this.length && (t = this.length);
+          (e < 0 && (e = 0), t > this.length && (t = this.length));
           for (var s = this.length, i = this.tail; null !== i && s > t; s--)
             i = i.prev;
           for (; null !== i && s > e; s--, i = i.prev) r.push(i.value);
           return r;
         }),
         (n.prototype.splice = function (e, t, ...r) {
-          e > this.length && (e = this.length - 1),
-            e < 0 && (e = this.length + e);
+          (e > this.length && (e = this.length - 1),
+            e < 0 && (e = this.length + e));
           for (var n = 0, i = this.head; null !== i && n < e; n++) i = i.next;
           var o = [];
           for (n = 0; i && n < t; n++)
-            o.push(i.value), (i = this.removeNode(i));
-          null === i && (i = this.tail),
-            i !== this.head && i !== this.tail && (i = i.prev);
+            (o.push(i.value), (i = this.removeNode(i)));
+          (null === i && (i = this.tail),
+            i !== this.head && i !== this.tail && (i = i.prev));
           for (n = 0; n < r.length; n++) i = s(this, i, r[n]);
           return o;
         }),
@@ -3253,10 +3259,10 @@
             r = r.prev
           ) {
             var n = r.prev;
-            (r.prev = r.next), (r.next = n);
+            ((r.prev = r.next), (r.next = n));
           }
-          return (this.head = t), (this.tail = e), this;
-        });
+          return ((this.head = t), (this.tail = e), this);
+        }));
       try {
         r(40259)(n);
       } catch (e) {}

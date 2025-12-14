@@ -1,6 +1,14 @@
 'use client';
 
-import { Mic, FileText, Zap, DollarSign, Shield, Edit2, Phone } from 'lucide-react';
+import {
+  Mic,
+  FileText,
+  Zap,
+  DollarSign,
+  Shield,
+  Edit2,
+  Phone,
+} from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 

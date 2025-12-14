@@ -48,7 +48,7 @@ class RateLimiter {
 
     // Record this request
     this.requests.push({ timestamp: Date.now() });
-    
+
     // Limit request history to prevent memory issues in long-running instances
     if (this.requests.length > 100) {
       this.requests = this.requests.slice(-60);
@@ -104,7 +104,7 @@ export function calculateRetryDelay(
   // For free tier: 1s, 2s, 4s, 8s, 16s
   const baseDelay = 1000; // 1 second minimum
   const exponentialDelay = baseDelay * Math.pow(2, retryCount);
-  
+
   // Cap at 60 seconds (1 minute window)
   return Math.min(exponentialDelay, 60000);
 }

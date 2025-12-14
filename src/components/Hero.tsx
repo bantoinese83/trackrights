@@ -7,7 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDownCircle } from 'lucide-react';
+import { ArrowDownCircle, RotateCcw } from 'lucide-react';
 import { ContractComparison } from '@/components/ContractComparison';
 import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { HeroTitle } from '@/components/HeroTitle';
@@ -16,7 +16,6 @@ import { ContractRevision } from '@/components/ContractRevision';
 import { RevisedContractDisplay } from './RevisedContractDisplay';
 import { useAppState } from '@/lib/contexts/StateContext';
 import { Button } from '@/components/ui/button';
-import { RotateCcw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import confetti from 'canvas-confetti';
 

@@ -31,9 +31,8 @@ export function ContractRevision() {
     useLocalStorage<string>('trackrights_revision_instructions', '');
   const { reviseContract } = useContract();
   const { handleError } = useErrorHandler();
-  const [exampleInstructions, setExampleInstructions] = useState<string[]>(
-    FALLBACK_EXAMPLES
-  );
+  const [exampleInstructions, setExampleInstructions] =
+    useState<string[]>(FALLBACK_EXAMPLES);
   const [isLoadingExamples, setIsLoadingExamples] = useState(false);
 
   const handleRevise = async () => {
@@ -79,7 +78,11 @@ export function ContractRevision() {
 
         if (response.ok) {
           const data = await response.json();
-          if (data.examples && Array.isArray(data.examples) && data.examples.length > 0) {
+          if (
+            data.examples &&
+            Array.isArray(data.examples) &&
+            data.examples.length > 0
+          ) {
             setExampleInstructions(data.examples);
           } else {
             setExampleInstructions(FALLBACK_EXAMPLES);
@@ -110,7 +113,9 @@ export function ContractRevision() {
     }
     // Scroll textarea into view and focus it
     setTimeout(() => {
-      const textarea = document.querySelector('textarea[aria-label="Revision instructions"]') as HTMLTextAreaElement;
+      const textarea = document.querySelector(
+        'textarea[aria-label="Revision instructions"]'
+      ) as HTMLTextAreaElement;
       if (textarea) {
         textarea.focus();
         textarea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

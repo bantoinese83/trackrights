@@ -7,8 +7,7 @@
     "src/app/**/layout.{ts,tsx}",
     "next.config.mjs",
     "tailwind.config.ts",
-    "postcss.config.mjs",
-    "src/**/*.{ts,tsx}"
+    "postcss.config.mjs"
   ],
   "project": [
     "src/**/*.{ts,tsx,js,jsx}",
@@ -29,10 +28,33 @@
     "declarations.d.ts",
     "index.d.ts",
     "react-pdf.d.ts",
-    "pdfjs-dist.d.ts"
+    "pdfjs-dist.d.ts",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
   ],
-  "ignoreDependencies": ["@types/*"],
+  "ignoreDependencies": [
+    "@types/*",
+    "eslint",
+    "prettier",
+    "@next/bundle-analyzer",
+    "knip"
+  ],
   "ignoreBinaries": ["lsof"],
+  "ignoreExportsUsedInFile": true,
+  "workspaces": {
+    ".": {
+      "entry": [
+        "src/app/**/*.{ts,tsx}",
+        "src/app/**/route.{ts,tsx}",
+        "src/app/**/page.{ts,tsx}",
+        "src/app/**/layout.{ts,tsx}",
+        "next.config.mjs"
+      ],
+      "project": ["src/**/*.{ts,tsx}", "*.{ts,tsx,js,jsx,mjs}"]
+    }
+  },
   "next": {
     "entry": [
       "src/app/**/*.{ts,tsx}",

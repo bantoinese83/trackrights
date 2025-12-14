@@ -72,8 +72,9 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: 'Butler', 'Montserrat', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-sans:
+    'Butler', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-decorative: 'Salome', 'Langita', 'Astila', cursive;
   --font-icons: 'Sea Life Icons';
 }

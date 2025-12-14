@@ -25,7 +25,8 @@ export async function initialize() {
       );
     resources = t.reduce(
       (e, { filename: r, buffer: t }) => (
-        (e[`${globalThis.gdPicture.baseUrl}/resources/${decodeURI(r)}`] = t), e
+        (e[`${globalThis.gdPicture.baseUrl}/resources/${decodeURI(r)}`] = t),
+        e
       ),
       {}
     );
@@ -45,7 +46,7 @@ export function fetch(e, r) {
       globalThis.gdPicture.module.FS.writeFile(r, new Uint8Array(resources[e]));
     else {
       const t = new XMLHttpRequest();
-      t.open('GET', e, !1),
+      (t.open('GET', e, !1),
         t.overrideMimeType('text/plain; charset=x-user-defined'),
         t.send(),
         200 === t.status
@@ -53,7 +54,7 @@ export function fetch(e, r) {
               r,
               stringToArrayBuffer(t.response)
             )
-          : console.error(`Could not retrieve resource. Status: ${t.status}`);
+          : console.error(`Could not retrieve resource. Status: ${t.status}`));
     }
   } catch (e) {
     console.error(`Could not retrieve resource. Exception: ${e.message}`);

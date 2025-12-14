@@ -254,8 +254,8 @@ export function RevisedContractDisplay() {
             placeholder="Edit your revised contract here..."
           />
           <p className="mt-2 text-xs text-gray-500">
-            Tip: You can edit the markdown content directly. Changes will be saved
-            when you click &quot;Save&quot;.
+            Tip: You can edit the markdown content directly. Changes will be
+            saved when you click &quot;Save&quot;.
           </p>
         </div>
       ) : (

@@ -10038,7 +10038,9 @@
 
         var _stream = __w_pdfjs_require__(10);
 
-        class DefaultAppearanceEvaluator extends _evaluator.EvaluatorPreprocessor {
+        class DefaultAppearanceEvaluator
+          extends _evaluator.EvaluatorPreprocessor
+        {
           constructor(str) {
             super(new _stream.StringStream(str));
           }
@@ -18092,7 +18094,7 @@
             b += a;
           }
 
-          return (b % 65521 << 16) | a % 65521;
+          return ((b % 65521) << 16) | (a % 65521);
         }
 
         class Parser {

@@ -36,16 +36,18 @@
             try {
               i = new o.Blob([e]);
             } catch (t) {
-              (i = new (o.BlobBuilder ||
+              ((i = new (
+                o.BlobBuilder ||
                 o.WebKitBlobBuilder ||
                 o.MozBlobBuilder ||
-                o.MSBlobBuilder)()).append(e),
-                (i = i.getBlob());
+                o.MSBlobBuilder
+              )()).append(e),
+                (i = i.getBlob()));
             }
             var a = o.URL || o.webkitURL,
               s = a.createObjectURL(i),
               c = new o[t](s, n);
-            return a.revokeObjectURL(s), c;
+            return (a.revokeObjectURL(s), c);
           } catch (r) {
             return new o[t](
               'data:application/javascript,'.concat(encodeURIComponent(e)),

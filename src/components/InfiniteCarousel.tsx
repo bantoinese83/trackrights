@@ -6,13 +6,7 @@ import {
   useTransform,
   useSpring,
 } from 'framer-motion';
-import {
-  FileText,
-  Wand2,
-  Shield,
-  DollarSign,
-  Calculator,
-} from 'lucide-react';
+import { FileText, Wand2, Shield, DollarSign, Calculator } from 'lucide-react';
 
 const SCROLL_SPEED = 450; // pixels per second
 

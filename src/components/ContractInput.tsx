@@ -69,11 +69,11 @@ export function ContractInput() {
     try {
       const result = await simplifyContract.execute({ contractText });
       if (result) {
-      toast({
-        title: 'Analysis Started!',
-        description:
-          'Your contract is being analyzed. Results will appear shortly.',
-      });
+        toast({
+          title: 'Analysis Started!',
+          description:
+            'Your contract is being analyzed. Results will appear shortly.',
+        });
         resetForm();
         clearDraft(); // Clear draft after successful submission
       }

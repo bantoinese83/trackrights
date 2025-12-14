@@ -12,7 +12,7 @@ export function ErrorDisplay({ error }: ErrorDisplayProps) {
     (errorLower.includes('rate limit') || errorLower.includes('429')) &&
     !errorLower.includes('daily') &&
     !errorLower.includes('quota');
-  const isQuota = 
+  const isQuota =
     errorLower.includes('quota') ||
     errorLower.includes('daily') ||
     (errorLower.includes('429') && errorLower.includes('20 requests'));
@@ -48,10 +48,13 @@ export function ErrorDisplay({ error }: ErrorDisplayProps) {
                 Daily Quota Exceeded:
               </p>
               <p className="text-xs mb-2">
-                The free tier allows 20 requests per day. Your daily quota has been reached.
+                The free tier allows 20 requests per day. Your daily quota has
+                been reached.
               </p>
               <p className="text-xs">
-                <strong>Solution:</strong> The quota resets daily. Please try again tomorrow, or consider upgrading your API plan for higher limits.
+                <strong>Solution:</strong> The quota resets daily. Please try
+                again tomorrow, or consider upgrading your API plan for higher
+                limits.
               </p>
             </div>
           )}

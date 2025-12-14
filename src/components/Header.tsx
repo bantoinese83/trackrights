@@ -274,9 +274,9 @@ export function Header() {
       />
       <style jsx>{`
         :root {
-          --font-sans: 'Butler', 'Montserrat', -apple-system,
-            BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-            sans-serif;
+          --font-sans:
+            'Butler', 'Montserrat', -apple-system, BlinkMacSystemFont,
+            'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
           --font-decorative: ${'Salome, Langita, Astila, cursive'};
         }
 

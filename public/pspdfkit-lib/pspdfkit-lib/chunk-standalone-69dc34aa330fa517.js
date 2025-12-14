@@ -15,7 +15,7 @@
   [5362],
   {
     63993: (e, t, a) => {
-      a.r(t),
+      (a.r(t),
         a.d(t, {
           corePool: () => l.mG,
           customFontsPromiseRef: () => b,
@@ -23,7 +23,7 @@
           loadModule: () => _,
           normalizeCoreOptions: () => l.DO,
           validateStandaloneConfiguration: () => l.mn,
-        });
+        }));
       var s = a(49568),
         i = a(85409),
         n = a(55994),
@@ -72,7 +72,7 @@
             throw new i.uE(
               "You're using the npm key instead of the license key. This key is used to download the PSPDFKit for Web package via the node package manager.\n\nLeave out the license key to activate as a trial."
             );
-          super(n), (this.destroyed = !1);
+          (super(n), (this.destroyed = !1));
         }
         async load() {
           let e =
@@ -80,17 +80,17 @@
                 ? arguments[0]
                 : {},
             t = 0.2;
-          e.progressCallback && e.progressCallback('loading', t),
+          (e.progressCallback && e.progressCallback('loading', t),
             (this._isPDFJavaScriptEnabled = e.isPDFJavaScriptEnabled),
             'string' == typeof this._state.document &&
               (0, g.XC)(
                 this._state.baseUrl,
                 this._state.document,
                 this._state.productId
-              );
+              ));
           const a = await _(this.client, this._state).finally(() => {
-              (t += 0.3),
-                e.progressCallback && e.progressCallback('loading', t);
+              ((t += 0.3),
+                e.progressCallback && e.progressCallback('loading', t));
             }),
             n = (async function (e, t, a, s) {
               if (e instanceof ArrayBuffer)
@@ -112,13 +112,13 @@
                   };
                 })();
               try {
-                if (!o) return (n = !0), p(e, s);
+                if (!o) return ((n = !0), p(e, s));
                 if (
                   ((0, i.V1)(r, 'Loader is not available'),
                   r.kickStartDownload(),
                   !(await r.waitUntilIsLinearizedIsKnown()))
                 )
-                  return r.destroy(), (n = !0), p(e, s);
+                  return (r.destroy(), (n = !0), p(e, s));
                 s?.();
                 const t = await r.waitUntilDocumentInfoAvailable();
                 return t
@@ -133,8 +133,8 @@
               this.corePDFBridge,
               this._state.allowLinearizedLoading,
               () => {
-                (t += 0.3),
-                  e.progressCallback && e.progressCallback('loading', t);
+                ((t += 0.3),
+                  e.progressCallback && e.progressCallback('loading', t));
               }
             );
           (0, i.V1)(a);
@@ -160,10 +160,10 @@
             this._state.forceLegacySignaturesFeature
               ? u.g.LEGACY_SIGNATURES
               : l;
-          (this._state = this._state
+          ((this._state = this._state
             .set('features', (0, s.B8)(o))
             .set('signatureFeatureAvailability', f)),
-            (y = this._state.licenseKey);
+            (y = this._state.licenseKey));
           const w = await n;
           let b = null;
           if (w.isFullyAvailable) {
@@ -201,7 +201,7 @@
                 let s,
                   n = (0, m.jU)();
                 try {
-                  n ||
+                  (n ||
                     ((n = (0, m.NY)({
                       baseUrl: this._state.baseProcessorEngineUrl,
                       mainThreadOrigin:
@@ -216,7 +216,7 @@
                     })),
                     (0, m.Pm)(n)),
                     (s = await n),
-                    (0, i.V1)(s);
+                    (0, i.V1)(s));
                   const a = await s.toPdf(t);
                   b = await this.client.openDocument(a, {
                     password: e.password,
@@ -228,7 +228,7 @@
                   });
                 } catch (e) {
                   throw (
-                    ('INVALID_PASSWORD' === e.message &&
+                    'INVALID_PASSWORD' === e.message &&
                       this._state.document instanceof ArrayBuffer &&
                       (this._state = this._state.set(
                         'document',
@@ -237,14 +237,14 @@
                     'IMAGE_DOCUMENTS_NOT_LICENSED' === e.message &&
                       (e.message =
                         'The image documents feature is not enabled for your license key. Please contact support or sales to purchase the UI module for your product.'),
-                    e)
+                    e
                   );
                 } finally {
-                  (t = null), s?.destroy(), (0, m.Pm)(null);
+                  ((t = null), s?.destroy(), (0, m.Pm)(null));
                 }
               }
             }
-            (0, i.V1)(b), await this.afterDocumentLoaded(b);
+            ((0, i.V1)(b), await this.afterDocumentLoaded(b));
           } else b = w.documentResponse;
           return (
             (this._state = this._state.set('documentResponse', b)),
@@ -262,7 +262,7 @@
           );
         }
         destroy() {
-          (this.destroyed = !0), super.destroy();
+          ((this.destroyed = !0), super.destroy());
         }
         getCustomFontsPromise() {
           return b;
@@ -319,12 +319,12 @@
           return this.corePDFBridge.linearizedInstance
             .waitUntilDownloaded()
             .then(async () => {
-              await this.corePDFBridge.normallyOpenLinearizedDocument(this, {
+              (await this.corePDFBridge.normallyOpenLinearizedDocument(this, {
                 password: e,
                 initialPageIndex: 0,
                 formsConfiguration: this._formsConfiguration,
               }),
-                await this.afterDocumentLoaded(this._state.documentResponse);
+                await this.afterDocumentLoaded(this._state.documentResponse));
             });
         }
       }
