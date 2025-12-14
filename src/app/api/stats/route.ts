@@ -11,7 +11,7 @@ export async function GET() {
     const contractsResult = await sql`
       SELECT COUNT(*) as count FROM contracts
     `;
-    const contractsAnalyzed = Number(contractsResult[0]?.['count'] || 0);
+    const contractsAnalyzed = Number((contractsResult as Array<{ count: number }>)[0]?.['count'] || 0);
 
     // Get unique users who have analyzed contracts
     const activeUsersResult = await sql`
@@ -19,7 +19,7 @@ export async function GET() {
       FROM contract_analyses 
       WHERE user_id IS NOT NULL
     `;
-    const musicProfessionals = Number(activeUsersResult[0]?.['count'] || 0);
+    const musicProfessionals = Number((activeUsersResult as Array<{ count: number }>)[0]?.['count'] || 0);
 
     // Get average processing time
     const avgTimeResult = await sql`
@@ -27,7 +27,7 @@ export async function GET() {
       FROM contract_analyses 
       WHERE processing_time_ms IS NOT NULL AND success = true
     `;
-    const avgTimeMs = Number(avgTimeResult[0]?.['avg_time'] || 30000);
+    const avgTimeMs = Number((avgTimeResult as Array<{ avg_time: number }>)[0]?.['avg_time'] || 30000);
     const avgTimeSeconds = Math.round(avgTimeMs / 1000);
 
     // Accuracy rate (successful analyses / total analyses)
@@ -37,8 +37,8 @@ export async function GET() {
         COUNT(*) as total
       FROM contract_analyses
     `;
-    const successful = Number(accuracyResult[0]?.['successful'] || 0);
-    const total = Number(accuracyResult[0]?.['total'] || 0);
+    const successful = Number((accuracyResult as Array<{ successful: number; total: number }>)[0]?.['successful'] || 0);
+    const total = Number((accuracyResult as Array<{ successful: number; total: number }>)[0]?.['total'] || 0);
     const accuracyRate =
       total > 0 ? Math.round((successful / total) * 100) : 95;
 
@@ -48,7 +48,7 @@ export async function GET() {
       FROM contracts 
       WHERE revised_text IS NOT NULL
     `;
-    const generatedContracts = Number(generatedResult[0]?.['count'] || 0);
+    const generatedContracts = Number((generatedResult as Array<{ count: number }>)[0]?.['count'] || 0);
 
     return NextResponse.json({
       contractsAnalyzed: contractsAnalyzed || 0,
