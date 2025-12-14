@@ -37,7 +37,7 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
   
   const sessionRef = useRef<{
     _playbackCleanup?: () => void;
-    _audioProcessor?: ScriptProcessorNode | null;
+    _audioProcessor?: AudioWorkletNode | ScriptProcessorNode | null;
     _inputAudioContext?: AudioContext | null;
     close: () => void;
   } | null>(null);
@@ -203,7 +203,12 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
   const cleanupAudioProcessor = useCallback(() => {
     if (sessionRef.current?._audioProcessor) {
       try {
-        sessionRef.current._audioProcessor.disconnect();
+        const processor = sessionRef.current._audioProcessor;
+        processor.disconnect();
+        // Close port if it's an AudioWorkletNode
+        if (processor instanceof AudioWorkletNode && processor.port) {
+          processor.port.close();
+        }
       } catch (err) {
         console.warn('Error disconnecting audio processor:', err);
       }
@@ -276,51 +281,96 @@ export function LiveLawyerWidget({ onClose, className }: LiveLawyerWidgetProps) 
 
       const source = audioContext.createMediaStreamSource(stream);
       
-      // Use ScriptProcessorNode for audio processing
-      // Note: ScriptProcessorNode is deprecated but still widely supported
-      // For better performance, consider using AudioWorkletNode in the future
-      const processor = audioContext.createScriptProcessor(4096, 1, 1);
-      
-      // Store for cleanup
-      if (sessionRef.current) {
-        sessionRef.current._audioProcessor = processor;
-      }
+      // Use AudioWorkletNode for audio processing (replaces deprecated ScriptProcessorNode)
+      try {
+        // Load the AudioWorklet processor
+        await audioContext.audioWorklet.addModule('/audio-processor.js');
+        
+        // Create AudioWorkletNode
+        const processor = new AudioWorkletNode(audioContext, 'audio-processor', {
+          numberOfInputs: 1,
+          numberOfOutputs: 1,
+          channelCount: 1,
+        });
+        
+        // Store for cleanup
+        if (sessionRef.current) {
+          sessionRef.current._audioProcessor = processor;
+        }
 
-      processor.onaudioprocess = (e) => {
-        if (!isMuted && session && isConnected && audioContext.state === 'running') {
-          try {
-            const inputData = e.inputBuffer.getChannelData(0);
-            
-            // Convert Float32Array to Int16Array (16-bit PCM)
-            const pcmData = new Int16Array(inputData.length);
-            for (let i = 0; i < inputData.length; i++) {
-              const sample = inputData[i];
-              if (sample !== undefined) {
-                const s = Math.max(-1, Math.min(1, sample));
-                pcmData[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+        // Handle messages from the worklet processor
+        processor.port.onmessage = (e) => {
+          if (!isMuted && session && isConnected && audioContext.state === 'running') {
+            if (e.data.type === 'audioData') {
+              try {
+                // Convert ArrayBuffer to base64 (worklet sends raw PCM data)
+                const uint8Array = new Uint8Array(e.data.data);
+                const base64 = btoa(
+                  String.fromCharCode.apply(null, Array.from(uint8Array))
+                );
+                
+                session.sendRealtimeInput({
+                  audio: {
+                    data: base64,
+                    mimeType: 'audio/pcm;rate=16000',
+                  },
+                });
+              } catch (err) {
+                console.error('Error sending audio data:', err);
               }
             }
-
-            // Convert to base64 efficiently
-            const uint8Array = new Uint8Array(pcmData.buffer);
-            const base64 = btoa(
-              String.fromCharCode.apply(null, Array.from(uint8Array))
-            );
-
-            session.sendRealtimeInput({
-              audio: {
-                data: base64,
-                mimeType: 'audio/pcm;rate=16000',
-              },
-            });
-          } catch (err) {
-            console.error('Error processing audio:', err);
           }
-        }
-      };
+        };
 
-      source.connect(processor);
-      processor.connect(audioContext.destination);
+        source.connect(processor);
+        processor.connect(audioContext.destination);
+      } catch (workletError) {
+        // Fallback to ScriptProcessorNode if AudioWorklet is not supported
+        console.warn('AudioWorklet not supported, falling back to ScriptProcessorNode:', workletError);
+        
+        const processor = audioContext.createScriptProcessor(4096, 1, 1);
+        
+        // Store for cleanup
+        if (sessionRef.current) {
+          sessionRef.current._audioProcessor = processor;
+        }
+
+        processor.onaudioprocess = (e) => {
+          if (!isMuted && session && isConnected && audioContext.state === 'running') {
+            try {
+              const inputData = e.inputBuffer.getChannelData(0);
+              
+              // Convert Float32Array to Int16Array (16-bit PCM)
+              const pcmData = new Int16Array(inputData.length);
+              for (let i = 0; i < inputData.length; i++) {
+                const sample = inputData[i];
+                if (sample !== undefined) {
+                  const s = Math.max(-1, Math.min(1, sample));
+                  pcmData[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+                }
+              }
+
+              // Convert to base64 efficiently
+              const uint8Array = new Uint8Array(pcmData.buffer);
+              const base64 = btoa(
+                String.fromCharCode.apply(null, Array.from(uint8Array))
+              );
+
+              session.sendRealtimeInput({
+                audio: {
+                  data: base64,
+                  mimeType: 'audio/pcm;rate=16000',
+                },
+              });
+            } catch (err) {
+              console.error('Error processing audio:', err);
+            }
+          }
+        };
+
+        source.connect(processor);
+        processor.connect(audioContext.destination);
+      }
     } catch (err) {
       console.error('Error accessing microphone:', err);
       const errorMessage = err instanceof Error 
