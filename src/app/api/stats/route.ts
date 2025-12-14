@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 
+// Force dynamic rendering to prevent build-time database connection attempts
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function GET() {
   try {
     // Get total contracts analyzed
