@@ -26,6 +26,7 @@ import { Diamond, Copy, Download, Check } from 'lucide-react';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
 import { LiveLawyerWidget } from '@/components/LiveLawyerWidget';
+import { HighlightedContractText } from '@/lib/contract-highlighter';
 
 const PDFViewer = lazy(() => import('./PDFViewer'));
 
@@ -224,7 +225,7 @@ export function ContractComparison() {
               </Suspense>
             ) : (
               <div className="prose max-w-none text-gray-700 whitespace-pre-line text-sm sm:text-base rounded-lg">
-                {originalText}
+                <HighlightedContractText text={originalText} />
               </div>
             )}
           </div>
