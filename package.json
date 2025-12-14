@@ -71,6 +71,7 @@
     "react-pdf": "^6.2.2",
     "react-resizable-panels": "^2.1.7",
     "react-schemaorg": "^2.0.0",
+    "react-tweet": "^3.3.0",
     "recharts": "^2.15.0",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.0",
