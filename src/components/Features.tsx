@@ -8,6 +8,8 @@ import {
   Shield,
   Edit2,
   Phone,
+  GitCompare,
+  Lock,
 } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
@@ -54,6 +56,18 @@ const features = [
     title: 'Live Lawyer - Real-Time AI Consultation',
     description:
       'Have a real-time voice conversation with an AI lawyer about your contract. Ask questions and get instant audio responses.',
+  },
+  {
+    icon: <GitCompare className="h-10 w-10 text-purple-600" />,
+    title: 'Contract Comparison',
+    description:
+      'Compare multiple contract versions side-by-side to understand changes and negotiate better terms for your music career.',
+  },
+  {
+    icon: <Lock className="h-10 w-10 text-purple-600" />,
+    title: 'Secure & Private',
+    description:
+      'Your contracts and sensitive information are encrypted and kept completely private. We never share your data with third parties.',
   },
 ];
 
@@ -116,11 +130,11 @@ export function Features({ id }: { id?: string }) {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 items-stretch">
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+              className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer flex flex-col h-full"
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{
@@ -139,7 +153,7 @@ export function Features({ id }: { id?: string }) {
                   {feature.title}
                 </h3>
               </div>
-              <p className="text-base md:text-lg text-gray-600">
+              <p className="text-base md:text-lg text-gray-600 flex-grow">
                 {feature.description}
               </p>
             </motion.div>
