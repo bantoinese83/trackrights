@@ -14,6 +14,7 @@ import { useContract } from '@/hooks/useContract';
 import { useAppState } from '@/lib/contexts/StateContext';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { hashContract } from '@/lib/utils/contract-optimizer';
 import { useEffect, useState } from 'react';
 
 // Fallback examples if API fails
@@ -66,6 +67,28 @@ export function ContractRevision() {
         return;
       }
 
+      // Check localStorage cache first to avoid unnecessary API calls
+      const contractHash = hashContract(originalContract);
+      const cacheKey = `trackrights_examples_${contractHash}`;
+      
+      try {
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          const cachedExamples = JSON.parse(cached) as string[];
+          if (
+            Array.isArray(cachedExamples) &&
+            cachedExamples.length > 0
+          ) {
+            setExampleInstructions(cachedExamples);
+            return; // Use cached examples, no API call needed
+          }
+        }
+      } catch (error) {
+        // Invalid cache, continue to fetch from API
+        console.warn('Failed to parse cached examples:', error);
+      }
+
+      // No cache found, fetch from API
       setIsLoadingExamples(true);
       try {
         const response = await fetch('/api/generate-examples', {
@@ -84,6 +107,13 @@ export function ContractRevision() {
             data.examples.length > 0
           ) {
             setExampleInstructions(data.examples);
+            // Cache the examples for future use
+            try {
+              localStorage.setItem(cacheKey, JSON.stringify(data.examples));
+            } catch (error) {
+              // localStorage might be full or unavailable, continue anyway
+              console.warn('Failed to cache examples:', error);
+            }
           } else {
             setExampleInstructions(FALLBACK_EXAMPLES);
           }
