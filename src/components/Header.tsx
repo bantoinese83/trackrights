@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { jsonLdScriptProps } from 'react-schemaorg';
 import { InfiniteCarousel } from './InfiniteCarousel';
+import { SITE_URL } from '@/lib/site-config';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -268,7 +269,7 @@ export function Header() {
             '@type': 'ListItem',
             position: index + 1,
             name: item.name,
-            item: `https://trackrights.com${item.url}`,
+            item: `${SITE_URL}${item.url}`,
           })),
         })}
       />

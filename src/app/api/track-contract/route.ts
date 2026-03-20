@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@/lib/db';
+import { isDatabaseConfigured, sql } from '@/lib/db';
 import { cookies } from 'next/headers';
 
 export async function POST(req: NextRequest) {
   try {
+    if (!isDatabaseConfigured) {
+      return NextResponse.json({ success: true });
+    }
     const {
       contractText,
       simplifiedText,

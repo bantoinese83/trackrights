@@ -100,7 +100,9 @@ export function CallToAction() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          Join thousands of artists, producers, songwriters, streamers, influencers, managers, and creative professionals who trust TrackRights.com for clear, concise contract analysis.
+          Join thousands of artists, producers, songwriters, streamers,
+          influencers, managers, and creative professionals who trust
+          TrackRights.com for clear, concise contract analysis.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -1,14 +1,21 @@
-import { neon } from '@neondatabase/serverless';
+import { neon, type NeonQueryFunction } from '@neondatabase/serverless';
 
-// Initialize sql connection
-// Use a valid placeholder URL during build to prevent neon() from throwing
-// The actual connection will be established at runtime when DATABASE_URL is available
-const databaseUrl =
-  process.env['DATABASE_URL'] ||
-  'postgresql://placeholder@localhost/placeholder';
+const databaseUrl = process.env['DATABASE_URL']?.trim();
 
-// Initialize with the URL (or placeholder during build)
-// This prevents the "not a valid URL" error during build
-const sql = neon(databaseUrl);
+/** True when a Neon connection string is set (required for real DB queries). */
+export const isDatabaseConfigured = Boolean(databaseUrl);
 
-export { sql };
+type AppSql = NeonQueryFunction<false, false>;
+
+/**
+ * No-op SQL tag when DATABASE_URL is missing — rejects if invoked.
+ * Avoids pointing the Neon HTTP driver at a fake localhost URL (which causes fetch failures).
+ */
+function createUnconfiguredSql(): AppSql {
+  return ((_strings: TemplateStringsArray, ..._values: unknown[]) =>
+    Promise.reject(new Error('DATABASE_URL is not configured'))) as AppSql;
+}
+
+export const sql: AppSql = databaseUrl
+  ? neon(databaseUrl)
+  : createUnconfiguredSql();

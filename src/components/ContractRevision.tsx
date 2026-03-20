@@ -70,15 +70,12 @@ export function ContractRevision() {
       // Check localStorage cache first to avoid unnecessary API calls
       const contractHash = hashContract(originalContract);
       const cacheKey = `trackrights_examples_${contractHash}`;
-      
+
       try {
         const cached = localStorage.getItem(cacheKey);
         if (cached) {
           const cachedExamples = JSON.parse(cached) as string[];
-          if (
-            Array.isArray(cachedExamples) &&
-            cachedExamples.length > 0
-          ) {
+          if (Array.isArray(cachedExamples) && cachedExamples.length > 0) {
             setExampleInstructions(cachedExamples);
             return; // Use cached examples, no API call needed
           }

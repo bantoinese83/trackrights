@@ -41,15 +41,15 @@ TrackRights is an innovative AI-powered platform designed to simplify and analyz
 
 ## ✨ Features
 
-| Feature                   | Description                                                                           |
-| ------------------------- | ------------------------------------------------------------------------------------- |
-| **AI Contract Analysis**  | Upload a contract to receive a simplified and easy-to-understand summary              |
-| **Contract Generation**   | Create custom contracts tailored to various roles in music and creator industries      |
-| **Contract Revision**     | Use AI-assisted suggestions to revise contracts in your favor                         |
+| Feature                   | Description                                                                                      |
+| ------------------------- | ------------------------------------------------------------------------------------------------ |
+| **AI Contract Analysis**  | Upload a contract to receive a simplified and easy-to-understand summary                         |
+| **Contract Generation**   | Create custom contracts tailored to various roles in music and creator industries                |
+| **Contract Revision**     | Use AI-assisted suggestions to revise contracts in your favor                                    |
 | **Multi-Role Support**    | Provides specialized analysis and generation for music professionals, streamers, and influencers |
-| **Royalty Calculator**    | Estimate potential earnings from various streaming platforms                          |
-| **Educational Resources** | Access a comprehensive FAQ and educational content regarding music industry contracts |
-| **Responsive Design**     | Fully functional and accessible on desktop and mobile devices                         |
+| **Royalty Calculator**    | Estimate potential earnings from various streaming platforms                                     |
+| **Educational Resources** | Access a comprehensive FAQ and educational content regarding music industry contracts            |
+| **Responsive Design**     | Fully functional and accessible on desktop and mobile devices                                    |
 
 ---
 
@@ -100,6 +100,7 @@ TrackRights is an innovative AI-powered platform designed to simplify and analyz
 
    ```bash
    GEMINI_API_KEY=your_google_cloud_api_key_here
+   GEMINI_API_KEY_1=optional_second_key_for_fallback
    DATABASE_URL=your_neon_database_connection_string_here
    ```
 
@@ -112,14 +113,36 @@ TrackRights is an innovative AI-powered platform designed to simplify and analyz
 5. **Open your browser:**
    Navigate to `http://localhost:3000`
 
+For Next.js, prefer **`.env.local`** for secrets (it is gitignored). Copy from `.env.example` and adjust variable names as needed.
+
+### Quality checks (CI / pre-PR)
+
+```bash
+npm run quality-gate   # type-check, lint (0 warnings), Prettier, Knip, production build
+npm run analyze        # bundle analysis (set ANALYZE=true via npm script)
+```
+
+See **`QUALITY_STATUS.md`** for what each step covers and Knip notes.
+
 ### Environment Variables
 
-| Variable          | Description                                  | Required                |
-| ----------------- | -------------------------------------------- | ----------------------- |
-| `GEMINI_API_KEY`  | Google Gemini API key                        | ✅ Yes                  |
-| `DATABASE_URL`    | Neon PostgreSQL connection string            | ⚠️ Optional (for stats) |
-| `ALLOWED_ORIGINS` | Comma-separated list of allowed CORS origins | ❌ No (has defaults)    |
-| `NODE_ENV`        | Environment (development/production)         | ❌ No                   |
+| Variable                               | Description                                                                | Required                |
+| -------------------------------------- | -------------------------------------------------------------------------- | ----------------------- |
+| `GEMINI_API_KEY`                       | Primary Google Gemini API key                                              | ✅ Yes                  |
+| `GEMINI_API_KEY_1`                     | Fallback Gemini key (used if primary fails quota/auth/rate limits)         | ⚠️ Optional             |
+| `DATABASE_URL`                         | Neon PostgreSQL connection string                                          | ⚠️ Optional (for stats) |
+| `ALLOWED_ORIGINS`                      | Comma-separated list of allowed CORS origins                               | ❌ No (has defaults)    |
+| `NEXT_PUBLIC_ADSENSE_CLIENT_ID`        | Google AdSense publisher id (`ca-pub-…`); empty string disables the script | ❌ No (has default)     |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console HTML-tag verification token                                 | ❌ No                   |
+| `NODE_ENV`                             | Environment (development/production)                                       | ❌ No                   |
+
+### SEO
+
+The app exposes **`/sitemap.xml`** and **`/robots.txt`** (via `src/app/sitemap.ts` and `src/app/robots.ts`). Each public route has its own **canonical URL** and **Open Graph** metadata (root layout no longer forces the homepage canonical on every URL). The FAQ uses **`FAQPage` JSON-LD** (`src/app/faq/layout.tsx`). Shared constants live in **`src/lib/site-config.ts`**. Optional: set **`NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`** for Search Console HTML-tag verification.
+
+### Google AdSense
+
+AdSense is **not** loaded site-wide. The AdSense script runs only on **high-content** routes (home and `/faq`). The `google-adsense-account` meta is set on the **home page** only so Google does not associate auto ads with thin or utility pages (for example `/cookies` or 404s), per [AdSense program policies](https://support.google.com/adsense/answer/48182). **`ads.txt`** is served statically from `public/ads.txt` at `/ads.txt` (the old rewrite to a missing API route was removed).
 
 ---
 

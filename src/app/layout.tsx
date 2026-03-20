@@ -1,5 +1,5 @@
 import './globals.css';
-import { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import React from 'react';
 import { jsonLdScriptProps } from 'react-schemaorg';
 import { CookieConsent } from '@/components/CookieConsent';
@@ -8,15 +8,20 @@ import { ModalProvider } from '@/lib/contexts/ModalContext';
 import { TourProvider } from '@/lib/contexts/TourContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { Analytics } from '@vercel/analytics/react';
+import { defaultDescription, SITE_NAME, SITE_URL } from '@/lib/site-config';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://trackrights.com'),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'TrackRights | AI-Powered Music Contract Analysis',
-    template: '%s | TrackRights',
+    default: `${SITE_NAME} | AI-Powered Music Contract Analysis`,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    'TrackRights uses AI to simplify and explain contracts in plain language. Perfect for artists, producers, songwriters, streamers, influencers, managers, and all creative professionals. Understand complex legal jargon effortlessly.',
+  description: defaultDescription,
   keywords: [
     'music contract analysis',
     'AI contract simplification',
@@ -39,9 +44,9 @@ export const metadata: Metadata = {
     'music law',
     'entertainment law',
   ],
-  authors: [{ name: 'TrackRights Team' }],
-  creator: 'TrackRights',
-  publisher: 'TrackRights',
+  authors: [{ name: `${SITE_NAME} Team` }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   formatDetection: {
     email: false,
     address: false,
@@ -50,26 +55,25 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://trackrights.com',
-    siteName: 'TrackRights',
-    title: 'TrackRights - AI-Powered Music Contract Analysis',
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} - AI-Powered Music Contract Analysis`,
     description:
       'Simplify your music contracts with AI. Understand legal terms easily.',
     images: [
       {
-        url: 'https://trackrights.com/og-image.jpg',
+        url: `${SITE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: 'TrackRights - AI-Powered Music Contract Analysis',
+        alt: `${SITE_NAME} - AI-Powered Music Contract Analysis`,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TrackRights - AI-Powered Music Contract Analysis',
+    title: `${SITE_NAME} - AI-Powered Music Contract Analysis`,
     description:
       'Simplify your music contracts with AI. Understand legal terms easily.',
-    images: ['https://trackrights.com/twitter-image.jpg'],
+    images: [`${SITE_URL}/twitter-image.jpg`],
     creator: '@trackrights',
     site: '@trackrights',
   },
@@ -90,12 +94,13 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   manifest: '/site.webmanifest',
-  alternates: {
-    canonical: 'https://trackrights.com',
-    languages: {
-      'en-US': 'https://trackrights.com',
-    },
-  },
+  ...(process.env['NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION']?.trim()
+    ? {
+        verification: {
+          google: process.env['NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION'],
+        },
+      }
+    : {}),
 };
 
 export default function RootLayout({
@@ -106,35 +111,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>TrackRights | AI-Powered Music Contract Analysis</title>
-        <meta name="google-adsense-account" content="ca-pub-2126374418379576" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="canonical" href="https://trackrights.com" />
-        <link rel="manifest" href="/site.webmanifest" />
         <script
           {...(jsonLdScriptProps({
             '@context': 'https://schema.org',
             '@type': 'WebSite',
-            name: 'TrackRights',
-            url: 'https://trackrights.com',
-            potentialAction: {
-              '@type': 'SearchAction',
-              target: {
-                '@type': 'EntryPoint',
-                urlTemplate:
-                  'https://trackrights.com/search?q={search_term_string}',
-              },
-              'query-input': 'required name=search_term_string',
-            },
+            name: SITE_NAME,
+            url: SITE_URL,
           }) as React.ScriptHTMLAttributes<HTMLScriptElement>)}
         />
         <script
           {...(jsonLdScriptProps({
             '@context': 'https://schema.org',
             '@type': 'Organization',
-            name: 'TrackRights',
-            url: 'https://trackrights.com',
-            logo: 'https://trackrights.com/logo.png',
+            name: SITE_NAME,
+            url: SITE_URL,
+            logo: `${SITE_URL}/logo.png`,
             sameAs: [
               'https://twitter.com/trackrights',
               'https://www.facebook.com/trackrights',

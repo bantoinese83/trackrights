@@ -82,10 +82,10 @@ export default function CookiesPage() {
             If you have any questions about our use of cookies or other
             technologies, please email us at{' '}
             <a
-              href="mailto:support@example.com"
+              href="mailto:support@trackrights.com"
               className="text-purple-600 hover:underline"
             >
-              support@example.com
+              support@trackrights.com
             </a>
             .
           </p>

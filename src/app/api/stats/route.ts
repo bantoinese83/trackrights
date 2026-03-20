@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { sql } from '@/lib/db';
+import { isDatabaseConfigured, sql } from '@/lib/db';
 import { statsResponseSchema, type StatsResponse } from '@/lib/validation';
 import { logError } from '@/lib/errors';
 
@@ -32,7 +32,19 @@ function extractNumber(
   return Number(value) || defaultValue;
 }
 
+const defaultStats: StatsResponse = {
+  contractsAnalyzed: 0,
+  musicProfessionals: 0,
+  averageAnalysisTime: 30,
+  accuracyRate: 95,
+  generatedContracts: 0,
+};
+
 export async function GET() {
+  if (!isDatabaseConfigured) {
+    return NextResponse.json(statsResponseSchema.parse(defaultStats));
+  }
+
   try {
     // Get total contracts analyzed
     const contractsResult = (await sql`
@@ -91,14 +103,6 @@ export async function GET() {
     return NextResponse.json(validatedStats);
   } catch (error) {
     logError(error, { endpoint: '/api/stats' });
-    // Return default stats if database error
-    const defaultStats: StatsResponse = {
-      contractsAnalyzed: 0,
-      musicProfessionals: 0,
-      averageAnalysisTime: 30,
-      accuracyRate: 95,
-      generatedContracts: 0,
-    };
-    return NextResponse.json(defaultStats);
+    return NextResponse.json(statsResponseSchema.parse(defaultStats));
   }
 }

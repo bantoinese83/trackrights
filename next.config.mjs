@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   compress: true,
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion', 'motion'],
+  },
   webpack: (config) => {
     config.resolve.alias.canvas = false;
     return config;
@@ -17,14 +20,6 @@ const nextConfig = {
         hostname: 'ui-avatars.com',
       },
     ],
-  },
-  async rewrites() {
-    return [
-      {
-        source: '/ads.txt',
-        destination: '/api/ads',
-      },
-    ];
   },
 };
 

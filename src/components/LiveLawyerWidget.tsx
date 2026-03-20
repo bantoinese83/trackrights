@@ -230,9 +230,9 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
       "i'm aiming to",
       "i'm considering",
       "i'm crafting",
-      "formulating a response",
-      "thinking about",
-      "preparing to",
+      'formulating a response',
+      'thinking about',
+      'preparing to',
     ];
     return internalPhrases.some((phrase) => lowerText.includes(phrase));
   }, []);
@@ -1110,7 +1110,6 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
       startMicrophone,
       startAudioPlayback,
       isConnecting,
-      addUserTranscript,
       initSpeechRecognition,
     ]
   );

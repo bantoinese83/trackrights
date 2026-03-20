@@ -49,10 +49,65 @@ function isDailyQuotaError(error: unknown): boolean {
   );
 }
 
+function getHttpStatus(error: unknown): number | undefined {
+  if (typeof error !== 'object' || error === null) {
+    return undefined;
+  }
+  const e = error as Record<string, unknown>;
+  if (typeof e['status'] === 'number') {
+    return e['status'];
+  }
+  const cause = e['cause'];
+  if (
+    cause &&
+    typeof cause === 'object' &&
+    cause !== null &&
+    'status' in cause
+  ) {
+    const s = (cause as { status?: unknown }).status;
+    return typeof s === 'number' ? s : undefined;
+  }
+  return undefined;
+}
+
 /**
- * Generate content with retry logic
+ * Whether to try the next configured API key (different project / quota).
  */
-export async function generateWithRetry(
+export function shouldRotateGeminiKey(error: unknown): boolean {
+  if (error instanceof TimeoutError) {
+    return false;
+  }
+  if (error instanceof RateLimitError) {
+    return true;
+  }
+
+  const status = getHttpStatus(error);
+  if (status === 401 || status === 403) {
+    return true;
+  }
+  if (status === 429) {
+    return true;
+  }
+  if (status === 503) {
+    return true;
+  }
+  if (status === 400) {
+    const s = JSON.stringify(error);
+    if (
+      /API[_ ]?key|PERMISSION_DENIED|INVALID_ARGUMENT|API_KEY_INVALID/i.test(s)
+    ) {
+      return true;
+    }
+  }
+
+  if (error instanceof ExternalServiceError && error.originalError) {
+    return shouldRotateGeminiKey(error.originalError);
+  }
+
+  return false;
+}
+
+async function generateWithRetrySingleClient(
   ai: GoogleGenAI,
   content: Content[] | string[] | string,
   options: RetryOptions = {}
@@ -60,7 +115,7 @@ export async function generateWithRetry(
   const {
     maxRetries = 5,
     timeoutMs = 50000,
-    model = 'gemini-2.5-pro',
+    model = 'gemini-2.5-flash-lite',
   } = options;
 
   let contentString: string;
@@ -77,10 +132,8 @@ export async function generateWithRetry(
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      // Rate limit check before making request
       await rateLimiter.waitIfNeeded();
 
-      // Create timeout promise
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(
           () =>
@@ -89,7 +142,6 @@ export async function generateWithRetry(
         );
       });
 
-      // Make API call with timeout
       const result = await Promise.race([
         ai.models.generateContent({
           model,
@@ -108,7 +160,6 @@ export async function generateWithRetry(
 
       return responseText;
     } catch (error: unknown) {
-      // Don't retry daily quota errors
       if (isDailyQuotaError(error)) {
         logError(error, {
           attempt,
@@ -120,7 +171,6 @@ export async function generateWithRetry(
         );
       }
 
-      // Check if it's a retryable error
       const errorStatus = (error as { status?: number })?.status;
       const isRetryable =
         errorStatus === 429 ||
@@ -151,7 +201,6 @@ export async function generateWithRetry(
         );
       }
 
-      // Calculate retry delay
       let waitTime: number;
       try {
         const errorDetails = error as {
@@ -186,9 +235,54 @@ export async function generateWithRetry(
     }
   }
 
-  // This should never be reached, but TypeScript needs it
   throw new ExternalServiceError(
     'Failed to generate content after all retries',
     'gemini'
   );
+}
+
+export async function generateWithRetry(
+  ai: GoogleGenAI,
+  content: Content[] | string[] | string,
+  options?: RetryOptions
+): Promise<string>;
+export async function generateWithRetry(
+  apiKeys: string[],
+  content: Content[] | string[] | string,
+  options?: RetryOptions
+): Promise<string>;
+export async function generateWithRetry(
+  aiOrKeys: GoogleGenAI | string[],
+  content: Content[] | string[] | string,
+  options: RetryOptions = {}
+): Promise<string> {
+  if (Array.isArray(aiOrKeys)) {
+    const keys = aiOrKeys.map((k) => k.trim()).filter(Boolean);
+    if (keys.length === 0) {
+      throw new ExternalServiceError('No Gemini API keys configured', 'gemini');
+    }
+
+    let lastError: unknown;
+    for (let i = 0; i < keys.length; i++) {
+      const ai = new GoogleGenAI({ apiKey: keys[i] });
+      try {
+        return await generateWithRetrySingleClient(ai, content, options);
+      } catch (error) {
+        lastError = error;
+        const hasNext = i < keys.length - 1;
+        if (hasNext && shouldRotateGeminiKey(error)) {
+          logError(error, {
+            geminiKeyFallback: true,
+            keyIndex: i,
+            message: 'Retrying with fallback Gemini API key',
+          });
+          continue;
+        }
+        throw error;
+      }
+    }
+    throw lastError;
+  }
+
+  return generateWithRetrySingleClient(aiOrKeys, content, options);
 }

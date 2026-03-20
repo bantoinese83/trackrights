@@ -3,10 +3,13 @@ import { GoogleGenAI } from '@google/genai';
 import {
   corsHeaders,
   getApiKey,
+  getGeminiApiKeys,
   handleError,
   cacheGet,
   cacheSet,
 } from '../utils';
+import { shouldRotateGeminiKey } from '@/lib/ai-retry';
+import { logError } from '@/lib/errors';
 import {
   hashContract,
   optimizeContractText,
@@ -16,8 +19,10 @@ import { rateLimiter, calculateRetryDelay } from '@/lib/utils/rate-limiter';
 // Set max duration for Vercel serverless function (30 seconds)
 export const maxDuration = 30;
 
-const apiKey = getApiKey();
-const ai = new GoogleGenAI({ apiKey });
+const geminiApiKeys = getGeminiApiKeys();
+if (geminiApiKeys.length === 0) {
+  getApiKey();
+}
 
 const SYSTEM_MESSAGE = `You are an expert music industry lawyer. Your task is to analyze a music contract and generate 4-5 specific, actionable example instructions that would help improve the contract for the music professional.
 
@@ -65,82 +70,95 @@ async function generateWithRetry(
   // Optimize contract text to reduce tokens
   const optimizedContract = optimizeContractText(contractText, 6000);
 
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      // Rate limit check before making request
-      await rateLimiter.waitIfNeeded();
+  let lastError: unknown;
 
-      const contents = [
-        SYSTEM_MESSAGE,
-        `Contract to analyze:\n${optimizedContract}`,
-        'Generate 4-5 example revision instructions based on this contract. Return only a JSON array of strings.',
-      ].join('\n\n');
+  for (let keyIdx = 0; keyIdx < geminiApiKeys.length; keyIdx++) {
+    const ai = new GoogleGenAI({ apiKey: geminiApiKeys[keyIdx] });
 
-      const result = await ai.models.generateContent({
-        model: 'gemini-2.5-pro',
-        contents,
-      });
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        await rateLimiter.waitIfNeeded();
 
-      const text = result.text ?? '';
+        const contents = [
+          SYSTEM_MESSAGE,
+          `Contract to analyze:\n${optimizedContract}`,
+          'Generate 4-5 example revision instructions based on this contract. Return only a JSON array of strings.',
+        ].join('\n\n');
 
-      // Try to parse JSON from the response
-      // Sometimes the AI wraps it in markdown code blocks
-      let jsonText = text.trim();
-      if (jsonText.startsWith('```json')) {
-        jsonText = jsonText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-      } else if (jsonText.startsWith('```')) {
-        jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '');
-      }
+        const result = await ai.models.generateContent({
+          model: 'gemini-2.5-flash-lite',
+          contents,
+        });
 
-      const examples = JSON.parse(jsonText) as string[];
+        const text = result.text ?? '';
 
-      // Validate it's an array of strings
-      if (
-        Array.isArray(examples) &&
-        examples.every((item) => typeof item === 'string')
-      ) {
-        const finalExamples = examples.slice(0, 5);
-        // Cache the result
-        cacheSet(cacheKey, JSON.stringify(finalExamples));
-        return finalExamples;
-      }
+        let jsonText = text.trim();
+        if (jsonText.startsWith('```json')) {
+          jsonText = jsonText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+        } else if (jsonText.startsWith('```')) {
+          jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+        }
 
-      throw new Error('Invalid response format');
-    } catch (error) {
-      // Check if it's a daily quota error (don't retry, quota won't reset until tomorrow)
-      const errorStatus = (error as { status?: number })?.status;
-      if (errorStatus === 429) {
-        const errorString = JSON.stringify(error);
-        const isDailyQuota =
-          errorString.includes('GenerateRequestsPerDayPerProjectPerModel') ||
-          errorString.includes('free_tier_requests') ||
-          errorString.includes('quotaValue');
+        const examples = JSON.parse(jsonText) as string[];
 
-        if (isDailyQuota) {
-          // Don't retry daily quota errors - they won't reset until tomorrow
+        if (
+          Array.isArray(examples) &&
+          examples.every((item) => typeof item === 'string')
+        ) {
+          const finalExamples = examples.slice(0, 5);
+          cacheSet(cacheKey, JSON.stringify(finalExamples));
+          return finalExamples;
+        }
+
+        throw new Error('Invalid response format');
+      } catch (error) {
+        lastError = error;
+        const errorStatus = (error as { status?: number })?.status;
+        if (errorStatus === 429) {
+          const errorString = JSON.stringify(error);
+          const isDailyQuota =
+            errorString.includes('GenerateRequestsPerDayPerProjectPerModel') ||
+            errorString.includes('free_tier_requests') ||
+            errorString.includes('quotaValue');
+
+          if (isDailyQuota) {
+            if (
+              keyIdx < geminiApiKeys.length - 1 &&
+              shouldRotateGeminiKey(error)
+            ) {
+              logError(error, {
+                generateExamplesKeyFallback: true,
+                keyIndex: keyIdx,
+              });
+              break;
+            }
+            throw error;
+          }
+        }
+
+        if (attempt === maxRetries) {
+          if (
+            keyIdx < geminiApiKeys.length - 1 &&
+            shouldRotateGeminiKey(error)
+          ) {
+            logError(error, {
+              generateExamplesKeyFallback: true,
+              keyIndex: keyIdx,
+            });
+            break;
+          }
           throw error;
         }
+        const waitTime = calculateRetryDelay(attempt - 1);
+        console.log(
+          `Error on attempt ${attempt}. Retrying in ${Math.ceil(waitTime / 1000)}s... (${attempt}/${maxRetries})`
+        );
+        await delay(waitTime);
       }
-
-      if (attempt === maxRetries) {
-        throw error;
-      }
-      // Calculate retry delay based on rate limits
-      const waitTime = calculateRetryDelay(attempt - 1);
-      console.log(
-        `Error on attempt ${attempt}. Retrying in ${Math.ceil(waitTime / 1000)}s... (${attempt}/${maxRetries})`
-      );
-      await delay(waitTime);
     }
   }
 
-  // Fallback examples if all retries fail
-  return [
-    'Increase my royalty percentage from 15% to 25%',
-    'Add a clause giving me creative control over my music',
-    'Extend the contract term to 3 years with option to renew',
-    'Remove the exclusivity clause',
-  ];
+  throw lastError ?? new Error('Failed to generate examples');
 }
 
 export async function POST(req: NextRequest) {

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI } from '@google/genai';
 import {
   corsHeaders,
   getApiKey,
+  getGeminiApiKeys,
   handleError,
   cacheGet,
   cacheSet,
@@ -14,8 +14,10 @@ import { validate, reviseContractRequestSchema } from '@/lib/validation';
 // Set max duration for Vercel serverless function (60 seconds)
 export const maxDuration = 60;
 
-const apiKey = getApiKey();
-const ai = new GoogleGenAI({ apiKey });
+const geminiApiKeys = getGeminiApiKeys();
+if (geminiApiKeys.length === 0) {
+  getApiKey();
+}
 
 const SYSTEM_MESSAGE = `You are an expert seasoned music industry lawyer specialized in revising music industry contracts in favor of various music professionals, including artists, producers, performers, songwriters, and managers. Your task is to rewrite the given contract based on the provided instructions, making it more favorable for the specific music professional while still maintaining a fair and legal agreement. 
 
@@ -47,7 +49,7 @@ async function generateContent(content: string[]): Promise<string> {
   }
 
   const contentString = content.join('\n\n');
-  const response = await generateWithRetry(ai, contentString);
+  const response = await generateWithRetry(geminiApiKeys, contentString);
 
   cacheSet(cacheKey, response);
   return response;

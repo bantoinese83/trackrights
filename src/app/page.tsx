@@ -10,6 +10,11 @@ import { ComicBanner } from '@/components/ComicBanner';
 import { ContractList } from '@/components/ContractList';
 import { jsonLdScriptProps } from 'react-schemaorg';
 import { FAQ } from '@/components/FAQ';
+import { AdSenseLoader } from '@/components/AdSenseLoader';
+import { getAdSenseClientId } from '@/lib/adsense-config';
+import { SITE_URL } from '@/lib/site-config';
+
+const adSenseClientId = getAdSenseClientId();
 
 // Metadata for the page
 export const metadata: Metadata = {
@@ -218,11 +223,11 @@ export const metadata: Metadata = {
     title: 'TrackRights - AI Contract Analysis for Creative Professionals',
     description:
       'Analyze and understand your contracts with AI. Free, instant, and designed for music professionals, streamers, influencers, and all creative professionals.',
-    url: 'https://trackrights.com',
+    url: SITE_URL,
     siteName: 'TrackRights',
     images: [
       {
-        url: 'https://trackrights.com/og-image.jpg',
+        url: `${SITE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
         alt: 'TrackRights AI Contract Analysis',
@@ -236,7 +241,7 @@ export const metadata: Metadata = {
     title: 'TrackRights - AI Music Contract Analysis',
     description:
       'Analyze and understand your music contracts with AI. Free, instant, and designed for all music industry professionals.',
-    images: ['https://trackrights.com/twitter-image.jpg'],
+    images: [`${SITE_URL}/twitter-image.jpg`],
     creator: '@trackrights',
   },
   robots: {
@@ -251,19 +256,24 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: 'https://trackrights.com',
+    canonical: SITE_URL,
   },
+  ...(adSenseClientId
+    ? { other: { 'google-adsense-account': adSenseClientId } }
+    : {}),
 };
 
 export default function Home() {
   return (
     <>
+      {adSenseClientId ? <AdSenseLoader clientId={adSenseClientId} /> : null}
       {/* Schema.org structured data */}
       <script
         {...jsonLdScriptProps({
           '@context': 'https://schema.org',
           '@type': 'WebApplication',
           name: 'TrackRights',
+          url: SITE_URL,
           applicationCategory: 'Business',
           description:
             'AI-powered music contract analysis tool for artists, producers, songwriters, managers, and all music industry professionals',
@@ -280,20 +290,6 @@ export default function Home() {
             'Royalty Calculations',
             'Contract Generation',
             'Live Lawyer - Real-Time AI Consultation',
-          ],
-        })}
-      />
-      <script
-        {...jsonLdScriptProps({
-          '@context': 'https://schema.org',
-          '@type': 'Organization',
-          name: 'TrackRights',
-          url: 'https://trackrights.com',
-          logo: 'https://trackrights.com/logo.png',
-          sameAs: [
-            'https://twitter.com/trackrights',
-            'https://www.facebook.com/trackrights',
-            'https://www.linkedin.com/company/trackrights',
           ],
         })}
       />

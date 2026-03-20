@@ -32,16 +32,40 @@ export function corsHeaders(req?: NextRequest): Record<string, string> {
   };
 }
 
+function normalizeGeminiKey(value: string | undefined): string | null {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : null;
+}
+
+/**
+ * Ordered Gemini API keys: primary {@code GEMINI_API_KEY}, then fallback {@code GEMINI_API_KEY_1}.
+ */
+export function getGeminiApiKeys(): string[] {
+  return [
+    normalizeGeminiKey(process.env['GEMINI_API_KEY']),
+    normalizeGeminiKey(process.env['GEMINI_API_KEY_1']),
+  ].filter((k): k is string => k !== null);
+}
+
+/** First available key (primary, then {@code GEMINI_API_KEY_1}). */
 export function getApiKey(): string {
-  const envApiKey = process.env['GEMINI_API_KEY'];
-  if (!envApiKey || envApiKey.trim() === '') {
+  const keys = getGeminiApiKeys();
+  if (keys.length === 0) {
     throw new AppError(
-      'GEMINI_API_KEY is not configured. Please set it in environment variables.',
+      'No Gemini API key configured. Set GEMINI_API_KEY or GEMINI_API_KEY_1 in environment variables.',
       500,
       'MISSING_API_KEY'
     );
   }
-  return envApiKey;
+  const primary = keys[0];
+  if (primary === undefined) {
+    throw new AppError(
+      'No Gemini API key configured. Set GEMINI_API_KEY or GEMINI_API_KEY_1 in environment variables.',
+      500,
+      'MISSING_API_KEY'
+    );
+  }
+  return primary;
 }
 
 /**

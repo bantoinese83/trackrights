@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI } from '@google/genai';
 import {
   getApiKey,
+  getGeminiApiKeys,
   handleError,
   corsHeaders,
   cacheGet,
@@ -15,8 +15,10 @@ import { validate, simplifyContractRequestSchema } from '@/lib/validation';
 // Set max duration for Vercel serverless function (60 seconds)
 export const maxDuration = 60;
 
-const apiKey = getApiKey();
-const ai = new GoogleGenAI({ apiKey });
+const geminiApiKeys = getGeminiApiKeys();
+if (geminiApiKeys.length === 0) {
+  getApiKey();
+}
 
 const SYSTEM_MESSAGE = `You are an AI assistant specialized in analyzing and simplifying music industry contracts. Your task is to provide a comprehensive analysis of the given contract text for various music industry professionals, including but not limited to artists, producers, performers, songwriters, and managers. Follow these guidelines:
 
@@ -126,7 +128,7 @@ async function generateContent(content: Content[]): Promise<string> {
   }
 
   const contentArray = content.map((item) => item.text || '').filter(Boolean);
-  const response = await generateWithRetry(ai, contentArray);
+  const response = await generateWithRetry(geminiApiKeys, contentArray);
 
   cacheSet(cacheKey, response);
   return response;

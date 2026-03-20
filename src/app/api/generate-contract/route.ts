@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI } from '@google/genai';
 import {
   corsHeaders,
   getApiKey,
+  getGeminiApiKeys,
   handleError,
   cacheGet,
   cacheSet,
@@ -13,8 +13,10 @@ import { validate, generateContractRequestSchema } from '@/lib/validation';
 // Set max duration for Vercel serverless function (60 seconds)
 export const maxDuration = 60;
 
-const apiKey = getApiKey();
-const ai = new GoogleGenAI({ apiKey });
+const geminiApiKeys = getGeminiApiKeys();
+if (geminiApiKeys.length === 0) {
+  getApiKey();
+}
 
 const SYSTEM_MESSAGE = `You are an AI specialized in generating music industry contracts. Your task is to create a complete, professional contract based on the provided details and contract type. 
 
@@ -41,7 +43,7 @@ async function generateContent(content: string[]): Promise<string> {
   }
 
   const contentString = content.join('\n\n');
-  const response = await generateWithRetry(ai, contentString);
+  const response = await generateWithRetry(geminiApiKeys, contentString);
 
   cacheSet(cacheKey, response);
   return response;

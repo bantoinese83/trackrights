@@ -15,6 +15,7 @@ TrackRights should expand to serve streamers and influencers. This represents a 
 5. **Marketing Advantage**: Creators have built-in audiences for organic growth
 
 ### Market Size
+
 - **Twitch**: 7+ million active streamers
 - **YouTube**: 50+ million creators
 - **TikTok**: Millions of content creators
@@ -28,6 +29,7 @@ TrackRights should expand to serve streamers and influencers. This represents a 
 Add new contract types to `src/lib/contracts.ts`:
 
 #### Brand Sponsorship Agreement
+
 - Campaign details
 - Payment terms
 - Content requirements
@@ -36,12 +38,14 @@ Add new contract types to `src/lib/contracts.ts`:
 - FTC compliance requirements
 
 #### Platform Partnership Agreement
+
 - Revenue share terms
 - Exclusivity requirements
 - Content ownership
 - Platform-specific terms (Twitch, YouTube, TikTok)
 
 #### Influencer Management Contract
+
 - Management fees
 - Term length
 - Services provided
@@ -49,12 +53,14 @@ Add new contract types to `src/lib/contracts.ts`:
 - Commission structure
 
 #### Collaboration Agreement
+
 - Content collaboration terms
 - Revenue sharing
 - Credit requirements
 - Usage rights
 
 #### Merchandise Licensing Deal
+
 - Royalty rates
 - Territory
 - Term length
@@ -63,17 +69,22 @@ Add new contract types to `src/lib/contracts.ts`:
 ### 2. Marketing Updates
 
 #### Update Hero Section
+
 **Current**: "Perfect for artists, producers, songwriters, managers..."
 **New**: "Perfect for artists, producers, songwriters, streamers, influencers, managers, and all creative professionals."
 
 #### Update Features Section
+
 Add:
+
 - "Streamer & Influencer Focused"
 - "Brand Deal Analysis"
 - "Platform Agreement Review"
 
 #### Update SEO Keywords
+
 Add to `src/app/page.tsx`:
+
 - 'streamer contract analysis'
 - 'influencer contract review'
 - 'sponsorship agreement checker'
@@ -84,7 +95,9 @@ Add to `src/app/page.tsx`:
 - 'influencer management contract'
 
 #### Update Testimonials
+
 Add testimonials from:
+
 - Twitch streamers
 - YouTube creators
 - TikTok influencers
@@ -93,11 +106,13 @@ Add testimonials from:
 ### 3. Feature Enhancements (Optional)
 
 #### Revenue Calculator for Creators
+
 - Sponsorship rate calculator
 - Platform revenue calculator (Twitch subs, YouTube ads, etc.)
 - Brand deal value estimator
 
 #### Platform-Specific Analysis
+
 - Twitch partnership terms
 - YouTube Partner Program analysis
 - TikTok Creator Fund terms
@@ -105,23 +120,27 @@ Add testimonials from:
 ## Implementation Phases
 
 ### Phase 1: Quick Win (1-2 weeks)
+
 - ✅ Update marketing copy to include streamers/influencers
 - ✅ Add SEO keywords
 - ✅ Update hero/features sections
 - ✅ Test existing AI analysis on influencer contracts (it should work!)
 
 ### Phase 2: Contract Templates (2-4 weeks)
+
 - Add brand sponsorship agreement template
 - Add platform partnership agreement template
 - Add influencer management contract template
 - Update contract generation system
 
 ### Phase 3: Enhanced Features (4-8 weeks)
+
 - Add creator revenue calculator
 - Platform-specific contract analysis
 - Creator-focused FAQ section
 
 ### Phase 4: Marketing Push (Ongoing)
+
 - Reach out to streamers/influencers for testimonials
 - Create content marketing for creator community
 - Partner with creator-focused platforms
@@ -130,6 +149,7 @@ Add testimonials from:
 ## Marketing Channels
 
 ### Primary Channels
+
 1. **Twitch**: Partner with streamers for sponsored content
 2. **YouTube**: Create educational content about creator contracts
 3. **TikTok**: Short-form educational videos
@@ -137,6 +157,7 @@ Add testimonials from:
 5. **Reddit**: r/Twitch, r/youtubers, r/influencermarketing
 
 ### Content Ideas
+
 - "5 Red Flags in Brand Sponsorship Contracts"
 - "How to Negotiate Better Twitch Partnership Terms"
 - "Understanding Your YouTube Contract"
@@ -145,6 +166,7 @@ Add testimonials from:
 ## Competitive Advantage
 
 ### Why TrackRights Wins
+
 1. **Free**: Most legal services charge $200-500/hour
 2. **AI-Powered**: Instant analysis vs. waiting for lawyers
 3. **Plain Language**: No legal jargon
@@ -154,6 +176,7 @@ Add testimonials from:
 ## Success Metrics
 
 ### Key Performance Indicators
+
 - % of users who are streamers/influencers
 - Number of creator contract analyses
 - Organic traffic from creator keywords
@@ -163,12 +186,15 @@ Add testimonials from:
 ## Risks & Mitigation
 
 ### Risk 1: Diluting Brand Focus
+
 **Mitigation**: Position as "creative professionals" umbrella, not abandoning music focus
 
 ### Risk 2: Different Contract Types
+
 **Mitigation**: AI analysis is generic enough to work, just need templates
 
 ### Risk 3: Marketing Costs
+
 **Mitigation**: Start with organic content, partner with creators for exposure
 
 ## Recommendation
