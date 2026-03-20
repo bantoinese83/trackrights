@@ -122,6 +122,8 @@ npm run quality-gate   # type-check, lint (0 warnings), Prettier, Knip, producti
 npm run analyze        # bundle analysis (set ANALYZE=true via npm script)
 ```
 
+**Husky:** `pre-commit` runs **lint-staged**; **`pre-push` runs `quality-gate`** so `main` stays green. Run `npm install` after clone so the `prepare` script registers hooks.
+
 See **`QUALITY_STATUS.md`** for what each step covers and Knip notes.
 
 ### Environment Variables
