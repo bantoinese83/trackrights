@@ -9,6 +9,20 @@ const nextConfig = {
     config.resolve.alias.canvas = false;
     return config;
   },
+  async redirects() {
+    return [
+      {
+        source: '/favicon.ico',
+        destination: '/icon.svg',
+        permanent: true,
+      },
+      {
+        source: '/favicon-16x16.png',
+        destination: '/icon.svg',
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

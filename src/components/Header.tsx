@@ -10,6 +10,7 @@ import {
   LayoutList,
   MessageCircle,
   HelpCircle,
+  ShieldAlert,
 } from 'lucide-react';
 import { jsonLdScriptProps } from 'react-schemaorg';
 import { InfiniteCarousel } from './InfiniteCarousel';
@@ -179,6 +180,13 @@ export function Header() {
                 <HelpCircle className="w-4 h-4 mr-2" aria-hidden="true" />
                 <span>FAQ</span>
               </button>
+              <Link
+                href="/bad-contract-guide"
+                className="text-sm hover:text-purple-200 flex items-center font-sans"
+              >
+                <ShieldAlert className="w-4 h-4 mr-2" aria-hidden="true" />
+                <span>Red flags</span>
+              </Link>
             </nav>
             <div className="hidden md:block"></div>
             <div className="hidden md:flex items-center space-x-4">
@@ -257,6 +265,14 @@ export function Header() {
               <HelpCircle className="w-4 h-4 mr-2" aria-hidden="true" />
               <span>FAQ</span>
             </button>
+            <Link
+              href="/bad-contract-guide"
+              className="text-white hover:text-purple-200 flex items-center font-sans"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <ShieldAlert className="w-4 h-4 mr-2" aria-hidden="true" />
+              <span>Red flags</span>
+            </Link>
           </nav>
         </div>
       )}

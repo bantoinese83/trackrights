@@ -60,10 +60,8 @@ export function HeroTitle({ title, description, className }: HeroTitleProps) {
         transition={{ duration: 0.5 }}
         className={`text-center mb-12 ${className}`} // Use className here
       >
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white leading-tight">
-          {title}
-        </h1>
-        <p className="text-lg md:text-xl text-purple-100/90 mb-6 leading-relaxed max-w-2xl mx-auto">
+        <h1 className="text-white leading-tight mb-4">{title}</h1>
+        <p className="text-lead text-purple-100/90 mb-6 max-w-2xl mx-auto">
           {description}
         </p>
         <motion.div

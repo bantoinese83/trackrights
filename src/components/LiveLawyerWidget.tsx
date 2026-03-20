@@ -579,8 +579,18 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
       }) => void;
     }) => {
       try {
+        const mediaDevices = navigator?.mediaDevices;
+        if (!mediaDevices || typeof mediaDevices.getUserMedia !== 'function') {
+          const msg =
+            typeof window !== 'undefined' && window.isSecureContext === false
+              ? 'Voice needs a secure page (https). Open the site with https and try again.'
+              : "Microphone isn't available here. Try another browser or device, or check site permissions.";
+          setError(msg);
+          throw new Error(msg);
+        }
+
         // Request microphone access
-        const stream = await navigator.mediaDevices.getUserMedia({
+        const stream = await mediaDevices.getUserMedia({
           audio: {
             sampleRate: 16000,
             channelCount: 1,
@@ -746,15 +756,10 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
             : 'Failed to access microphone';
 
         setError(errorMessage);
-        toast({
-          title: 'Microphone Error',
-          description: errorMessage,
-          variant: 'destructive',
-        });
         throw err;
       }
     },
-    [isMuted, isConnected, toast]
+    [isMuted, isConnected, setError]
   );
 
   // Start audio playback with robust error handling
@@ -1093,8 +1098,13 @@ export function LiveLawyerWidget({ className }: LiveLawyerWidgetProps) {
         setIsConnected(false);
         setIsListening(false);
 
+        const micRelated =
+          /microphone|Microphone|https|secure page|NotAllowedError|NotFoundError|Permission denied/i.test(
+            errorMessage
+          );
+
         toast({
-          title: 'Connection Error',
+          title: micRelated ? "Can't use microphone" : 'Connection Error',
           description: errorMessage,
           variant: 'destructive',
         });

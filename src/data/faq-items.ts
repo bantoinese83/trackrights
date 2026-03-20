@@ -1,3 +1,5 @@
+import { SITE_URL } from '@/lib/site-config';
+
 export interface FaqItem {
   question: string;
   answer: string;
@@ -44,5 +46,9 @@ export const faqItems: FaqItem[] = [
     question: 'Is there a limit to how many contracts I can analyze?',
     answer:
       'Our free tier allows for a limited number of contract analyses per month. For users who need to analyze more contracts, we offer premium plans with higher or unlimited usage.',
+  },
+  {
+    question: 'What red flags should I look for in a music contract?',
+    answer: `Watch for one-sided long terms and options, broad master ownership, heavy royalty deductions and reserves, 360-style income shares, recoupment only from your share, vague "commercially satisfactory" delivery, suspension clauses, perpetual name and likeness rights, and forum or fee rules that favor the other side. Our plain-language guide walks through example language and what fairer deals often include: ${SITE_URL}/bad-contract-guide — still have an entertainment attorney review anything before you sign.`,
   },
 ];

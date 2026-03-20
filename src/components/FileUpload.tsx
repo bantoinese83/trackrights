@@ -138,7 +138,7 @@ export function FileUpload() {
       {isFileUpload ? (
         <motion.form
           onSubmit={handleSubmit}
-          className="w-full max-w-3xl mx-auto px-4 sm:px-6 py-6 rounded-xl backdrop-blur-lg bg-white/10 border border-white/20 shadow-xl"
+          className="w-full max-w-3xl mx-auto px-4 sm:px-6 py-6 rounded-2xl backdrop-blur-lg bg-card/40 border border-border shadow-2xl"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
@@ -150,30 +150,37 @@ export function FileUpload() {
             <div className="flex items-center justify-center w-full">
               <label
                 htmlFor="contract"
-                className="flex flex-col items-center justify-center w-full min-h-[300px] border-2 border-purple-300 border-dashed rounded-xl cursor-pointer bg-white hover:bg-purple-50 transition-colors duration-300 relative z-10"
+                className="flex flex-col items-center justify-center w-full min-h-[300px] border-2 border-primary/30 border-dashed rounded-xl cursor-pointer bg-card/50 hover:bg-primary/5 transition-all duration-300 relative z-10 group"
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center">
-                  <Music className="w-12 h-12 mb-3 text-purple-500" />
-                  <Upload className="w-10 h-10 mb-3 text-purple-500" />
-                  <p className="mb-2 text-sm text-gray-600 font-medium">
-                    <span className="font-semibold">Click to upload</span> or
-                    drag and drop
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                  >
+                    <Music className="w-12 h-12 mb-3 text-primary/70 group-hover:text-primary transition-colors duration-300" />
+                  </motion.div>
+                  <Upload className="w-10 h-10 mb-4 text-primary/50 group-hover:text-primary transition-colors duration-300" />
+                  <p className="mb-2 text-base text-foreground font-medium">
+                    <span className="font-semibold text-primary">
+                      Click to upload
+                    </span>{' '}
+                    or drag and drop
                   </p>
-                  <p className="text-xs text-gray-500 mb-2">
+                  <p className="text-sm text-muted-foreground mb-4">
                     PDF, DOCX, TXT (MAX. 10MB)
                   </p>
-                  <p className="text-xs text-purple-600 font-medium">
+                  <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
                     Your files are processed securely and never stored
-                  </p>
+                  </div>
                   {file && (
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200"
+                      initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      className="mt-6 p-4 bg-primary/10 rounded-xl border border-primary/20 w-full max-w-sm"
                     >
-                      <div className="text-sm text-purple-700 font-medium flex items-center justify-between">
-                        <span>✓ {file.name}</span>
-                        <span className="text-xs text-purple-500">
+                      <div className="text-sm text-primary font-medium flex items-center justify-between">
+                        <span className="truncate mr-4">✓ {file.name}</span>
+                        <span className="text-xs text-primary/70 flex-shrink-0">
                           {(file.size / 1024 / 1024).toFixed(2)} MB
                         </span>
                       </div>
@@ -195,9 +202,10 @@ export function FileUpload() {
             <div className="flex justify-center">
               <Button
                 type="submit"
-                className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-full transform transition-all duration-200 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100"
+                size="lg"
+                className="w-full sm:w-auto font-semibold py-6 px-10 rounded-full transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/25 disabled:opacity-50 disabled:hover:scale-100 text-base"
               >
-                <Wand2 className="w-4 h-4 mr-2" />
+                <Wand2 className="w-5 h-5 mr-2" />
                 Analyze Contract
               </Button>
             </div>

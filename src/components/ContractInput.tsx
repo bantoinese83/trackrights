@@ -98,7 +98,7 @@ export function ContractInput() {
   return (
     <motion.form
       onSubmit={handleSubmit}
-      className="w-full max-w-3xl mx-auto px-4 sm:px-6 py-6 rounded-xl backdrop-blur-lg bg-white/10 border border-white/20 shadow-xl"
+      className="w-full max-w-3xl mx-auto px-4 sm:px-6 py-6 rounded-2xl backdrop-blur-lg bg-card/40 border border-border shadow-2xl"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -110,13 +110,13 @@ export function ContractInput() {
           value={contractText}
           onChange={(e) => handleInputChange('contractText', e.target.value)}
           onKeyDown={handleKeyDown}
-          className="w-full min-h-[300px] mb-6 p-4 bg-white/95 rounded-lg border-2 border-white/30 focus:border-purple-400 focus:ring-2 focus:ring-purple-300/50 placeholder:text-gray-400 text-gray-800 resize-y transition-all duration-200 shadow-lg"
+          className="w-full min-h-[300px] mb-6 p-4 bg-card/60 backdrop-blur-sm rounded-xl border-2 border-primary/20 focus:border-primary focus:ring-2 focus:ring-primary/30 placeholder:text-muted-foreground text-foreground resize-y transition-all duration-300 shadow-inner text-base"
           required
           aria-invalid={hasError}
           aria-describedby={hasError ? 'contract-error' : undefined}
         />
         {contractText && (
-          <div className="absolute bottom-8 right-4 text-xs text-gray-500 bg-white/80 px-2 py-1 rounded">
+          <div className="absolute bottom-8 right-4 text-xs text-muted-foreground bg-background/80 backdrop-blur-sm px-2 py-1 rounded-md border border-border/50">
             {contractText.length.toLocaleString()} characters
           </div>
         )}
@@ -125,10 +125,11 @@ export function ContractInput() {
         <div className="flex justify-center">
           <Button
             type="submit"
-            className="w-full sm:w-auto bg-white text-purple-900 hover:bg-purple-50 font-semibold py-3 px-8 rounded-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:hover:scale-100 shadow-lg"
+            size="lg"
+            className="w-full sm:w-auto font-semibold py-6 px-10 rounded-full transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/25 disabled:opacity-50 disabled:hover:scale-100 text-base"
             disabled={!contractText.trim()}
           >
-            <Wand2 className="w-4 h-4 mr-2" />
+            <Wand2 className="w-5 h-5 mr-2" />
             Analyze Contract
           </Button>
         </div>

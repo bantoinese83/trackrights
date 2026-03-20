@@ -16,55 +16,55 @@ import { useState, useRef, useEffect } from 'react';
 
 const features = [
   {
-    icon: <Mic className="h-10 w-10 text-purple-600" />,
+    icon: <Mic className="h-10 w-10 text-primary" />,
     title: 'Creative Professional Focused',
     description:
       'Tailored analysis for artists, producers, songwriters, streamers, influencers, managers, labels, publishers, and all creative professionals.',
   },
   {
-    icon: <FileText className="h-10 w-10 text-purple-600" />,
+    icon: <FileText className="h-10 w-10 text-primary" />,
     title: 'Plain English Explanations',
     description:
       'Complex legal terms simplified for easy understanding by all creative professionals, from musicians to streamers and influencers.',
   },
   {
-    icon: <Zap className="h-10 w-10 text-purple-600" />,
+    icon: <Zap className="h-10 w-10 text-primary" />,
     title: 'Instant Analysis',
     description:
       'Get your contract breakdown in seconds, not days, regardless of your role in the industry.',
   },
   {
-    icon: <DollarSign className="h-10 w-10 text-purple-600" />,
+    icon: <DollarSign className="h-10 w-10 text-primary" />,
     title: 'Royalty & Payment Clarification',
     description:
       "Understand your earnings and payment structures clearly, whether you're an artist, producer, songwriter, streamer, influencer, manager, or any creative professional.",
   },
   {
-    icon: <Shield className="h-10 w-10 text-purple-600" />,
+    icon: <Shield className="h-10 w-10 text-primary" />,
     title: 'Rights Protection',
     description:
       'Identify clauses that may impact your creative control and intellectual property rights.',
   },
   {
-    icon: <Edit2 className="h-10 w-10 text-purple-600" />,
+    icon: <Edit2 className="h-10 w-10 text-primary" />,
     title: 'AI-Powered Contract Revision',
     description:
       'Get suggestions for contract revisions that favor your specific role, whether in music, streaming, or influencer marketing.',
   },
   {
-    icon: <Phone className="h-10 w-10 text-purple-600" />,
+    icon: <Phone className="h-10 w-10 text-primary" />,
     title: 'Live Lawyer - Real-Time AI Consultation',
     description:
       'Have a real-time voice conversation with an AI lawyer about your contract. Ask questions and get instant audio responses.',
   },
   {
-    icon: <GitCompare className="h-10 w-10 text-purple-600" />,
+    icon: <GitCompare className="h-10 w-10 text-primary" />,
     title: 'Contract Comparison',
     description:
       'Compare multiple contract versions side-by-side to understand changes and negotiate better terms for your creative career.',
   },
   {
-    icon: <Lock className="h-10 w-10 text-purple-600" />,
+    icon: <Lock className="h-10 w-10 text-primary" />,
     title: 'Secure & Private',
     description:
       'Your contracts and sensitive information are encrypted and kept completely private. We never share your data with third parties.',
@@ -115,45 +115,50 @@ export function Features({ id }: { id?: string }) {
     <section
       id={id}
       ref={sectionRef}
-      className="py-24 md:py-32 bg-white relative overflow-hidden min-h-[80vh]"
+      className="py-24 md:py-32 bg-background relative overflow-hidden min-h-[80vh]"
     >
       <div className="container mx-auto px-4 md:px-6">
-        <div className="text-center mb-16 md:mb-24">
+        <motion.div
+          className="text-center mb-16 md:mb-24"
+          initial={{ opacity: 0, y: -20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+          transition={{ duration: 0.6 }}
+        >
           <h2
-            className="text-3xl md:text-4xl lg:text-5xl font-normal text-purple-600 font-salome"
+            className="text-3xl md:text-4xl lg:text-5xl font-normal text-primary font-salome"
             style={{
               color: 'transparent',
-              WebkitTextStroke: '2px rgba(128, 90, 213, 0.8)',
+              WebkitTextStroke: '2px hsl(var(--primary))',
             }}
           >
             Features for All Creative Professionals
           </h2>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 items-stretch">
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer flex flex-col h-full"
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              className="bg-card text-card-foreground p-6 rounded-xl shadow-lg border border-border/50 hover:shadow-primary/10 transition-all duration-300 cursor-pointer flex flex-col h-full group"
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{
-                duration: 0.8,
+                duration: 0.6,
                 delay: index * 0.1,
-                ease: 'easeInOut',
+                ease: [0.22, 1, 0.36, 1], // Custom easing for spring-like feel
               }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ y: -5, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               <div className="flex items-center mb-4">
-                <div className="mr-4 bg-purple-100 rounded-full p-3">
+                <div className="mr-4 bg-primary/10 group-hover:bg-primary/20 transition-colors rounded-full p-3">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl md:text-2xl font-semibold text-purple-700">
+                <h3 className="text-xl md:text-2xl font-semibold text-foreground group-hover:text-primary transition-colors">
                   {feature.title}
                 </h3>
               </div>
-              <p className="text-base md:text-lg text-gray-600 flex-grow">
+              <p className="text-base md:text-lg text-muted-foreground flex-grow leading-relaxed">
                 {feature.description}
               </p>
             </motion.div>

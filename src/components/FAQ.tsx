@@ -54,6 +54,11 @@ const faqItems = [
     answer:
       'Live Lawyer is our real-time AI consultation feature. After analyzing your contract, you can have a voice conversation with our AI lawyer to ask questions about your contract. Simply click "Start Call" in the Live Lawyer widget, allow microphone access, and speak naturally. The AI will respond with audio answers, referencing your contract analysis. This feature uses advanced voice AI technology to provide instant, conversational legal guidance.',
   },
+  {
+    question: 'What red flags should I look for in a music contract?',
+    answer:
+      'Watch for one-sided long terms and options, broad master ownership, heavy royalty deductions and reserves, 360-style income shares, recoupment only from your share, vague "commercially satisfactory" delivery, suspension clauses, perpetual name and likeness rights, and forum or fee rules that favor the other side. Our Red flags guide (main menu) walks through example language and what fairer deals often include — still have an entertainment attorney review anything before you sign.',
+  },
 ];
 
 export function FAQ({ id }: { id?: string }) {
@@ -77,10 +82,10 @@ export function FAQ({ id }: { id?: string }) {
   };
 
   return (
-    <section id={id} className="py-24 bg-white text-gray-800">
+    <section id={id} className="py-24 bg-background text-foreground">
       <div className="container mx-auto px-4">
         <motion.h2
-          className="text-4xl md:text-5xl font-bold mb-12 text-center text-gray-800"
+          className="text-center mb-12"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -89,19 +94,19 @@ export function FAQ({ id }: { id?: string }) {
         </motion.h2>
 
         <motion.div
-          className="max-w-2xl mx-auto mb-8"
+          className="max-w-2xl mx-auto mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <div className="relative group">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <Input
               type="text"
               placeholder="Search FAQs..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white/10 text-gray-800 placeholder-gray-300"
+              className="pl-10 pr-4 py-6 w-full border-2 border-border/50 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 bg-card/50 text-foreground placeholder:text-muted-foreground transition-all shadow-sm"
             />
           </div>
         </motion.div>
@@ -109,7 +114,7 @@ export function FAQ({ id }: { id?: string }) {
         <AnimatePresence>
           {filteredFAQs.length > 0 ? (
             <motion.div
-              className="space-y-4"
+              className="grid gap-4 max-w-4xl mx-auto"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -120,20 +125,20 @@ export function FAQ({ id }: { id?: string }) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-gray-100 backdrop-blur-sm rounded-lg overflow-hidden"
+                  className="bg-card/40 backdrop-blur-sm rounded-xl border border-border/50 overflow-hidden hover:border-primary/30 transition-colors shadow-sm"
                 >
                   <Button
                     variant="ghost"
                     onClick={() => toggleQuestion(index)}
-                    className="w-full text-left p-4 flex justify-between items-center hover:bg-gray-200"
+                    className="w-full text-left p-6 h-auto flex justify-between items-center hover:bg-primary/5 group"
                   >
-                    <span className="text-lg font-semibold text-gray-800">
+                    <span className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors pr-8">
                       {item.question}
                     </span>
                     {expandedIndex === index ? (
-                      <ChevronUp className="h-5 w-5" />
+                      <ChevronUp className="h-5 w-5 text-primary" />
                     ) : (
-                      <ChevronDown className="h-5 w-5" />
+                      <ChevronDown className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
                     )}
                   </Button>
                   <AnimatePresence>
@@ -143,9 +148,11 @@ export function FAQ({ id }: { id?: string }) {
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="px-4 pb-4"
+                        className="px-6 pb-6"
                       >
-                        <p className="text-gray-600">{item.answer}</p>
+                        <p className="text-muted-foreground leading-relaxed pt-2 border-t border-border/30">
+                          {item.answer}
+                        </p>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -154,7 +161,7 @@ export function FAQ({ id }: { id?: string }) {
             </motion.div>
           ) : (
             <motion.p
-              className="text-center text-gray-600 mt-8"
+              className="text-center text-muted-foreground mt-12 text-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
