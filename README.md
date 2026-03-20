@@ -128,15 +128,14 @@ See **`QUALITY_STATUS.md`** for what each step covers and Knip notes.
 
 ### Environment Variables
 
-| Variable                               | Description                                                                | Required                |
-| -------------------------------------- | -------------------------------------------------------------------------- | ----------------------- |
-| `GEMINI_API_KEY`                       | Primary Google Gemini API key                                              | ✅ Yes                  |
-| `GEMINI_API_KEY_1`                     | Fallback Gemini key (used if primary fails quota/auth/rate limits)         | ⚠️ Optional             |
-| `DATABASE_URL`                         | Neon PostgreSQL connection string                                          | ⚠️ Optional (for stats) |
-| `ALLOWED_ORIGINS`                      | Comma-separated list of allowed CORS origins                               | ❌ No (has defaults)    |
-| `NEXT_PUBLIC_ADSENSE_CLIENT_ID`        | Google AdSense publisher id (`ca-pub-…`); empty string disables the script | ❌ No (has default)     |
-| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console HTML-tag verification token                                 | ❌ No                   |
-| `NODE_ENV`                             | Environment (development/production)                                       | ❌ No                   |
+| Variable                               | Description                                                        | Required                |
+| -------------------------------------- | ------------------------------------------------------------------ | ----------------------- |
+| `GEMINI_API_KEY`                       | Primary Google Gemini API key                                      | ✅ Yes                  |
+| `GEMINI_API_KEY_1`                     | Fallback Gemini key (used if primary fails quota/auth/rate limits) | ⚠️ Optional             |
+| `DATABASE_URL`                         | Neon PostgreSQL connection string                                  | ⚠️ Optional (for stats) |
+| `ALLOWED_ORIGINS`                      | Comma-separated list of allowed CORS origins                       | ❌ No (has defaults)    |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console HTML-tag verification token                         | ❌ No                   |
+| `NODE_ENV`                             | Environment (development/production)                               | ❌ No                   |
 
 ### SEO
 
@@ -144,7 +143,7 @@ The app exposes **`/sitemap.xml`** and **`/robots.txt`** (via `src/app/sitemap.t
 
 ### Google AdSense
 
-AdSense is **not** loaded site-wide. The AdSense script runs only on **high-content** routes (home and `/faq`). The `google-adsense-account` meta is set on the **home page** only so Google does not associate auto ads with thin or utility pages (for example `/cookies` or 404s), per [AdSense program policies](https://support.google.com/adsense/answer/48182). **`ads.txt`** is served statically from `public/ads.txt` at `/ads.txt` (the old rewrite to a missing API route was removed).
+**Publisher declaration** uses **`ads.txt`** only: `public/ads.txt` is served at **`https://<your-domain>/ads.txt`**. In AdSense, choose the **ads.txt** verification option and use the line Google provides (committed line: `google.com, pub-2126374418379576, DIRECT, f08c47fec0942fa0`). No AdSense script is injected in the app layout; add ad units or auto-ads code later if you enable them in AdSense.
 
 ---
 

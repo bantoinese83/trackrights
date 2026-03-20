@@ -10,11 +10,7 @@ import { ComicBanner } from '@/components/ComicBanner';
 import { ContractList } from '@/components/ContractList';
 import { jsonLdScriptProps } from 'react-schemaorg';
 import { FAQ } from '@/components/FAQ';
-import { AdSenseLoader } from '@/components/AdSenseLoader';
-import { getAdSenseClientId } from '@/lib/adsense-config';
 import { SITE_URL } from '@/lib/site-config';
-
-const adSenseClientId = getAdSenseClientId();
 
 // Metadata for the page
 export const metadata: Metadata = {
@@ -258,15 +254,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: SITE_URL,
   },
-  ...(adSenseClientId
-    ? { other: { 'google-adsense-account': adSenseClientId } }
-    : {}),
 };
 
 export default function Home() {
   return (
     <>
-      {adSenseClientId ? <AdSenseLoader clientId={adSenseClientId} /> : null}
       {/* Schema.org structured data */}
       <script
         {...jsonLdScriptProps({

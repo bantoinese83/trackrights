@@ -1,12 +1,8 @@
 import type { Metadata } from 'next';
 import React, { type ReactNode } from 'react';
 import { jsonLdScriptProps } from 'react-schemaorg';
-import { AdSenseLoader } from '@/components/AdSenseLoader';
-import { getAdSenseClientId } from '@/lib/adsense-config';
 import { faqItems } from '@/data/faq-items';
 import { defaultDescription, SITE_NAME, SITE_URL } from '@/lib/site-config';
-
-const adSenseClientId = getAdSenseClientId();
 
 const faqUrl = `${SITE_URL}/faq`;
 
@@ -58,11 +54,9 @@ const faqJsonLd = {
   })),
 };
 
-/** AdSense script only (account meta is on the home page). */
 export default function FAQLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      {adSenseClientId ? <AdSenseLoader clientId={adSenseClientId} /> : null}
       <script
         {...(jsonLdScriptProps(
           faqJsonLd

@@ -1,12 +1,8 @@
 import type { Metadata } from 'next';
 import React, { type ReactNode } from 'react';
 import { jsonLdScriptProps } from 'react-schemaorg';
-import { AdSenseLoader } from '@/components/AdSenseLoader';
-import { getAdSenseClientId } from '@/lib/adsense-config';
 import { badContractGuideMeta } from '@/data/bad-contract-guide';
 import { SITE_NAME, SITE_URL } from '@/lib/site-config';
-
-const adSenseClientId = getAdSenseClientId();
 
 const guideUrl = `${SITE_URL}/bad-contract-guide`;
 
@@ -76,7 +72,6 @@ export default function BadContractGuideLayout({
 }) {
   return (
     <>
-      {adSenseClientId ? <AdSenseLoader clientId={adSenseClientId} /> : null}
       <script
         {...(jsonLdScriptProps(
           articleJsonLd
